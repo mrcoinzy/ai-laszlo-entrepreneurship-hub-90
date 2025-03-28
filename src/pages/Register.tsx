@@ -12,11 +12,11 @@ const Register = () => {
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h1 className="text-3xl sm:text-4xl font-bold mb-4 gradient-text">
-            Join Ai Laszlo's Entrepreneurial Community
+            Sign Up to Work With Ai Laszlo
           </h1>
           <p className="text-white/70 max-w-2xl mx-auto">
-            Create an account to access exclusive resources, track your progress,
-            and get personalized guidance for your entrepreneurial journey.
+            Fill out the form below to start your journey with us. Tell us about your project
+            and what services you're interested in.
           </p>
         </div>
         
