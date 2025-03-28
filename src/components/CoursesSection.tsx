@@ -2,51 +2,9 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Code, DollarSign, Rocket, BarChart2, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const courses = [
-  {
-    id: 1,
-    title: "AI Prompt Engineering Course",
-    description: "Master the art of prompt engineering to get the most out of AI tools.",
-    icon: <Zap className="h-6 w-6 text-white" />,
-    buttonText: "Start Learning",
-    featured: true
-  },
-  {
-    id: 2,
-    title: "Start with $0",
-    description: "Learn how to bootstrap your business without initial capital.",
-    icon: <DollarSign className="h-6 w-6 text-white" />,
-    buttonText: "Start Learning",
-    featured: false
-  },
-  {
-    id: 3,
-    title: "10 AI Software That Works 20x Faster",
-    description: "Discover AI tools that will dramatically increase your productivity.",
-    icon: <Rocket className="h-6 w-6 text-white" />,
-    buttonText: "Start Learning",
-    featured: false
-  },
-  {
-    id: 4,
-    title: "Marketing Course",
-    description: "Learn modern marketing strategies to grow your business effectively.",
-    icon: <BarChart2 className="h-6 w-6 text-white" />,
-    buttonText: "Start Learning",
-    featured: false
-  },
-  {
-    id: 5,
-    title: "Vibe Coding Step by Step",
-    description: "Learn coding with a focus on creating visually appealing interfaces.",
-    icon: <Code className="h-6 w-6 text-white" />,
-    buttonText: "Start Learning",
-    featured: false
-  }
-];
+import { courses } from "@/data/courses";
 
 const CoursesSection = () => {
   return (
