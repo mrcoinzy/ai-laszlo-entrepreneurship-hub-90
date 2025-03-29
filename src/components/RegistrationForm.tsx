@@ -13,12 +13,13 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
-import { ArrowRight, Send } from "lucide-react";
+import { ArrowRight, ArrowLeft, Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Create a schema for form validation
 const formSchema = z.object({
@@ -40,6 +41,7 @@ type FormData = z.infer<typeof formSchema>;
 
 const RegistrationForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -52,6 +54,7 @@ const RegistrationForm = () => {
       serviceOptions: [],
       projectDetails: "",
     },
+    mode: "onChange",
   });
   
   const onSubmit = async (values: FormData) => {
@@ -64,6 +67,7 @@ const RegistrationForm = () => {
       
       toast.success("Registration successful! We'll get back to you soon.");
       form.reset();
+      setCurrentStep(0);
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
       console.error(error);
@@ -79,209 +83,363 @@ const RegistrationForm = () => {
     { id: "business", label: "Building a business from scratch" },
     { id: "self-development", label: "Self-development" },
   ];
+
+  const steps = [
+    { name: "email", label: "Email Address", type: "email", placeholder: "you@example.com" },
+    { name: "fullName", label: "Full Name", type: "text", placeholder: "John Doe" },
+    { name: "password", label: "Password", type: "password", placeholder: "••••••••" },
+    { name: "confirmPassword", label: "Confirm Password", type: "password", placeholder: "••••••••" },
+    { name: "projectDescription", label: "Project Description", type: "textarea", placeholder: "Briefly describe the project you want me to create..." },
+    { name: "serviceOptions", label: "Select Services", type: "checkboxes" },
+    { name: "projectDetails", label: "Project Details", type: "textarea", placeholder: "Please provide more details about your project..." },
+  ];
+
+  const nextStep = async () => {
+    const currentFieldName = steps[currentStep].name as keyof FormData;
+    
+    // Validate only the current field
+    const result = await form.trigger(currentFieldName);
+    
+    if (result) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    setCurrentStep(currentStep - 1);
+  };
+
+  const isLastStep = currentStep === steps.length - 1;
+  const isFirstStep = currentStep === 0;
+
+  const variants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -50 }
+  };
   
   return (
     <div className="w-full max-w-md mx-auto p-6 bg-accent/30 rounded-lg border border-white/10">
       <h2 className="text-2xl font-bold mb-6 gradient-text text-center">Create Account</h2>
       
+      {/* Progress indicator */}
+      <div className="w-full bg-secondary/50 h-1 mb-6 rounded-full overflow-hidden">
+        <div 
+          className="bg-sky-600 h-full transition-all duration-300 ease-in-out"
+          style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+        />
+      </div>
+      
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Email Field */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white/70">Email Address</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="you@example.com"
-                    className="bg-secondary/50"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+          <AnimatePresence mode="wait">
+            {currentStep === 0 && (
+              <motion.div
+                key="email-step"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={variants}
+                transition={{ duration: 0.3 }}
+              >
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/70">Email Address</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="you@example.com"
+                          className="bg-secondary/50"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
             )}
-          />
-
-          {/* Full Name Field */}
-          <FormField
-            control={form.control}
-            name="fullName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white/70">Full Name</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="John Doe"
-                    className="bg-secondary/50"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            
+            {currentStep === 1 && (
+              <motion.div
+                key="fullName-step"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={variants}
+                transition={{ duration: 0.3 }}
+              >
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/70">Full Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="John Doe"
+                          className="bg-secondary/50"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
             )}
-          />
-
-          {/* Password Field */}
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white/70">Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    className="bg-secondary/50"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            
+            {currentStep === 2 && (
+              <motion.div
+                key="password-step"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={variants}
+                transition={{ duration: 0.3 }}
+              >
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/70">Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          className="bg-secondary/50"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
             )}
-          />
-
-          {/* Confirm Password Field */}
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white/70">Confirm Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    className="bg-secondary/50"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            
+            {currentStep === 3 && (
+              <motion.div
+                key="confirmPassword-step"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={variants}
+                transition={{ duration: 0.3 }}
+              >
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/70">Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          className="bg-secondary/50"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
             )}
-          />
-
-          {/* Project Description Field */}
-          <FormField
-            control={form.control}
-            name="projectDescription"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white/70">Project Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Briefly describe the project you want me to create..."
-                    className="bg-secondary/50 min-h-[80px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            
+            {currentStep === 4 && (
+              <motion.div
+                key="projectDescription-step"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={variants}
+                transition={{ duration: 0.3 }}
+              >
+                <FormField
+                  control={form.control}
+                  name="projectDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/70">Project Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Briefly describe the project you want me to create..."
+                          className="bg-secondary/50 min-h-[80px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
             )}
-          />
-
-          {/* Service Options Checkboxes */}
-          <FormField
-            control={form.control}
-            name="serviceOptions"
-            render={() => (
-              <FormItem>
-                <div className="mb-4">
-                  <FormLabel className="text-white/70">Select Services</FormLabel>
-                  <FormDescription className="text-white/50 text-xs">
-                    Choose the services you're interested in
-                  </FormDescription>
-                </div>
-                <div className="space-y-3">
-                  {serviceOptions.map((option) => (
-                    <FormField
-                      key={option.id}
-                      control={form.control}
-                      name="serviceOptions"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
+            
+            {currentStep === 5 && (
+              <motion.div
+                key="serviceOptions-step"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={variants}
+                transition={{ duration: 0.3 }}
+              >
+                <FormField
+                  control={form.control}
+                  name="serviceOptions"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-white/70">Select Services</FormLabel>
+                        <FormDescription className="text-white/50 text-xs">
+                          Choose the services you're interested in
+                        </FormDescription>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        {serviceOptions.map((option) => (
+                          <FormField
                             key={option.id}
-                            className="flex flex-row items-start space-x-3 space-y-0"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(option.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...field.value, option.id])
-                                    : field.onChange(
-                                        field.value?.filter(
-                                          (value) => value !== option.id
-                                        )
-                                      )
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="text-white/70 font-normal">
-                              {option.label}
-                            </FormLabel>
-                          </FormItem>
-                        )
-                      }}
-                    />
-                  ))}
-                </div>
-                <FormMessage className="mt-2" />
-              </FormItem>
+                            control={form.control}
+                            name="serviceOptions"
+                            render={({ field }) => {
+                              return (
+                                <motion.div
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ 
+                                    duration: 0.3,
+                                    delay: serviceOptions.indexOf(option) * 0.1 
+                                  }}
+                                >
+                                  <FormItem
+                                    key={option.id}
+                                    className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-secondary/20 rounded-md hover:bg-secondary/30 transition-all"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(option.id)}
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange([...field.value, option.id])
+                                            : field.onChange(
+                                                field.value?.filter(
+                                                  (value) => value !== option.id
+                                                )
+                                              )
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-white/70 font-normal">
+                                      {option.label}
+                                    </FormLabel>
+                                  </FormItem>
+                                </motion.div>
+                              )
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <FormMessage className="mt-2" />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
             )}
-          />
-
-          {/* Project Details Field */}
-          <FormField
-            control={form.control}
-            name="projectDetails"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white/70">Project Details</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Please provide more details about your project..."
-                    className="bg-secondary/50 min-h-[120px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            
+            {currentStep === 6 && (
+              <motion.div
+                key="projectDetails-step"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={variants}
+                transition={{ duration: 0.3 }}
+              >
+                <FormField
+                  control={form.control}
+                  name="projectDetails"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/70">Project Details</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Please provide more details about your project..."
+                          className="bg-secondary/50 min-h-[120px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
             )}
-          />
-
-          {/* Animated Submit Button */}
-          <Button 
-            type="submit" 
-            disabled={isSubmitting}
-            className={cn(
-              "w-full group relative overflow-hidden transition-all duration-300",
-              isSubmitting 
-                ? "bg-sky-700" 
-                : "bg-sky-600 hover:bg-sky-500"
+          </AnimatePresence>
+          
+          {/* Navigation buttons */}
+          <div className="flex justify-between mt-8">
+            {!isFirstStep && (
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={prevStep}
+                className="flex items-center gap-2 bg-transparent border-sky-600/50 text-sky-400 hover:text-sky-100 hover:bg-sky-700/20"
+              >
+                <ArrowLeft size={16} />
+                Back
+              </Button>
             )}
-          >
-            <span className="relative z-10 flex items-center justify-center transition-all duration-300 group-hover:scale-105">
-              {isSubmitting ? (
-                <span className="flex items-center">
-                  Processing
-                  <span className="ml-1 animate-pulse">...</span>
+            
+            {!isLastStep ? (
+              <Button 
+                type="button" 
+                onClick={nextStep}
+                className={cn(
+                  "ml-auto group relative overflow-hidden transition-all duration-300",
+                  "bg-sky-600 hover:bg-sky-500"
+                )}
+              >
+                <span className="relative z-10 flex items-center justify-center transition-all duration-300 group-hover:scale-105">
+                  Next
+                  <ArrowRight size={16} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
-              ) : (
-                <span className="flex items-center">
-                  Sign Up
-                  <Send size={16} className="ml-2 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                <span className="absolute inset-0 z-0 bg-gradient-to-r from-sky-500 via-sky-600 to-sky-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              </Button>
+            ) : (
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className={cn(
+                  "ml-auto group relative overflow-hidden transition-all duration-300",
+                  isSubmitting 
+                    ? "bg-sky-700" 
+                    : "bg-sky-600 hover:bg-sky-500"
+                )}
+              >
+                <span className="relative z-10 flex items-center justify-center transition-all duration-300 group-hover:scale-105">
+                  {isSubmitting ? (
+                    <span className="flex items-center">
+                      Processing
+                      <span className="ml-1 animate-pulse">...</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      Sign Up
+                      <Send size={16} className="ml-2 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                    </span>
+                  )}
                 </span>
-              )}
-            </span>
-            <span className="absolute inset-0 z-0 bg-gradient-to-r from-sky-500 via-sky-600 to-sky-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-          </Button>
+                <span className="absolute inset-0 z-0 bg-gradient-to-r from-sky-500 via-sky-600 to-sky-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              </Button>
+            )}
+          </div>
         </form>
       </Form>
       
