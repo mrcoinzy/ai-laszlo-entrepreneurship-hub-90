@@ -20,6 +20,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 // Create a schema for form validation
 const formSchema = z.object({
@@ -42,6 +44,7 @@ type FormData = z.infer<typeof formSchema>;
 const RegistrationForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const navigate = useNavigate();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -61,16 +64,45 @@ const RegistrationForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      console.log("Form submitted:", values);
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Register with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            full_name: values.fullName,
+          },
+        },
+      });
+      
+      if (authError) throw authError;
+      
+      // Create a new project entry
+      const { error: projectError } = await supabase
+        .from('projects')
+        .insert({
+          client_id: authData.user?.id,
+          title: values.projectDescription,
+          description: values.projectDetails,
+          status: 'not-started',
+          is_active: false
+        });
+      
+      if (projectError) throw projectError;
       
       toast.success("Registration successful! We'll get back to you soon.");
+      
+      // Reset form and redirect
       form.reset();
       setCurrentStep(0);
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
-      console.error(error);
+      
+      // Log the user out after registration since we want admin to approve first
+      await supabase.auth.signOut();
+      setTimeout(() => navigate('/'), 2000);
+      
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      toast.error(error.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

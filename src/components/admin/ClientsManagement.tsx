@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Card, 
   CardContent, 
@@ -21,64 +21,33 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Mock client data
-const mockClients = [
-  {
-    id: 1,
-    fullName: "Jane Cooper",
-    email: "jane@example.com",
-    registrationDate: "2023-06-15",
-    projectDescription: "E-commerce website for selling handmade crafts",
-    serviceOptions: ["website", "marketing"],
-    projectDetails: "Looking for a complete solution with payment processing and inventory management.",
-    status: "active"
-  },
-  {
-    id: 2,
-    fullName: "Wade Warren",
-    email: "wade@example.com",
-    registrationDate: "2023-06-10",
-    projectDescription: "Mobile app for fitness tracking",
-    serviceOptions: ["webapp"],
-    projectDetails: "Need an app that integrates with wearable devices and provides workout recommendations.",
-    status: "active"
-  },
-  {
-    id: 3,
-    fullName: "Esther Howard",
-    email: "esther@example.com",
-    registrationDate: "2023-06-05",
-    projectDescription: "Business consultation and brand development",
-    serviceOptions: ["business", "marketing"],
-    projectDetails: "Starting a new salon business and need help with business planning and marketing strategy.",
-    status: "active"
-  }
-];
+// Types for our data
+interface Client {
+  id: string;
+  email: string;
+  full_name: string;
+  profile_image_url: string | null;
+  bio: string | null;
+  role: string;
+  created_at: string;
+}
 
-// Mock incoming client requests
-const mockIncomingClients = [
-  {
-    id: 101,
-    fullName: "Brooklyn Simmons",
-    email: "brooklyn@example.com",
-    registrationDate: "2023-06-18",
-    projectDescription: "Personal portfolio website with blog functionality",
-    serviceOptions: ["website"],
-    projectDetails: "I'm a photographer looking to showcase my work and start a blog to share tips and techniques.",
-    status: "pending"
-  },
-  {
-    id: 102,
-    fullName: "Cameron Williamson",
-    email: "cameron@example.com",
-    registrationDate: "2023-06-17",
-    projectDescription: "Online course platform development",
-    serviceOptions: ["webapp", "marketing"],
-    projectDetails: "I want to create an online learning platform for teaching digital marketing skills with payment integration.",
-    status: "pending"
-  }
-];
+interface Project {
+  id: string;
+  client_id: string;
+  title: string;
+  description: string;
+  start_date: string | null;
+  due_date: string | null;
+  progress: number;
+  status: string;
+  time_spent: string;
+  is_active: boolean;
+  created_at: string;
+}
 
 // Helper function to format service options for display
 const formatServiceOptions = (options: string[]) => {
@@ -94,25 +63,142 @@ const formatServiceOptions = (options: string[]) => {
 };
 
 const ClientsManagement = () => {
-  const [expandedClient, setExpandedClient] = useState<number | null>(null);
+  const [expandedClient, setExpandedClient] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   
-  const toggleClientDetails = (clientId: number) => {
+  // Fetch all clients with role 'client'
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({
+    queryKey: ['clients'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('role', 'client');
+      
+      if (error) throw error;
+      return data as Client[];
+    }
+  });
+  
+  // Fetch all projects where is_active is false (pending approval)
+  const { data: pendingProjects = [], isLoading: isLoadingPending } = useQuery({
+    queryKey: ['pendingProjects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          users:client_id (id, full_name, email, created_at)
+        `)
+        .eq('is_active', false);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+  
+  // Fetch active projects
+  const { data: activeProjects = [], isLoading: isLoadingActive } = useQuery({
+    queryKey: ['activeProjects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          users:client_id (id, full_name, email, created_at)
+        `)
+        .eq('is_active', true);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+  
+  // Mutation to approve a project
+  const approveMutation = useMutation({
+    mutationFn: async (projectId: string) => {
+      const { error } = await supabase
+        .from('projects')
+        .update({ 
+          is_active: true,
+          status: 'in-progress' 
+        })
+        .eq('id', projectId);
+      
+      if (error) throw error;
+      return projectId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pendingProjects'] });
+      queryClient.invalidateQueries({ queryKey: ['activeProjects'] });
+      toast.success("Client accepted successfully! An email notification has been sent.");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to accept client. Please try again.");
+    }
+  });
+  
+  // Mutation to reject a project
+  const rejectMutation = useMutation({
+    mutationFn: async (projectId: string) => {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', projectId);
+      
+      if (error) throw error;
+      return projectId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pendingProjects'] });
+      toast.info("Client request declined. An automated email has been sent.");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to decline client. Please try again.");
+    }
+  });
+  
+  const toggleClientDetails = (clientId: string) => {
     setExpandedClient(expandedClient === clientId ? null : clientId);
   };
   
   // Handle client acceptance
-  const handleAcceptClient = (clientId: number) => {
-    // In a real app, this would call an API to update the client status
-    toast.success("Client accepted successfully! An email notification has been sent.");
-    console.log("Accepted client with ID:", clientId);
+  const handleAcceptClient = (projectId: string) => {
+    approveMutation.mutate(projectId);
   };
   
   // Handle client rejection
-  const handleRejectClient = (clientId: number) => {
-    // In a real app, this would call an API to update the client status and send an email
-    toast.info("Client request declined. An automated email has been sent.");
-    console.log("Rejected client with ID:", clientId);
+  const handleRejectClient = (projectId: string) => {
+    rejectMutation.mutate(projectId);
   };
+
+  // Extract active clients from active projects
+  const activeClients = activeProjects.map((project: any) => ({
+    id: project.users.id,
+    fullName: project.users.full_name,
+    email: project.users.email,
+    registrationDate: new Date(project.users.created_at).toISOString().split('T')[0],
+    projectDescription: project.title,
+    serviceOptions: ["website"], // Default placeholder, should come from a separate table in real implementation
+    projectDetails: project.description,
+    status: "active",
+    projectId: project.id
+  }));
+
+  // Format pending clients from pending projects
+  const pendingClients = pendingProjects.map((project: any) => ({
+    id: project.users.id,
+    fullName: project.users.full_name,
+    email: project.users.email,
+    registrationDate: new Date(project.users.created_at).toISOString().split('T')[0],
+    projectDescription: project.title,
+    serviceOptions: ["website"], // Default placeholder, should come from a separate table in real implementation
+    projectDetails: project.description,
+    status: "pending",
+    projectId: project.id
+  }));
 
   return (
     <div className="space-y-6">
@@ -121,9 +207,9 @@ const ClientsManagement = () => {
           <TabsTrigger value="all">All Clients</TabsTrigger>
           <TabsTrigger value="incoming">
             Incoming Clients
-            {mockIncomingClients.length > 0 && (
+            {pendingClients.length > 0 && (
               <Badge variant="secondary" className="ml-2">
-                {mockIncomingClients.length}
+                {pendingClients.length}
               </Badge>
             )}
           </TabsTrigger>
@@ -136,91 +222,97 @@ const ClientsManagement = () => {
               <CardDescription>Manage your existing clients</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[250px]">Name</TableHead>
-                      <TableHead>Services</TableHead>
-                      <TableHead className="hidden md:table-cell">Registration Date</TableHead>
-                      <TableHead className="text-right">Status</TableHead>
-                      <TableHead className="w-[50px]"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockClients.map((client) => (
-                      <React.Fragment key={client.id}>
-                        <TableRow className="hover:bg-accent/10">
-                          <TableCell className="font-medium">{client.fullName}</TableCell>
-                          <TableCell className="hidden sm:table-cell">
-                            {formatServiceOptions(client.serviceOptions)}
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <div className="flex items-center">
-                              <Calendar className="mr-2 h-4 w-4 text-white/70" />
-                              {client.registrationDate}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Badge variant={client.status === "active" ? "default" : "secondary"}>
-                              {client.status === "active" ? "Active" : "Pending"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => toggleClientDetails(client.id)}
-                              aria-label="Toggle client details"
-                            >
-                              {expandedClient === client.id ? 
-                                <ChevronUp className="h-4 w-4" /> : 
-                                <ChevronDown className="h-4 w-4" />
-                              }
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                        
-                        {/* Expanded Details Row */}
-                        {expandedClient === client.id && (
-                          <TableRow className="bg-accent/10">
-                            <TableCell colSpan={5} className="p-4">
-                              <div className="space-y-3">
-                                <div>
-                                  <h4 className="text-sm font-medium mb-1">Contact Information</h4>
-                                  <div className="flex items-center text-sm">
-                                    <Mail className="mr-2 h-4 w-4 text-white/70" />
-                                    {client.email}
-                                  </div>
-                                </div>
-                                
-                                <div>
-                                  <h4 className="text-sm font-medium mb-1">Project Description</h4>
-                                  <p className="text-sm text-white/80">{client.projectDescription}</p>
-                                </div>
-                                
-                                <div>
-                                  <h4 className="text-sm font-medium mb-1">Project Details</h4>
-                                  <p className="text-sm text-white/80">{client.projectDetails}</p>
-                                </div>
-                                
-                                <div className="flex gap-2 pt-2">
-                                  <Button size="sm" variant="outline">
-                                    View Projects
-                                  </Button>
-                                  <Button size="sm" variant="outline">
-                                    Send Message
-                                  </Button>
-                                </div>
+              {isLoadingActive ? (
+                <div className="text-center py-8">Loading clients...</div>
+              ) : activeClients.length === 0 ? (
+                <div className="text-center py-8 text-white/70">No active clients yet</div>
+              ) : (
+                <div className="rounded-md border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[250px]">Name</TableHead>
+                        <TableHead>Services</TableHead>
+                        <TableHead className="hidden md:table-cell">Registration Date</TableHead>
+                        <TableHead className="text-right">Status</TableHead>
+                        <TableHead className="w-[50px]"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {activeClients.map((client) => (
+                        <React.Fragment key={client.id}>
+                          <TableRow className="hover:bg-accent/10">
+                            <TableCell className="font-medium">{client.fullName}</TableCell>
+                            <TableCell className="hidden sm:table-cell">
+                              {formatServiceOptions(client.serviceOptions)}
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              <div className="flex items-center">
+                                <Calendar className="mr-2 h-4 w-4 text-white/70" />
+                                {client.registrationDate}
                               </div>
                             </TableCell>
+                            <TableCell className="text-right">
+                              <Badge variant="default">
+                                Active
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => toggleClientDetails(client.id)}
+                                aria-label="Toggle client details"
+                              >
+                                {expandedClient === client.id ? 
+                                  <ChevronUp className="h-4 w-4" /> : 
+                                  <ChevronDown className="h-4 w-4" />
+                                }
+                              </Button>
+                            </TableCell>
                           </TableRow>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                          
+                          {/* Expanded Details Row */}
+                          {expandedClient === client.id && (
+                            <TableRow className="bg-accent/10">
+                              <TableCell colSpan={5} className="p-4">
+                                <div className="space-y-3">
+                                  <div>
+                                    <h4 className="text-sm font-medium mb-1">Contact Information</h4>
+                                    <div className="flex items-center text-sm">
+                                      <Mail className="mr-2 h-4 w-4 text-white/70" />
+                                      {client.email}
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="text-sm font-medium mb-1">Project Description</h4>
+                                    <p className="text-sm text-white/80">{client.projectDescription}</p>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="text-sm font-medium mb-1">Project Details</h4>
+                                    <p className="text-sm text-white/80">{client.projectDetails}</p>
+                                  </div>
+                                  
+                                  <div className="flex gap-2 pt-2">
+                                    <Button size="sm" variant="outline">
+                                      View Projects
+                                    </Button>
+                                    <Button size="sm" variant="outline">
+                                      Send Message
+                                    </Button>
+                                  </div>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -232,13 +324,15 @@ const ClientsManagement = () => {
               <CardDescription>Review and respond to new client inquiries</CardDescription>
             </CardHeader>
             <CardContent>
-              {mockIncomingClients.length === 0 ? (
+              {isLoadingPending ? (
+                <div className="text-center py-8">Loading requests...</div>
+              ) : pendingClients.length === 0 ? (
                 <div className="text-center py-6 text-white/70">
                   No pending client requests at this time
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {mockIncomingClients.map((client) => (
+                  {pendingClients.map((client) => (
                     <Card key={client.id} className="bg-accent/20 border-white/10">
                       <CardHeader>
                         <div className="flex justify-between items-start">
@@ -280,7 +374,7 @@ const ClientsManagement = () => {
                           variant="outline" 
                           size="sm"
                           className="text-red-400 border-red-400/30 hover:bg-red-400/10"
-                          onClick={() => handleRejectClient(client.id)}
+                          onClick={() => handleRejectClient(client.projectId)}
                         >
                           <XCircle className="mr-2 h-4 w-4" />
                           Decline
@@ -289,7 +383,7 @@ const ClientsManagement = () => {
                           variant="default"
                           size="sm"
                           className="bg-green-600 hover:bg-green-500"
-                          onClick={() => handleAcceptClient(client.id)}
+                          onClick={() => handleAcceptClient(client.projectId)}
                         >
                           <CheckCircle className="mr-2 h-4 w-4" />
                           Accept Client
