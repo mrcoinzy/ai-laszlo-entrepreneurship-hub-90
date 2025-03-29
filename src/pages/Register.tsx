@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import RegistrationForm from "@/components/RegistrationForm";
@@ -21,6 +22,12 @@ const Register = () => {
         </div>
         
         <RegistrationForm />
+        
+        <div className="mt-6 text-center">
+          <p className="text-sm text-white/60">
+            Admin access: <Link to="/admin" className="text-sky-400 hover:underline">Go to Admin Panel</Link>
+          </p>
+        </div>
       </div>
       
       <Footer />
