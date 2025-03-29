@@ -1,19 +1,28 @@
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const Logout = () => {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   
   useEffect(() => {
-    // In a real app, you would clear auth tokens, etc.
-    console.log("Logging out user...");
+    const performLogout = async () => {
+      try {
+        await signOut();
+        toast.success("Logged out successfully!");
+        navigate("/login");
+      } catch (error) {
+        console.error("Error logging out:", error);
+        toast.error("Error logging out. Please try again.");
+        navigate("/dashboard");
+      }
+    };
     
-    // Redirect to login page
-    setTimeout(() => {
-      navigate("/login");
-    }, 1000);
-  }, [navigate]);
+    performLogout();
+  }, [navigate, signOut]);
   
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">

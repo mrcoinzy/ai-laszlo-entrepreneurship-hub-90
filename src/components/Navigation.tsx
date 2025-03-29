@@ -1,11 +1,14 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { X, Menu, ChevronRight } from "lucide-react";
+import { X, Menu, ChevronRight, LogOut, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
   return (
     <nav className="fixed w-full z-50 bg-background/80 backdrop-blur-md">
@@ -28,19 +31,45 @@ const Navigation = () => {
             <Link to="/about" className="text-sm text-white/80 hover:text-white transition-colors">
               About
             </Link>
+            {user && (
+              <Link to="/dashboard" className="text-sm text-white/80 hover:text-white transition-colors">
+                Dashboard
+              </Link>
+            )}
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login">
-              <Button variant="ghost" className="text-white/80 hover:text-white">
-                Login
-              </Button>
-            </Link>
-            <Link to="/register">
-              <Button className="bg-white text-black hover:bg-white/90">
-                Register
-              </Button>
-            </Link>
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <Button 
+                  variant="ghost" 
+                  className="text-white/80 hover:text-white"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  <User size={16} className="mr-2" />
+                  Account
+                </Button>
+                <Link to="/logout">
+                  <Button variant="outline" className="text-white/80 hover:text-white">
+                    <LogOut size={16} className="mr-2" />
+                    Logout
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" className="text-white/80 hover:text-white">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button className="bg-white text-black hover:bg-white/90">
+                    Register
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
           
           <button 
@@ -68,17 +97,41 @@ const Navigation = () => {
             <Link to="/about" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
               About
             </Link>
+            {user && (
+              <Link to="/dashboard" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+                Dashboard
+              </Link>
+            )}
             <div className="pt-6 flex flex-col space-y-4">
-              <Link to="/login" onClick={() => setIsOpen(false)}>
-                <Button variant="outline" className="w-full">
-                  Login
-                </Button>
-              </Link>
-              <Link to="/register" onClick={() => setIsOpen(false)}>
-                <Button className="w-full bg-white text-black hover:bg-white/90">
-                  Register
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" className="w-full flex items-center justify-center">
+                      <User size={16} className="mr-2" />
+                      Account
+                    </Button>
+                  </Link>
+                  <Link to="/logout" onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" className="w-full flex items-center justify-center">
+                      <LogOut size={16} className="mr-2" />
+                      Logout
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" className="w-full">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/register" onClick={() => setIsOpen(false)}>
+                    <Button className="w-full bg-white text-black hover:bg-white/90">
+                      Register
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

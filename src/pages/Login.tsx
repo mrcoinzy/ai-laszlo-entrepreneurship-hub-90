@@ -18,14 +18,15 @@ import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
+import { Loader2 } from "lucide-react";
 
 // Form validation schema
 const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters.",
   }),
 });
 
@@ -48,12 +49,18 @@ const Login = () => {
     setIsLoading(true);
     
     try {
+      console.log("Attempting login with:", values.email);
       await signIn(values.email, values.password);
       toast.success("Login successful!");
       navigate("/dashboard");
     } catch (error: any) {
+      console.error("Login error:", error);
       toast.error(error.message || "Login failed. Please check your credentials.");
-      console.error(error);
+      
+      // Check for common errors and provide helpful messages
+      if (error.message?.includes("Invalid login")) {
+        toast.error("Invalid email or password. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -89,6 +96,7 @@ const Login = () => {
                           placeholder="you@example.com" 
                           className="bg-background/50" 
                           {...field} 
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <FormMessage />
@@ -108,6 +116,7 @@ const Login = () => {
                           placeholder="••••••••" 
                           className="bg-background/50" 
                           {...field} 
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <FormMessage />
@@ -121,7 +130,12 @@ const Login = () => {
                     className="w-full" 
                     disabled={isLoading}
                   >
-                    {isLoading ? "Logging in..." : "Log In"}
+                    {isLoading ? (
+                      <>
+                        <Loader2 size={16} className="mr-2 animate-spin" />
+                        Logging in...
+                      </>
+                    ) : "Log In"}
                   </Button>
                 </div>
               </form>
@@ -146,6 +160,9 @@ const Login = () => {
             </p>
             <p className="mt-1">
               Admin: admin@example.com / password123
+            </p>
+            <p className="mt-1">
+              User: jane@example.com / password123
             </p>
           </div>
         </div>

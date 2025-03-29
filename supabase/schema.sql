@@ -248,11 +248,19 @@ DECLARE
   course2_id UUID;
   project1_id UUID;
 BEGIN
-  -- Create admin user (you'll need to create this user through Supabase Auth UI/API first)
-  INSERT INTO auth.users (id, email, raw_user_meta_data) 
+  -- Create demo admin user with an actual password
+  INSERT INTO auth.users (id, email, raw_user_meta_data, email_confirmed_at, created_at, last_sign_in_at) 
   VALUES 
-    ('00000000-0000-0000-0000-000000000000', 'admin@example.com', '{"full_name":"Admin User"}')
+    ('00000000-0000-0000-0000-000000000000', 'admin@example.com', '{"full_name":"Admin User"}', now(), now(), now())
   ON CONFLICT (id) DO NOTHING;
+  
+  -- Set password for admin user (password123)
+  INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, last_sign_in_at) 
+  VALUES 
+    ('00000000-0000-0000-0000-000000000000', 'admin@example.com', '$2a$10$GVm5ZAVupGQ8JSIBq7GXO.A0jCTvWOCn6aQRhKKqCKLCM5KvOIccu', now(), now(), now())
+  ON CONFLICT (id) DO UPDATE 
+  SET encrypted_password = '$2a$10$GVm5ZAVupGQ8JSIBq7GXO.A0jCTvWOCn6aQRhKKqCKLCM5KvOIccu',
+      email_confirmed_at = now();
   
   admin_id := '00000000-0000-0000-0000-000000000000';
   
@@ -261,12 +269,21 @@ BEGIN
   SET role = 'admin' 
   WHERE id = admin_id;
   
-  -- Create client users
-  INSERT INTO auth.users (id, email, raw_user_meta_data) 
+  -- Create client users with actual passwords
+  INSERT INTO auth.users (id, email, raw_user_meta_data, email_confirmed_at, created_at, last_sign_in_at)
   VALUES 
-    ('11111111-1111-1111-1111-111111111111', 'jane@example.com', '{"full_name":"Jane Cooper"}'),
-    ('22222222-2222-2222-2222-222222222222', 'wade@example.com', '{"full_name":"Wade Warren"}')
+    ('11111111-1111-1111-1111-111111111111', 'jane@example.com', '{"full_name":"Jane Cooper"}', now(), now(), now()),
+    ('22222222-2222-2222-2222-222222222222', 'wade@example.com', '{"full_name":"Wade Warren"}', now(), now(), now())
   ON CONFLICT (id) DO NOTHING;
+  
+  -- Set passwords for client users (password123)
+  INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, last_sign_in_at)
+  VALUES 
+    ('11111111-1111-1111-1111-111111111111', 'jane@example.com', '$2a$10$GVm5ZAVupGQ8JSIBq7GXO.A0jCTvWOCn6aQRhKKqCKLCM5KvOIccu', now(), now(), now()),
+    ('22222222-2222-2222-2222-222222222222', 'wade@example.com', '$2a$10$GVm5ZAVupGQ8JSIBq7GXO.A0jCTvWOCn6aQRhKKqCKLCM5KvOIccu', now(), now(), now())
+  ON CONFLICT (id) DO UPDATE 
+  SET encrypted_password = '$2a$10$GVm5ZAVupGQ8JSIBq7GXO.A0jCTvWOCn6aQRhKKqCKLCM5KvOIccu',
+      email_confirmed_at = now();
   
   client1_id := '11111111-1111-1111-1111-111111111111';
   client2_id := '22222222-2222-2222-2222-222222222222';
@@ -276,12 +293,14 @@ BEGIN
   VALUES 
     (uuid_generate_v4(), 'Business Development Masterclass', 'Learn essential business development skills.', 'intermediate', 499.99, '8 weeks'),
     (uuid_generate_v4(), 'Digital Marketing Fundamentals', 'Master the basics of digital marketing.', 'beginner', 299.99, '6 weeks')
+  ON CONFLICT DO NOTHING
   RETURNING id INTO course1_id, course2_id;
   
   -- Create sample project
   INSERT INTO projects (client_id, title, description, start_date, due_date, progress, status)
   VALUES 
     (client1_id, 'E-commerce Website', 'Building a complete e-commerce platform with payment processing and inventory management.', '2023-05-20', '2023-07-25', 65, 'in-progress')
+  ON CONFLICT DO NOTHING
   RETURNING id INTO project1_id;
   
   -- Create sample tasks
@@ -289,20 +308,23 @@ BEGIN
   VALUES 
     (project1_id, 'Homepage design', 'completed', '8h 30m'),
     (project1_id, 'Product catalog implementation', 'completed', '12h 45m'),
-    (project1_id, 'Shopping cart functionality', 'in-progress', '6h 10m');
+    (project1_id, 'Shopping cart functionality', 'in-progress', '6h 10m')
+  ON CONFLICT DO NOTHING;
     
   -- Create sample invoices
   INSERT INTO invoices (client_id, amount, date, due_date, status, invoice_number)
   VALUES 
     (client1_id, 500, '2023-01-15', '2023-02-15', 'paid', 'INV-001'),
     (client1_id, 750, '2023-02-20', '2023-03-20', 'paid', 'INV-002'),
-    (client2_id, 1200, '2023-03-05', '2023-04-05', 'unpaid', 'INV-003');
+    (client2_id, 1200, '2023-03-05', '2023-04-05', 'unpaid', 'INV-003')
+  ON CONFLICT DO NOTHING;
     
   -- Create sample messages
   INSERT INTO messages (sender_id, receiver_id, text)
   VALUES 
     (client1_id, admin_id, 'Hi, I had a question about the e-commerce feature we discussed.'),
-    (admin_id, client1_id, 'Hello Jane, I''d be happy to answer your question. What specifically about the e-commerce feature were you wondering about?');
+    (admin_id, client1_id, 'Hello Jane, I''d be happy to answer your question. What specifically about the e-commerce feature were you wondering about?')
+  ON CONFLICT DO NOTHING;
 END;
 $$ LANGUAGE plpgsql;
 
