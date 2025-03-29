@@ -119,11 +119,11 @@ const RegistrationForm = () => {
   };
   
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-accent/30 rounded-lg border border-white/10">
-      <h2 className="text-2xl font-bold mb-6 gradient-text text-center">Create Account</h2>
+    <div className="w-full max-w-md mx-auto p-4 sm:p-6 bg-accent/30 rounded-lg border border-white/10">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 gradient-text text-center">Create Account</h2>
       
       {/* Progress indicator */}
-      <div className="w-full bg-secondary/50 h-1 mb-6 rounded-full overflow-hidden">
+      <div className="w-full bg-secondary/50 h-1 mb-4 sm:mb-6 rounded-full overflow-hidden">
         <div 
           className="bg-sky-600 h-full transition-all duration-300 ease-in-out"
           style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
@@ -131,7 +131,7 @@ const RegistrationForm = () => {
       </div>
       
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
           <AnimatePresence mode="wait">
             {currentStep === 0 && (
               <motion.div
@@ -141,6 +141,7 @@ const RegistrationForm = () => {
                 exit="exit"
                 variants={variants}
                 transition={{ duration: 0.3 }}
+                className="min-h-[120px] sm:min-h-[140px] flex flex-col justify-center"
               >
                 <FormField
                   control={form.control}
@@ -171,6 +172,7 @@ const RegistrationForm = () => {
                 exit="exit"
                 variants={variants}
                 transition={{ duration: 0.3 }}
+                className="min-h-[120px] sm:min-h-[140px] flex flex-col justify-center"
               >
                 <FormField
                   control={form.control}
@@ -201,6 +203,7 @@ const RegistrationForm = () => {
                 exit="exit"
                 variants={variants}
                 transition={{ duration: 0.3 }}
+                className="min-h-[120px] sm:min-h-[140px] flex flex-col justify-center"
               >
                 <FormField
                   control={form.control}
@@ -231,6 +234,7 @@ const RegistrationForm = () => {
                 exit="exit"
                 variants={variants}
                 transition={{ duration: 0.3 }}
+                className="min-h-[120px] sm:min-h-[140px] flex flex-col justify-center"
               >
                 <FormField
                   control={form.control}
@@ -261,6 +265,7 @@ const RegistrationForm = () => {
                 exit="exit"
                 variants={variants}
                 transition={{ duration: 0.3 }}
+                className="min-h-[150px] sm:min-h-[180px] flex flex-col justify-center"
               >
                 <FormField
                   control={form.control}
@@ -290,6 +295,7 @@ const RegistrationForm = () => {
                 exit="exit"
                 variants={variants}
                 transition={{ duration: 0.3 }}
+                className="min-h-[200px] sm:min-h-[240px]"
               >
                 <FormField
                   control={form.control}
@@ -302,7 +308,7 @@ const RegistrationForm = () => {
                           Choose the services you're interested in
                         </FormDescription>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 xs:grid-cols-2 gap-3">
                         {serviceOptions.map((option) => (
                           <FormField
                             key={option.id}
@@ -336,7 +342,7 @@ const RegistrationForm = () => {
                                         }}
                                       />
                                     </FormControl>
-                                    <FormLabel className="text-white/70 font-normal">
+                                    <FormLabel className="text-white/70 font-normal text-sm sm:text-base">
                                       {option.label}
                                     </FormLabel>
                                   </FormItem>
@@ -361,6 +367,7 @@ const RegistrationForm = () => {
                 exit="exit"
                 variants={variants}
                 transition={{ duration: 0.3 }}
+                className="min-h-[180px] sm:min-h-[200px] flex flex-col justify-center"
               >
                 <FormField
                   control={form.control}
@@ -384,15 +391,15 @@ const RegistrationForm = () => {
           </AnimatePresence>
           
           {/* Navigation buttons */}
-          <div className="flex justify-between mt-8">
+          <div className="flex justify-between mt-6 sm:mt-8">
             {!isFirstStep && (
               <Button 
                 type="button" 
                 variant="outline"
                 onClick={prevStep}
-                className="flex items-center gap-2 bg-transparent border-sky-600/50 text-sky-400 hover:text-sky-100 hover:bg-sky-700/20"
+                className="flex items-center gap-1 sm:gap-2 bg-transparent border-sky-600/50 text-sky-400 hover:text-sky-100 hover:bg-sky-700/20 px-3 sm:px-4 py-1.5 sm:py-2 text-sm"
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={14} className="sm:size-16" />
                 Back
               </Button>
             )}
@@ -403,12 +410,12 @@ const RegistrationForm = () => {
                 onClick={nextStep}
                 className={cn(
                   "ml-auto group relative overflow-hidden transition-all duration-300",
-                  "bg-sky-600 hover:bg-sky-500"
+                  "bg-sky-600 hover:bg-sky-500 px-3 sm:px-4 py-1.5 sm:py-2 text-sm"
                 )}
               >
                 <span className="relative z-10 flex items-center justify-center transition-all duration-300 group-hover:scale-105">
                   Next
-                  <ArrowRight size={16} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight size={14} className="ml-1 sm:ml-2 sm:size-16 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
                 <span className="absolute inset-0 z-0 bg-gradient-to-r from-sky-500 via-sky-600 to-sky-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
               </Button>
@@ -420,7 +427,7 @@ const RegistrationForm = () => {
                   "ml-auto group relative overflow-hidden transition-all duration-300",
                   isSubmitting 
                     ? "bg-sky-700" 
-                    : "bg-sky-600 hover:bg-sky-500"
+                    : "bg-sky-600 hover:bg-sky-500 px-3 sm:px-4 py-1.5 sm:py-2 text-sm"
                 )}
               >
                 <span className="relative z-10 flex items-center justify-center transition-all duration-300 group-hover:scale-105">
@@ -432,7 +439,7 @@ const RegistrationForm = () => {
                   ) : (
                     <span className="flex items-center">
                       Sign Up
-                      <Send size={16} className="ml-2 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                      <Send size={14} className="ml-1 sm:ml-2 sm:size-16 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
                     </span>
                   )}
                 </span>
@@ -443,7 +450,7 @@ const RegistrationForm = () => {
         </form>
       </Form>
       
-      <p className="mt-6 text-center text-white/50 text-sm">
+      <p className="mt-5 sm:mt-6 text-center text-white/50 text-xs sm:text-sm">
         Already have an account?{" "}
         <a href="/login" className="text-white hover:underline">
           Log in
