@@ -14,6 +14,11 @@ import Register from "./pages/Register";
 import CourseDetail from "./pages/CourseDetail";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
+import Billing from "./pages/Billing";
+import Messages from "./pages/Messages";
+import Settings from "./pages/Settings";
+import Help from "./pages/Help";
+import Logout from "./pages/Logout";
 
 // Create the query client
 const queryClient = new QueryClient();
@@ -36,6 +41,11 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/billing" element={<Billing />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/logout" element={<Logout />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

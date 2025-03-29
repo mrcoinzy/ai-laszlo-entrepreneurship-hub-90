@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -25,7 +26,8 @@ interface DashboardSidebarProps {
 
 const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
   const [isMobile, setIsMobile] = useState(false);
-
+  const navigate = useNavigate();
+  
   // Check if screen is mobile
   useEffect(() => {
     const checkIfMobile = () => {
@@ -40,12 +42,15 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
     };
   }, []);
 
+  const handleLogout = () => {
+    navigate("/logout");
+  };
+
   const navItems = [
     {
       icon: LayoutDashboard,
       label: "Dashboard",
       href: "/dashboard",
-      active: true
     },
     {
       icon: FileText,
@@ -55,7 +60,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
     {
       icon: CreditCard,
       label: "Billing",
-      href: "/dashboard/billing"
+      href: "/billing"
     },
     {
       icon: BarChart3,
@@ -65,12 +70,12 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
     {
       icon: MessageSquare,
       label: "Messages",
-      href: "/dashboard/messages"
+      href: "/messages"
     },
     {
       icon: Settings,
       label: "Settings",
-      href: "/dashboard/settings"
+      href: "/settings"
     }
   ];
 
@@ -102,18 +107,33 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
         <ul className="space-y-1 px-2">
           {navItems.map((item, index) => (
             <li key={index}>
-              <Link
-                to={item.href}
-                className={cn(
-                  "flex items-center px-3 py-2 rounded-md transition-colors",
-                  item.active 
-                    ? "bg-primary text-primary-foreground" 
-                    : "hover:bg-accent/50"
-                )}
-              >
-                <item.icon size={18} className={(isOpen || isMobile) ? "mr-3" : "mx-auto"} />
-                {(isOpen || isMobile) && <span>{item.label}</span>}
-              </Link>
+              {isOpen || isMobile ? (
+                <Link
+                  to={item.href}
+                  className={cn(
+                    "flex items-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
+                  )}
+                >
+                  <item.icon size={18} className="mr-3" />
+                  <span>{item.label}</span>
+                </Link>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      to={item.href}
+                      className={cn(
+                        "flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
+                      )}
+                    >
+                      <item.icon size={18} />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {item.label}
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </li>
           ))}
         </ul>
@@ -129,22 +149,56 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
         
         <ul className="space-y-1 px-2">
           <li>
-            <Link
-              to="/help"
-              className="flex items-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
-            >
-              <HelpCircle size={18} className={(isOpen || isMobile) ? "mr-3" : "mx-auto"} />
-              {(isOpen || isMobile) && <span>Help</span>}
-            </Link>
+            {isOpen || isMobile ? (
+              <Link
+                to="/help"
+                className="flex items-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
+              >
+                <HelpCircle size={18} className="mr-3" />
+                <span>Help</span>
+              </Link>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    to="/help"
+                    className="flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
+                  >
+                    <HelpCircle size={18} />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  Help
+                </TooltipContent>
+              </Tooltip>
+            )}
           </li>
           <li>
-            <Link
-              to="/logout"
-              className="flex items-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
-            >
-              <LogOut size={18} className={(isOpen || isMobile) ? "mr-3" : "mx-auto"} />
-              {(isOpen || isMobile) && <span>Logout</span>}
-            </Link>
+            {isOpen || isMobile ? (
+              <Button
+                variant="ghost"
+                className="w-full flex items-center justify-start px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
+                onClick={handleLogout}
+              >
+                <LogOut size={18} className="mr-3" />
+                <span>Logout</span>
+              </Button>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
+                    onClick={handleLogout}
+                  >
+                    <LogOut size={18} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  Logout
+                </TooltipContent>
+              </Tooltip>
+            )}
           </li>
         </ul>
       </div>

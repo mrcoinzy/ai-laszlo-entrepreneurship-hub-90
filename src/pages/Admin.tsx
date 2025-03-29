@@ -28,7 +28,7 @@ const Admin = () => {
         </Button>
       </div>
       
-      <Navigation className="hidden md:block" />
+      <Navigation />
       
       <main className="flex-1 container mx-auto px-4 py-8 md:py-12">
         <div className="flex flex-col space-y-4 mb-8 hidden md:flex">
