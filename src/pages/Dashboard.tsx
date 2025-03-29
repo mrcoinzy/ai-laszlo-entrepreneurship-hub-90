@@ -1,6 +1,4 @@
-
 import React, { useState } from "react";
-import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -110,12 +108,10 @@ const Dashboard = () => {
       <DashboardSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
       <div className="flex-1 flex flex-col">
-        <Navigation />
-        
-        <main className="flex-1 container mx-auto px-4 py-16">
+        <main className="flex-1 container mx-auto px-4 pt-6 pb-16">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold gradient-text mb-2">Client Dashboard</h1>
+              <h1 className="text-2xl md:text-3xl font-bold gradient-text mb-2">Client Dashboard</h1>
               <p className="text-white/70">
                 Welcome back, {userData.name}. Here's an overview of your projects and spending.
               </p>
@@ -142,7 +138,7 @@ const Dashboard = () => {
           </div>
 
           <Tabs defaultValue="overview" className="space-y-6" onValueChange={setActiveTab} value={activeTab}>
-            <TabsList className="grid grid-cols-4 lg:w-[400px]">
+            <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full md:w-auto overflow-x-auto">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="projects">Projects</TabsTrigger>
               <TabsTrigger value="invoices">Invoices</TabsTrigger>
@@ -150,7 +146,7 @@ const Dashboard = () => {
             </TabsList>
             
             <TabsContent value="overview" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 {/* Status Card */}
                 <Card className="bg-accent/30 border-accent">
                   <CardHeader className="pb-2">
