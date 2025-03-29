@@ -18,20 +18,30 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Create a secure RLS policy for the users table
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+-- Basic policies without recursion
 CREATE POLICY "Users can view their own profile" ON users
   FOR SELECT USING (auth.uid() = id);
+
 CREATE POLICY "Users can update their own profile" ON users
   FOR UPDATE USING (auth.uid() = id);
+
+-- Admin policy that doesn't cause recursion
 CREATE POLICY "Admins can view all profiles" ON users
   FOR SELECT USING (
+    auth.jwt() -> 'role' = 'admin' OR
     EXISTS (
-      SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'
+      SELECT 1 FROM auth.users
+      WHERE auth.uid() = auth.users.id AND auth.users.role = 'service_role'
     )
   );
+
 CREATE POLICY "Admins can update all profiles" ON users
   FOR UPDATE USING (
+    auth.jwt() -> 'role' = 'admin' OR
     EXISTS (
-      SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'
+      SELECT 1 FROM auth.users
+      WHERE auth.uid() = auth.users.id AND auth.users.role = 'service_role'
     )
   );
 
