@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
   Form, 
@@ -35,7 +35,14 @@ type FormData = z.infer<typeof formSchema>;
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
+  
+  // Redirect user if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -52,14 +59,21 @@ const Login = () => {
       console.log("Attempting login with:", values.email);
       await signIn(values.email, values.password);
       toast.success("Login successful!");
-      navigate("/dashboard");
+      
+      // Add a slight delay to ensure the auth state is updated
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 500);
     } catch (error: any) {
       console.error("Login error:", error);
-      toast.error(error.message || "Login failed. Please check your credentials.");
       
       // Check for common errors and provide helpful messages
-      if (error.message?.includes("Invalid login")) {
+      if (error.message?.includes("Invalid login") || error.message?.includes("Invalid email or password")) {
         toast.error("Invalid email or password. Please try again.");
+      } else if (error.message?.includes("Email not confirmed")) {
+        toast.error("Your email has not been confirmed. Please check your inbox.");
+      } else {
+        toast.error(error.message || "Login failed. Please check your credentials.");
       }
     } finally {
       setIsLoading(false);

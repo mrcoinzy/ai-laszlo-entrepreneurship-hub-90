@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
@@ -23,6 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
+        console.log("Auth state changed:", _event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -39,6 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Get initial session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log("Initial session fetch:", session?.user?.id);
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -87,14 +90,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log("Signing in with:", email);
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
       if (error) throw error;
+      
+      // Set user and session immediately
+      setUser(data.user);
+      setSession(data.session);
+      
+      if (data.user) {
+        await checkUserRole(data.user.id);
+      }
+      
+      console.log("Sign in successful:", data.user?.id);
     } catch (error: any) {
-      throw new Error(error.message || 'Error signing in');
+      console.error("Sign in error:", error.message);
+      throw error;
     }
   };
 
@@ -102,6 +117,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      
+      // Clear user data
+      setUser(null);
+      setSession(null);
+      setIsAdmin(false);
     } catch (error: any) {
       throw new Error(error.message || 'Error signing out');
     }

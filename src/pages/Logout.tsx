@@ -13,7 +13,8 @@ const Logout = () => {
       try {
         await signOut();
         toast.success("Logged out successfully!");
-        navigate("/login");
+        // Ensure we direct back to the login page
+        navigate("/login", { replace: true });
       } catch (error) {
         console.error("Error logging out:", error);
         toast.error("Error logging out. Please try again.");
