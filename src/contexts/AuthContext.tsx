@@ -6,10 +6,21 @@ import { Session, User } from '@supabase/supabase-js';
 interface AuthContextType {
   session: Session | null;
   user: User | null;
+  userData: UserData | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
+}
+
+// Define a type for additional user data from the users table
+interface UserData {
+  id: string;
+  full_name: string;
+  email: string;
+  role: string;
+  profile_image_url: string | null;
+  bio: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,8 +28,30 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // Fetch user data from the users table
+  const fetchUserData = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return null;
+      }
+      
+      return data as UserData;
+    } catch (error) {
+      console.error('Error in fetchUserData:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     // Set up auth state listener
@@ -28,10 +61,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Check if user is admin
+        // Fetch user data if user is logged in
         if (session?.user) {
-          await checkUserRole(session.user.id);
+          const data = await fetchUserData(session.user.id);
+          setUserData(data);
+          setIsAdmin(data?.role === 'admin');
         } else {
+          setUserData(null);
           setIsAdmin(false);
         }
         
@@ -44,9 +80,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Initial session fetch:", session?.user?.id);
       setSession(session);
       setUser(session?.user ?? null);
+      
       if (session?.user) {
-        await checkUserRole(session.user.id);
+        const data = await fetchUserData(session.user.id);
+        setUserData(data);
+        setIsAdmin(data?.role === 'admin');
       }
+      
       setLoading(false);
     });
 
@@ -58,30 +98,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Modified to use safer query that doesn't cause recursion
   const checkUserRole = async (userId: string) => {
     try {
-      // First try to get the role from the user's metadata if available
-      const { data: userData } = await supabase.auth.getUser();
-      const userRole = userData?.user?.user_metadata?.role;
-      
-      if (userRole === 'admin') {
-        setIsAdmin(true);
-        return;
-      }
-      
-      // If not available in metadata, try to fetch from the users table
-      // with a direct query that won't trigger the recursion
-      const { data, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', userId)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching user role:', error);
-        setIsAdmin(false);
-        return;
-      }
-      
-      setIsAdmin(data.role === 'admin');
+      const userData = await fetchUserData(userId);
+      setIsAdmin(userData?.role === 'admin');
     } catch (error) {
       console.error('Error checking admin status:', error);
       setIsAdmin(false);
@@ -103,7 +121,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(data.session);
       
       if (data.user) {
-        await checkUserRole(data.user.id);
+        const userData = await fetchUserData(data.user.id);
+        setUserData(userData);
+        setIsAdmin(userData?.role === 'admin');
       }
       
       console.log("Sign in successful:", data.user?.id);
@@ -121,6 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Clear user data
       setUser(null);
       setSession(null);
+      setUserData(null);
       setIsAdmin(false);
     } catch (error: any) {
       throw new Error(error.message || 'Error signing out');
@@ -132,6 +153,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         session,
         user,
+        userData,
         loading,
         signIn,
         signOut,

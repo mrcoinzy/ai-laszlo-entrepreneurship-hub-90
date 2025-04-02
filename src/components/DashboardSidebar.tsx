@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ interface DashboardSidebarProps {
 const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+  const { userData } = useAuth();
   
   // Check if screen is mobile
   useEffect(() => {
@@ -142,8 +144,8 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
       <div className="p-4 border-t border-white/10 space-y-2">
         {(isOpen || isMobile) && (
           <div className="px-3 py-2">
-            <div className="text-sm font-medium">John Doe</div>
-            <div className="text-xs text-white/60">john@example.com</div>
+            <div className="text-sm font-medium">{userData?.full_name || 'User'}</div>
+            <div className="text-xs text-white/60">{userData?.email || ''}</div>
           </div>
         )}
         
