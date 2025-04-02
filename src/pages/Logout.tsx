@@ -1,34 +1,45 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 const Logout = () => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = useState(true);
   
   useEffect(() => {
-    // Add a flag to prevent multiple logout attempts
-    if (!isLoggingOut) return;
-    
     const performLogout = async () => {
       try {
-        setIsLoggingOut(false); // Prevent multiple attempts
+        // Force clear all Supabase auth sessions
+        const { error } = await supabase.auth.signOut({ scope: 'global' });
+        if (error) throw error;
+        
+        // Execute the auth context signOut which clears local state
         await signOut();
+        
+        // Show success toast
         toast.success("Logged out successfully!");
-        // Ensure we direct back to the login page
+        
+        // Redirect to login page
         navigate("/login", { replace: true });
       } catch (error) {
         console.error("Error logging out:", error);
         toast.error("Error logging out. Please try again.");
-        navigate("/dashboard");
+        
+        // Even if there's an error, still redirect to login
+        navigate("/login", { replace: true });
       }
     };
     
     performLogout();
-  }, [navigate, signOut, isLoggingOut]);
+    
+    // This cleanup function ensures we don't have any lingering effects
+    return () => {
+      // Additional cleanup if needed
+    };
+  }, [navigate, signOut]);
   
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
