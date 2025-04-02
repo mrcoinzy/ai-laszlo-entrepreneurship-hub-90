@@ -1,64 +1,202 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/ui/avatar";
 import DashboardSidebar from "@/components/DashboardSidebar";
-import { Send, User } from "lucide-react";
+import { Send, User, AlertCircle } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface Message {
-  id: number;
-  sender: string;
-  content: string;
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  text: string;
   timestamp: string;
-  isMe: boolean;
+  sender_name?: string;
+  isMe?: boolean;
 }
 
 interface Contact {
-  id: number;
-  name: string;
-  lastMessage: string;
-  unread: number;
-  isActive: boolean;
+  id: string;
+  full_name: string;
+  email: string;
+  profile_image_url: string | null;
+  lastMessage?: string;
+  unread?: number;
+  isActive?: boolean;
 }
 
 const Messages = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [message, setMessage] = useState("");
-  const [activeContact, setActiveContact] = useState(1);
+  const [activeContact, setActiveContact] = useState<string | null>(null);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const { user, userData } = useAuth();
   
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Mock data for contacts
-  const contacts: Contact[] = [
-    { id: 1, name: "John Doe", lastMessage: "Thanks for your help!", unread: 0, isActive: true },
-    { id: 2, name: "Jane Smith", lastMessage: "When can we schedule a call?", unread: 2, isActive: false },
-    { id: 3, name: "Mike Johnson", lastMessage: "Project update needed", unread: 0, isActive: true },
-    { id: 4, name: "Sarah Williams", lastMessage: "Invoice received, thanks!", unread: 1, isActive: true },
-  ];
+  // Fetch contacts (all users except current user)
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        if (!user) return;
+        
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .neq('id', user.id);
+        
+        if (error) {
+          console.error('Error fetching contacts:', error);
+          return;
+        }
+        
+        // Transform data to match Contact interface
+        const contactsData = data.map((contact: any) => ({
+          id: contact.id,
+          full_name: contact.full_name,
+          email: contact.email,
+          profile_image_url: contact.profile_image_url,
+          // We'll get last messages in a separate query
+          lastMessage: '',
+          unread: 0,
+          isActive: true // For now, set all as active
+        }));
+        
+        setContacts(contactsData);
+        
+        // If we have contacts, set the first one as active by default
+        if (contactsData.length > 0 && !activeContact) {
+          setActiveContact(contactsData[0].id);
+        }
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error in fetchContacts:', error);
+        setIsLoading(false);
+      }
+    };
+    
+    fetchContacts();
+  }, [user]);
 
-  // Mock data for messages
-  const messages: Message[] = [
-    { id: 1, sender: "John Doe", content: "Hello! I have a question about my project.", timestamp: "09:30 AM", isMe: false },
-    { id: 2, sender: "Me", content: "Hi John, what can I help you with?", timestamp: "09:32 AM", isMe: true },
-    { id: 3, sender: "John Doe", content: "I was wondering if we could add another feature to the dashboard.", timestamp: "09:35 AM", isMe: false },
-    { id: 4, sender: "Me", content: "Of course! What feature did you have in mind?", timestamp: "09:40 AM", isMe: true },
-    { id: 5, sender: "John Doe", content: "I'd like to add a calendar view to track project deadlines.", timestamp: "09:45 AM", isMe: false },
-    { id: 6, sender: "Me", content: "That's a great idea. I can definitely implement that for you. When would you need it by?", timestamp: "09:48 AM", isMe: true },
-    { id: 7, sender: "John Doe", content: "Ideally by the end of the month. Is that doable?", timestamp: "09:52 AM", isMe: false },
-    { id: 8, sender: "Me", content: "Yes, I can have it ready for you by then. I'll start working on it next week.", timestamp: "09:55 AM", isMe: true },
-    { id: 9, sender: "John Doe", content: "Perfect! Thanks for your help!", timestamp: "10:00 AM", isMe: false },
-  ];
+  // Fetch messages between current user and active contact
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        if (!user || !activeContact) return;
+        
+        const { data, error } = await supabase
+          .from('messages')
+          .select(`
+            id,
+            sender_id,
+            receiver_id,
+            text,
+            timestamp,
+            users!sender_id(full_name)
+          `)
+          .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+          .or(`sender_id.eq.${activeContact},receiver_id.eq.${activeContact}`)
+          .order('timestamp', { ascending: true });
+        
+        if (error) {
+          console.error('Error fetching messages:', error);
+          return;
+        }
+        
+        // Filter to only include messages between the current user and active contact
+        const filteredMessages = data.filter((msg: any) => 
+          (msg.sender_id === user.id && msg.receiver_id === activeContact) || 
+          (msg.sender_id === activeContact && msg.receiver_id === user.id)
+        );
+        
+        // Transform data to match Message interface
+        const messagesData = filteredMessages.map((msg: any) => ({
+          id: msg.id,
+          sender_id: msg.sender_id,
+          receiver_id: msg.receiver_id,
+          text: msg.text,
+          timestamp: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sender_name: msg.users?.full_name || 'Unknown',
+          isMe: msg.sender_id === user.id
+        }));
+        
+        setMessages(messagesData);
+      } catch (error) {
+        console.error('Error in fetchMessages:', error);
+      }
+    };
+    
+    fetchMessages();
+    
+    // Set up real-time subscription for new messages
+    const messagesSubscription = supabase
+      .channel('messages-changes')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages'
+      }, (payload) => {
+        const newMessage = payload.new as Message;
+        
+        // Only add the message if it's relevant to the current conversation
+        if ((newMessage.sender_id === user?.id && newMessage.receiver_id === activeContact) ||
+            (newMessage.sender_id === activeContact && newMessage.receiver_id === user?.id)) {
+          
+          // Format and add isMe property
+          const formattedMessage = {
+            ...newMessage,
+            timestamp: new Date(newMessage.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isMe: newMessage.sender_id === user?.id
+          };
+          
+          setMessages(prev => [...prev, formattedMessage]);
+        }
+      })
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(messagesSubscription);
+    };
+  }, [user, activeContact]);
 
-  const handleSendMessage = () => {
-    if (message.trim() !== "") {
-      // In a real app, you would send the message to the backend
-      console.log("Sending message:", message);
-      setMessage("");
+  const handleSendMessage = async () => {
+    if (message.trim() === '' || !user || !activeContact) return;
+    
+    try {
+      const newMessage = {
+        sender_id: user.id,
+        receiver_id: activeContact,
+        text: message,
+        timestamp: new Date().toISOString()
+      };
+      
+      const { error } = await supabase
+        .from('messages')
+        .insert(newMessage);
+      
+      if (error) {
+        console.error('Error sending message:', error);
+        toast.error('Failed to send message');
+        return;
+      }
+      
+      // Clear input after sending
+      setMessage('');
+    } catch (error) {
+      console.error('Error in handleSendMessage:', error);
+      toast.error('Failed to send message');
     }
   };
 
@@ -69,9 +207,20 @@ const Messages = () => {
     }
   };
 
-  const handleContactClick = (contactId: number) => {
+  const handleContactClick = (contactId: string) => {
     setActiveContact(contactId);
   };
+
+  // Empty state component
+  const EmptyState = () => (
+    <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+      <AlertCircle className="w-12 h-12 text-primary/50 mb-4" />
+      <h3 className="text-xl font-medium mb-2">No messages yet</h3>
+      <p className="text-white/60 mb-6 max-w-md">
+        You don't have any messages yet. Select a contact to start a conversation.
+      </p>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -93,78 +242,107 @@ const Messages = () => {
               />
             </div>
             <div className="flex-1 overflow-auto">
-              {contacts.map((contact) => (
-                <div 
-                  key={contact.id}
-                  className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-accent/50 border-b border-white/10 ${activeContact === contact.id ? 'bg-accent/50' : ''}`}
-                  onClick={() => handleContactClick(contact.id)}
-                >
-                  <Avatar className="h-10 w-10 flex items-center justify-center bg-secondary text-white">
-                    <User size={20} />
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="font-medium truncate">{contact.name}</p>
-                      {contact.unread > 0 && (
-                        <span className="flex-shrink-0 h-5 w-5 bg-primary text-primary-foreground rounded-full text-xs flex items-center justify-center">
-                          {contact.unread}
-                        </span>
+              {isLoading ? (
+                <div className="p-4 text-center text-white/60">Loading contacts...</div>
+              ) : contacts.length === 0 ? (
+                <div className="p-4 text-center text-white/60">No contacts found</div>
+              ) : (
+                contacts.map((contact) => (
+                  <div 
+                    key={contact.id}
+                    className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-accent/50 border-b border-white/10 ${activeContact === contact.id ? 'bg-accent/50' : ''}`}
+                    onClick={() => handleContactClick(contact.id)}
+                  >
+                    <Avatar className="h-10 w-10 flex items-center justify-center bg-secondary text-white">
+                      {contact.profile_image_url ? (
+                        <img src={contact.profile_image_url} alt={contact.full_name} />
+                      ) : (
+                        <User size={20} />
                       )}
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium truncate">{contact.full_name}</p>
+                        {contact.unread && contact.unread > 0 && (
+                          <span className="flex-shrink-0 h-5 w-5 bg-primary text-primary-foreground rounded-full text-xs flex items-center justify-center">
+                            {contact.unread}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-white/60 truncate">{contact.email}</p>
                     </div>
-                    <p className="text-sm text-white/60 truncate">{contact.lastMessage}</p>
                   </div>
-                  <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" 
-                       style={{ visibility: contact.isActive ? 'visible' : 'hidden' }}></div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </Card>
           
           {/* Chat window */}
           <Card className="bg-accent/30 border-accent flex-1 flex flex-col overflow-hidden">
-            <div className="p-4 border-b border-white/10 flex items-center gap-3">
-              <Avatar className="h-10 w-10 flex items-center justify-center bg-secondary text-white">
-                <User size={20} />
-              </Avatar>
-              <div>
-                <p className="font-medium">{contacts.find(c => c.id === activeContact)?.name}</p>
-                <p className="text-xs text-white/60">
-                  {contacts.find(c => c.id === activeContact)?.isActive ? 'Online' : 'Offline'}
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex-1 overflow-auto p-4 space-y-4">
-              {messages.map((msg) => (
-                <div 
-                  key={msg.id} 
-                  className={`flex ${msg.isMe ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`max-w-[80%] ${msg.isMe ? 'bg-primary text-primary-foreground' : 'bg-secondary/40'} rounded-lg p-3`}>
-                    <div className="flex justify-between items-baseline gap-4">
-                      <p className="text-xs font-medium">{msg.sender}</p>
-                      <span className="text-xs opacity-70">{msg.timestamp}</span>
-                    </div>
-                    <p className="mt-1 text-sm">{msg.content}</p>
+            {activeContact && contacts.length > 0 ? (
+              <>
+                <div className="p-4 border-b border-white/10 flex items-center gap-3">
+                  <Avatar className="h-10 w-10 flex items-center justify-center bg-secondary text-white">
+                    {contacts.find(c => c.id === activeContact)?.profile_image_url ? (
+                      <img 
+                        src={contacts.find(c => c.id === activeContact)?.profile_image_url || ''} 
+                        alt={contacts.find(c => c.id === activeContact)?.full_name} 
+                      />
+                    ) : (
+                      <User size={20} />
+                    )}
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{contacts.find(c => c.id === activeContact)?.full_name}</p>
+                    <p className="text-xs text-white/60">
+                      {contacts.find(c => c.id === activeContact)?.email}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-            
-            <div className="p-4 border-t border-white/10">
-              <div className="flex gap-2">
-                <Textarea 
-                  placeholder="Type your message here..." 
-                  className="min-h-[60px] bg-secondary/50"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                />
-                <Button className="flex-shrink-0" onClick={handleSendMessage}>
-                  <Send size={18} />
-                </Button>
-              </div>
-            </div>
+                
+                <div className="flex-1 overflow-auto p-4 space-y-4">
+                  {messages.length === 0 ? (
+                    <div className="text-center text-white/60 p-4">
+                      No messages yet. Start the conversation!
+                    </div>
+                  ) : (
+                    messages.map((msg) => (
+                      <div 
+                        key={msg.id} 
+                        className={`flex ${msg.isMe ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div className={`max-w-[80%] ${msg.isMe ? 'bg-primary text-primary-foreground' : 'bg-secondary/40'} rounded-lg p-3`}>
+                          <div className="flex justify-between items-baseline gap-4">
+                            <p className="text-xs font-medium">
+                              {msg.isMe ? 'You' : contacts.find(c => c.id === msg.sender_id)?.full_name}
+                            </p>
+                            <span className="text-xs opacity-70">{msg.timestamp}</span>
+                          </div>
+                          <p className="mt-1 text-sm">{msg.text}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                
+                <div className="p-4 border-t border-white/10">
+                  <div className="flex gap-2">
+                    <Textarea 
+                      placeholder="Type your message here..." 
+                      className="min-h-[60px] bg-secondary/50"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyDown={handleKeyPress}
+                    />
+                    <Button className="flex-shrink-0" onClick={handleSendMessage}>
+                      <Send size={18} />
+                    </Button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <EmptyState />
+            )}
           </Card>
         </div>
       </div>
