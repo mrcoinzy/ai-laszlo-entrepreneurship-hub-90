@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -7,10 +7,15 @@ import { toast } from "sonner";
 const Logout = () => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(true);
   
   useEffect(() => {
+    // Add a flag to prevent multiple logout attempts
+    if (!isLoggingOut) return;
+    
     const performLogout = async () => {
       try {
+        setIsLoggingOut(false); // Prevent multiple attempts
         await signOut();
         toast.success("Logged out successfully!");
         // Ensure we direct back to the login page
@@ -23,7 +28,7 @@ const Logout = () => {
     };
     
     performLogout();
-  }, [navigate, signOut]);
+  }, [navigate, signOut, isLoggingOut]);
   
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
