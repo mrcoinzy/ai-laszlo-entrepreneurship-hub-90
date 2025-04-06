@@ -32,6 +32,7 @@ interface Client {
   profile_image_url: string | null;
   bio: string | null;
   role: string;
+  status: string;
   created_at: string;
 }
 
@@ -40,8 +41,8 @@ interface Project {
   client_id: string;
   title: string;
   description: string;
-  start_date: string | null;
-  due_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
   progress: number;
   status: string;
   time_spent: string;
@@ -66,7 +67,7 @@ const ClientsManagement = () => {
   const [expandedClient, setExpandedClient] = useState<string | null>(null);
   const queryClient = useQueryClient();
   
-  // Fetch all clients with role 'client'
+  // Fetch all users with role 'client'
   const { data: clients = [], isLoading: isLoadingClients } = useQuery({
     queryKey: ['clients'],
     queryFn: async () => {
@@ -80,83 +81,95 @@ const ClientsManagement = () => {
     }
   });
   
-  // Fetch all projects where is_active is false (pending approval)
-  const { data: pendingProjects = [], isLoading: isLoadingPending } = useQuery({
-    queryKey: ['pendingProjects'],
+  // Fetch all pending clients
+  const { data: pendingClients = [], isLoading: isLoadingPending } = useQuery({
+    queryKey: ['pendingClients'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('role', 'client')
+        .eq('status', 'pending');
+      
+      if (error) throw error;
+      return data as Client[];
+    }
+  });
+  
+  // Fetch approved clients
+  const { data: approvedClients = [], isLoading: isLoadingApproved } = useQuery({
+    queryKey: ['approvedClients'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('role', 'client')
+        .eq('status', 'approved');
+      
+      if (error) throw error;
+      return data as Client[];
+    }
+  });
+  
+  // Fetch all projects for approved clients
+  const { data: projects = [], isLoading: isLoadingProjects } = useQuery({
+    queryKey: ['clientProjects'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('projects')
         .select(`
           *,
           users:client_id (id, full_name, email, created_at)
-        `)
-        .eq('is_active', false);
+        `);
       
       if (error) throw error;
       return data;
     }
   });
   
-  // Fetch active projects
-  const { data: activeProjects = [], isLoading: isLoadingActive } = useQuery({
-    queryKey: ['activeProjects'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('projects')
-        .select(`
-          *,
-          users:client_id (id, full_name, email, created_at)
-        `)
-        .eq('is_active', true);
-      
-      if (error) throw error;
-      return data;
-    }
-  });
-  
-  // Mutation to approve a project
+  // Mutation to approve a client
   const approveMutation = useMutation({
-    mutationFn: async (projectId: string) => {
+    mutationFn: async (clientId: string) => {
       const { error } = await supabase
-        .from('projects')
-        .update({ 
-          is_active: true,
-          status: 'in-progress' 
-        })
-        .eq('id', projectId);
+        .from('users')
+        .update({ status: 'approved' })
+        .eq('id', clientId);
       
       if (error) throw error;
-      return projectId;
+      return clientId;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingProjects'] });
-      queryClient.invalidateQueries({ queryKey: ['activeProjects'] });
-      toast.success("Client accepted successfully! An email notification has been sent.");
+      queryClient.invalidateQueries({ queryKey: ['pendingClients'] });
+      queryClient.invalidateQueries({ queryKey: ['approvedClients'] });
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast.success("Client approved successfully! An email notification has been sent.");
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Failed to accept client. Please try again.");
+      toast.error("Failed to approve client. Please try again.");
     }
   });
   
-  // Mutation to reject a project
+  // Mutation to reject a client
   const rejectMutation = useMutation({
-    mutationFn: async (projectId: string) => {
+    mutationFn: async (clientId: string) => {
       const { error } = await supabase
-        .from('projects')
-        .delete()
-        .eq('id', projectId);
+        .from('users')
+        .update({ status: 'rejected' })
+        .eq('id', clientId);
       
       if (error) throw error;
-      return projectId;
+      return clientId;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingProjects'] });
-      toast.info("Client request declined. An automated email has been sent.");
+      queryClient.invalidateQueries({ queryKey: ['pendingClients'] });
+      queryClient.invalidateQueries({ queryKey: ['approvedClients'] });
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast.info("Client request rejected. An automated email has been sent.");
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Failed to decline client. Please try again.");
+      toast.error("Failed to reject client. Please try again.");
     }
   });
   
@@ -164,41 +177,40 @@ const ClientsManagement = () => {
     setExpandedClient(expandedClient === clientId ? null : clientId);
   };
   
-  // Handle client acceptance
-  const handleAcceptClient = (projectId: string) => {
-    approveMutation.mutate(projectId);
+  // Handle client approval
+  const handleApproveClient = (clientId: string) => {
+    approveMutation.mutate(clientId);
   };
   
   // Handle client rejection
-  const handleRejectClient = (projectId: string) => {
-    rejectMutation.mutate(projectId);
+  const handleRejectClient = (clientId: string) => {
+    rejectMutation.mutate(clientId);
   };
-
-  // Extract active clients from active projects
-  const activeClients = activeProjects.map((project: any) => ({
-    id: project.users.id,
-    fullName: project.users.full_name,
-    email: project.users.email,
-    registrationDate: new Date(project.users.created_at).toISOString().split('T')[0],
-    projectDescription: project.title,
-    serviceOptions: ["website"], // Default placeholder, should come from a separate table in real implementation
-    projectDetails: project.description,
-    status: "active",
-    projectId: project.id
-  }));
-
-  // Format pending clients from pending projects
-  const pendingClients = pendingProjects.map((project: any) => ({
-    id: project.users.id,
-    fullName: project.users.full_name,
-    email: project.users.email,
-    registrationDate: new Date(project.users.created_at).toISOString().split('T')[0],
-    projectDescription: project.title,
-    serviceOptions: ["website"], // Default placeholder, should come from a separate table in real implementation
-    projectDetails: project.description,
+  
+  // Format pending clients data
+  const formattedPendingClients = pendingClients.map(client => ({
+    id: client.id,
+    fullName: client.full_name,
+    email: client.email,
+    registrationDate: new Date(client.created_at).toISOString().split('T')[0],
     status: "pending",
-    projectId: project.id
   }));
+
+  // Format approved clients data
+  const formattedApprovedClients = approvedClients.map(client => {
+    // Find projects for this client
+    const clientProjects = projects.filter((p: any) => p.client_id === client.id);
+    
+    return {
+      id: client.id,
+      fullName: client.full_name,
+      email: client.email,
+      registrationDate: new Date(client.created_at).toISOString().split('T')[0],
+      projectCount: clientProjects.length,
+      projects: clientProjects,
+      status: "approved",
+    };
+  });
 
   return (
     <div className="space-y-6">
@@ -206,10 +218,10 @@ const ClientsManagement = () => {
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="all">All Clients</TabsTrigger>
           <TabsTrigger value="incoming">
-            Incoming Clients
-            {pendingClients.length > 0 && (
+            Pending Approval
+            {formattedPendingClients.length > 0 && (
               <Badge variant="secondary" className="ml-2">
-                {pendingClients.length}
+                {formattedPendingClients.length}
               </Badge>
             )}
           </TabsTrigger>
@@ -222,29 +234,29 @@ const ClientsManagement = () => {
               <CardDescription>Manage your existing clients</CardDescription>
             </CardHeader>
             <CardContent>
-              {isLoadingActive ? (
+              {isLoadingApproved ? (
                 <div className="text-center py-8">Loading clients...</div>
-              ) : activeClients.length === 0 ? (
-                <div className="text-center py-8 text-white/70">No active clients yet</div>
+              ) : formattedApprovedClients.length === 0 ? (
+                <div className="text-center py-8 text-white/70">No approved clients yet</div>
               ) : (
                 <div className="rounded-md border overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-[250px]">Name</TableHead>
-                        <TableHead>Services</TableHead>
+                        <TableHead>Email</TableHead>
                         <TableHead className="hidden md:table-cell">Registration Date</TableHead>
                         <TableHead className="text-right">Status</TableHead>
                         <TableHead className="w-[50px]"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {activeClients.map((client) => (
+                      {formattedApprovedClients.map((client) => (
                         <React.Fragment key={client.id}>
                           <TableRow className="hover:bg-accent/10">
                             <TableCell className="font-medium">{client.fullName}</TableCell>
                             <TableCell className="hidden sm:table-cell">
-                              {formatServiceOptions(client.serviceOptions)}
+                              {client.email}
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
                               <div className="flex items-center">
@@ -253,8 +265,8 @@ const ClientsManagement = () => {
                               </div>
                             </TableCell>
                             <TableCell className="text-right">
-                              <Badge variant="default">
-                                Active
+                              <Badge variant="default" className="bg-green-600">
+                                Approved
                               </Badge>
                             </TableCell>
                             <TableCell>
@@ -286,13 +298,23 @@ const ClientsManagement = () => {
                                   </div>
                                   
                                   <div>
-                                    <h4 className="text-sm font-medium mb-1">Project Description</h4>
-                                    <p className="text-sm text-white/80">{client.projectDescription}</p>
-                                  </div>
-                                  
-                                  <div>
-                                    <h4 className="text-sm font-medium mb-1">Project Details</h4>
-                                    <p className="text-sm text-white/80">{client.projectDetails}</p>
+                                    <h4 className="text-sm font-medium mb-1">Projects ({client.projectCount})</h4>
+                                    {client.projects.length > 0 ? (
+                                      <div className="space-y-2">
+                                        {client.projects.map((project: any) => (
+                                          <div key={project.id} className="p-2 bg-accent/20 rounded-md">
+                                            <div className="font-medium">{project.title}</div>
+                                            <div className="text-sm text-white/70">{project.description}</div>
+                                            <div className="flex justify-between mt-1 text-xs text-white/60">
+                                              <div>Status: {project.status}</div>
+                                              <div>Progress: {project.progress}%</div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <p className="text-sm text-white/70">No projects yet</p>
+                                    )}
                                   </div>
                                   
                                   <div className="flex gap-2 pt-2">
@@ -320,19 +342,19 @@ const ClientsManagement = () => {
         <TabsContent value="incoming">
           <Card className="bg-accent/30 border-accent">
             <CardHeader>
-              <CardTitle>Incoming Client Requests</CardTitle>
-              <CardDescription>Review and respond to new client inquiries</CardDescription>
+              <CardTitle>Pending Client Requests</CardTitle>
+              <CardDescription>Review and approve new client registrations</CardDescription>
             </CardHeader>
             <CardContent>
               {isLoadingPending ? (
                 <div className="text-center py-8">Loading requests...</div>
-              ) : pendingClients.length === 0 ? (
+              ) : formattedPendingClients.length === 0 ? (
                 <div className="text-center py-6 text-white/70">
                   No pending client requests at this time
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {pendingClients.map((client) => (
+                  {formattedPendingClients.map((client) => (
                     <Card key={client.id} className="bg-accent/20 border-white/10">
                       <CardHeader>
                         <div className="flex justify-between items-start">
@@ -340,7 +362,9 @@ const ClientsManagement = () => {
                             <CardTitle className="text-lg">{client.fullName}</CardTitle>
                             <CardDescription>{client.email}</CardDescription>
                           </div>
-                          <Badge variant="outline">New Request</Badge>
+                          <Badge variant="outline" className="bg-amber-500/20 text-amber-500">
+                            Pending Approval
+                          </Badge>
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-3">
@@ -351,42 +375,25 @@ const ClientsManagement = () => {
                             {client.registrationDate}
                           </div>
                         </div>
-                        
-                        <div>
-                          <h4 className="text-sm font-medium mb-1">Requested Services</h4>
-                          <p className="text-sm text-white/80">
-                            {formatServiceOptions(client.serviceOptions)}
-                          </p>
-                        </div>
-                        
-                        <div>
-                          <h4 className="text-sm font-medium mb-1">Project Description</h4>
-                          <p className="text-sm text-white/80">{client.projectDescription}</p>
-                        </div>
-                        
-                        <div>
-                          <h4 className="text-sm font-medium mb-1">Project Details</h4>
-                          <p className="text-sm text-white/80">{client.projectDetails}</p>
-                        </div>
                       </CardContent>
                       <CardFooter className="flex justify-between border-t border-white/10 pt-4">
                         <Button 
                           variant="outline" 
                           size="sm"
                           className="text-red-400 border-red-400/30 hover:bg-red-400/10"
-                          onClick={() => handleRejectClient(client.projectId)}
+                          onClick={() => handleRejectClient(client.id)}
                         >
                           <XCircle className="mr-2 h-4 w-4" />
-                          Decline
+                          Reject
                         </Button>
                         <Button 
                           variant="default"
                           size="sm"
                           className="bg-green-600 hover:bg-green-500"
-                          onClick={() => handleAcceptClient(client.projectId)}
+                          onClick={() => handleApproveClient(client.id)}
                         >
                           <CheckCircle className="mr-2 h-4 w-4" />
-                          Accept Client
+                          Approve Access
                         </Button>
                       </CardFooter>
                     </Card>

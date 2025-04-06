@@ -1,5 +1,5 @@
 
--- This schema is designed for Supabase and extends the built-in auth system
+-- This schema is designed for Supabase and extends the built-in auth.users system
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
   profile_image_url TEXT,
   bio TEXT,
   role TEXT CHECK (role IN ('client', 'admin')) DEFAULT 'client',
+  status TEXT CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -29,19 +30,15 @@ CREATE POLICY "Users can update their own profile" ON users
 -- Admin policy that doesn't cause recursion
 CREATE POLICY "Admins can view all profiles" ON users
   FOR SELECT USING (
-    auth.jwt() -> 'role' = 'admin' OR
     EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.uid() = auth.users.id AND auth.users.role = 'service_role'
+      SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'
     )
   );
 
 CREATE POLICY "Admins can update all profiles" ON users
   FOR UPDATE USING (
-    auth.jwt() -> 'role' = 'admin' OR
     EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.uid() = auth.users.id AND auth.users.role = 'service_role'
+      SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'
     )
   );
 
@@ -106,8 +103,8 @@ CREATE TABLE IF NOT EXISTS projects (
   client_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   description TEXT,
-  start_date DATE,
-  due_date DATE,
+  start_time TIMESTAMP WITH TIME ZONE,
+  end_time TIMESTAMP WITH TIME ZONE,
   progress INTEGER DEFAULT 0,
   status TEXT CHECK (status IN ('not-started', 'in-progress', 'completed', 'on-hold')) DEFAULT 'not-started',
   time_spent TEXT DEFAULT '0h 0m',
@@ -221,12 +218,53 @@ CREATE POLICY "Admins can modify all invoices" ON invoices
     )
   );
 
+-- Work sessions table for detailed activity tracking
+CREATE TABLE IF NOT EXISTS work_sessions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  admin_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+  end_time TIMESTAMP WITH TIME ZONE,
+  duration_minutes INTEGER,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Secure the work_sessions table
+ALTER TABLE work_sessions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Admins can view all work sessions" ON work_sessions
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+CREATE POLICY "Admins can modify their work sessions" ON work_sessions
+  FOR ALL USING (
+    auth.uid() = admin_id OR
+    EXISTS (
+      SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+CREATE POLICY "Clients can view work sessions for their projects" ON work_sessions
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM projects 
+      WHERE id = work_sessions.project_id AND client_id = auth.uid()
+    )
+  );
+
 -- Create function to handle user registration
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.users (id, full_name, email)
-  VALUES (new.id, new.raw_user_meta_data->>'full_name', new.email);
+  INSERT INTO public.users (id, full_name, email, role, status)
+  VALUES (
+    new.id, 
+    new.raw_user_meta_data->>'full_name', 
+    new.email,
+    COALESCE(new.raw_user_meta_data->>'role', 'client'),
+    'pending'
+  );
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -237,21 +275,15 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
 -- Create function to set up demo data for testing
--- This can be removed in production
-CREATE OR REPLACE FUNCTION public.setup_demo_data()
+CREATE OR REPLACE FUNCTION public.setup_admin_user()
 RETURNS void AS $$
 DECLARE
   admin_id UUID;
-  client1_id UUID;
-  client2_id UUID;
-  course1_id UUID;
-  course2_id UUID;
-  project1_id UUID;
 BEGIN
   -- Create demo admin user with an actual password
   INSERT INTO auth.users (id, email, raw_user_meta_data, email_confirmed_at, created_at, last_sign_in_at) 
   VALUES 
-    ('00000000-0000-0000-0000-000000000000', 'admin@example.com', '{"full_name":"Admin User"}', now(), now(), now())
+    ('00000000-0000-0000-0000-000000000000', 'admin@example.com', '{"full_name":"Admin User", "role":"admin"}', now(), now(), now())
   ON CONFLICT (id) DO NOTHING;
   
   -- Set password for admin user (password123)
@@ -264,69 +296,13 @@ BEGIN
   
   admin_id := '00000000-0000-0000-0000-000000000000';
   
-  -- Update admin role
+  -- Update admin role and status
   UPDATE users 
-  SET role = 'admin' 
+  SET role = 'admin',
+      status = 'approved'
   WHERE id = admin_id;
-  
-  -- Create client users with actual passwords
-  INSERT INTO auth.users (id, email, raw_user_meta_data, email_confirmed_at, created_at, last_sign_in_at)
-  VALUES 
-    ('11111111-1111-1111-1111-111111111111', 'jane@example.com', '{"full_name":"Jane Cooper"}', now(), now(), now()),
-    ('22222222-2222-2222-2222-222222222222', 'wade@example.com', '{"full_name":"Wade Warren"}', now(), now(), now())
-  ON CONFLICT (id) DO NOTHING;
-  
-  -- Set passwords for client users (password123)
-  INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, last_sign_in_at)
-  VALUES 
-    ('11111111-1111-1111-1111-111111111111', 'jane@example.com', '$2a$10$GVm5ZAVupGQ8JSIBq7GXO.A0jCTvWOCn6aQRhKKqCKLCM5KvOIccu', now(), now(), now()),
-    ('22222222-2222-2222-2222-222222222222', 'wade@example.com', '$2a$10$GVm5ZAVupGQ8JSIBq7GXO.A0jCTvWOCn6aQRhKKqCKLCM5KvOIccu', now(), now(), now())
-  ON CONFLICT (id) DO UPDATE 
-  SET encrypted_password = '$2a$10$GVm5ZAVupGQ8JSIBq7GXO.A0jCTvWOCn6aQRhKKqCKLCM5KvOIccu',
-      email_confirmed_at = now();
-  
-  client1_id := '11111111-1111-1111-1111-111111111111';
-  client2_id := '22222222-2222-2222-2222-222222222222';
-  
-  -- Create sample courses
-  INSERT INTO courses (id, title, description, level, price, duration)
-  VALUES 
-    (uuid_generate_v4(), 'Business Development Masterclass', 'Learn essential business development skills.', 'intermediate', 499.99, '8 weeks'),
-    (uuid_generate_v4(), 'Digital Marketing Fundamentals', 'Master the basics of digital marketing.', 'beginner', 299.99, '6 weeks')
-  ON CONFLICT DO NOTHING
-  RETURNING id INTO course1_id, course2_id;
-  
-  -- Create sample project
-  INSERT INTO projects (client_id, title, description, start_date, due_date, progress, status)
-  VALUES 
-    (client1_id, 'E-commerce Website', 'Building a complete e-commerce platform with payment processing and inventory management.', '2023-05-20', '2023-07-25', 65, 'in-progress')
-  ON CONFLICT DO NOTHING
-  RETURNING id INTO project1_id;
-  
-  -- Create sample tasks
-  INSERT INTO tasks (project_id, title, status, time_spent)
-  VALUES 
-    (project1_id, 'Homepage design', 'completed', '8h 30m'),
-    (project1_id, 'Product catalog implementation', 'completed', '12h 45m'),
-    (project1_id, 'Shopping cart functionality', 'in-progress', '6h 10m')
-  ON CONFLICT DO NOTHING;
-    
-  -- Create sample invoices
-  INSERT INTO invoices (client_id, amount, date, due_date, status, invoice_number)
-  VALUES 
-    (client1_id, 500, '2023-01-15', '2023-02-15', 'paid', 'INV-001'),
-    (client1_id, 750, '2023-02-20', '2023-03-20', 'paid', 'INV-002'),
-    (client2_id, 1200, '2023-03-05', '2023-04-05', 'unpaid', 'INV-003')
-  ON CONFLICT DO NOTHING;
-    
-  -- Create sample messages
-  INSERT INTO messages (sender_id, receiver_id, text)
-  VALUES 
-    (client1_id, admin_id, 'Hi, I had a question about the e-commerce feature we discussed.'),
-    (admin_id, client1_id, 'Hello Jane, I''d be happy to answer your question. What specifically about the e-commerce feature were you wondering about?')
-  ON CONFLICT DO NOTHING;
 END;
 $$ LANGUAGE plpgsql;
 
--- Note: Call this function manually in the SQL editor to set up demo data
--- SELECT setup_demo_data();
+-- Note: Call this function manually in the SQL editor to set up admin data
+-- SELECT setup_admin_user();

@@ -23,6 +23,8 @@ import DashboardSidebar from "@/components/DashboardSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import ProjectStatusCard from "@/components/Dashboard/ProjectStatusCard";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Define types for our data
 interface Project {
@@ -30,11 +32,13 @@ interface Project {
   title: string;
   status: string;
   completion: number;
-  start_date: string;
+  start_time: string | null;
   due_date?: string;
   description?: string;
   cost?: string;
   feedback?: string;
+  progress: number;
+  is_active: boolean;
 }
 
 interface Invoice {
@@ -53,97 +57,156 @@ interface Notification {
   read: boolean;
 }
 
+interface WorkSession {
+  id: string;
+  project_id: string;
+  admin_id: string;
+  start_time: string;
+  end_time: string | null;
+}
+
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { userData } = useAuth();
+  const queryClient = useQueryClient();
   
   // State for data
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [spending, setSpending] = useState({ current: 0, total: 5000 });
 
-  // Fetch user's projects from Supabase
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!userData?.id) return;
-
-      setIsLoading(true);
-      try {
-        // Fetch projects
-        const { data: projectsData, error: projectsError } = await supabase
-          .from('projects')
-          .select('*')
-          .eq('client_id', userData.id);
-
-        if (projectsError) throw projectsError;
-        
-        // Transform projects data
-        const formattedProjects = projectsData.map(p => ({
-          id: p.id,
-          title: p.title,
-          status: p.status,
-          completion: p.progress,
-          start_date: p.start_date,
-          due_date: p.due_date,
-          description: p.description,
-          cost: '', // We'll fetch this from invoices if needed
-          feedback: ''
-        }));
-        
-        setProjects(formattedProjects);
-
-        // Fetch invoices
-        const { data: invoicesData, error: invoicesError } = await supabase
-          .from('invoices')
-          .select('*')
-          .eq('client_id', userData.id);
-
-        if (invoicesError) throw invoicesError;
-        
-        // Transform invoices data
-        const formattedInvoices = invoicesData.map(inv => ({
-          id: inv.id,
-          invoice_number: inv.invoice_number,
-          amount: inv.amount,
-          date: inv.date,
-          status: inv.status,
-          project_title: inv.details
-        }));
-        
-        setInvoices(formattedInvoices);
-        
-        // Calculate spending
-        if (invoicesData.length > 0) {
-          const totalSpent = invoicesData.reduce((sum, inv) => sum + parseFloat(inv.amount), 0);
-          setSpending({ current: totalSpent, total: Math.max(5000, totalSpent * 1.5) });
-        }
-
-        // For notifications, we'll use mock data for now since there's no notifications table
-        // This could be replaced with real data if a notifications table is added
-        setNotifications([
-          {
-            id: 1,
-            message: "Your account has been set up successfully",
-            time: "Just now",
-            read: false
-          }
-        ]);
-
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        toast.error('Failed to load your dashboard data');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [userData?.id]);
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  // Fetch user's projects from Supabase
+  const { data: projects = [], isLoading: projectsLoading } = useQuery({
+    queryKey: ['clientProjects'],
+    queryFn: async () => {
+      if (!userData?.id) return [];
+
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('client_id', userData.id);
+
+      if (error) throw error;
+      
+      // Transform projects data
+      const formattedProjects = data.map(p => ({
+        id: p.id,
+        title: p.title,
+        status: p.status,
+        completion: p.progress,
+        start_time: p.start_time,
+        due_date: p.due_date,
+        description: p.description,
+        progress: p.progress,
+        is_active: p.is_active,
+        cost: '', // We'll fetch this from invoices if needed
+        feedback: ''
+      }));
+      
+      return formattedProjects as Project[];
+    },
+    enabled: !!userData?.id
+  });
+
+  // Fetch user's invoices from Supabase
+  const { data: invoices = [], isLoading: invoicesLoading } = useQuery({
+    queryKey: ['clientInvoices'],
+    queryFn: async () => {
+      if (!userData?.id) return [];
+
+      const { data, error } = await supabase
+        .from('invoices')
+        .select('*')
+        .eq('client_id', userData.id);
+
+      if (error) throw error;
+      
+      // Transform invoices data
+      const formattedInvoices = data.map(inv => ({
+        id: inv.id,
+        invoice_number: inv.invoice_number,
+        amount: inv.amount,
+        date: inv.date,
+        status: inv.status,
+        project_title: inv.details
+      }));
+      
+      // Calculate spending
+      if (formattedInvoices.length > 0) {
+        const totalSpent = formattedInvoices.reduce((sum, inv) => sum + parseFloat(inv.amount.toString()), 0);
+        setSpending({ current: totalSpent, total: Math.max(5000, totalSpent * 1.5) });
+      }
+      
+      return formattedInvoices as Invoice[];
+    },
+    enabled: !!userData?.id
+  });
+
+  // Fetch work sessions to see active projects
+  const { data: workSessions = [] } = useQuery({
+    queryKey: ['workSessions'],
+    queryFn: async () => {
+      if (!userData?.id) return [];
+
+      // Find all work sessions for user's projects
+      const { data: projectIds } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('client_id', userData.id);
+      
+      if (!projectIds || projectIds.length === 0) return [];
+      
+      const projectIdList = projectIds.map(p => p.id);
+      
+      const { data, error } = await supabase
+        .from('work_sessions')
+        .select('*')
+        .in('project_id', projectIdList)
+        .is('end_time', null); // Only active sessions
+      
+      if (error) throw error;
+      return data as WorkSession[];
+    },
+    enabled: !!userData?.id
+  });
+
+  // Setup real-time subscriptions
+  useEffect(() => {
+    if (!userData?.id) return;
+    
+    // Subscribe to project updates for this user
+    const projectSubscription = supabase
+      .channel('client_projects')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'projects',
+          filter: `client_id=eq.${userData.id}`
+        }, 
+        () => {
+          // Refresh projects data
+          queryClient.invalidateQueries({ queryKey: ['clientProjects'] });
+        }
+      )
+      .subscribe();
+    
+    // For notifications, we'll use mock data for now since there's no notifications table
+    setNotifications([
+      {
+        id: 1,
+        message: "Your account has been approved.",
+        time: "Recently",
+        read: false
+      }
+    ]);
+    
+    return () => {
+      projectSubscription.unsubscribe();
+    };
+  }, [userData?.id]);
 
   // Helper function to count projects by status
   const countProjectsByStatus = (status: string) => {
@@ -250,48 +313,66 @@ const Dashboard = () => {
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span>Total Projects</span>
-                        <span>{projects.length}</span>
+                        <span>{projectsLoading ? '...' : projects.length}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Completed</span>
-                        <span>{countProjectsByStatus('completed')}</span>
+                        <span>{projectsLoading ? '...' : countProjectsByStatus('completed')}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>In Progress</span>
-                        <span>{countProjectsByStatus('in-progress')}</span>
+                        <span>{projectsLoading ? '...' : countProjectsByStatus('in-progress')}</span>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Active Work Card */}
+                <Card className={`bg-accent/30 border-accent ${projects.some(p => p.is_active) ? 'border-green-500 bg-green-500/5' : ''}`}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <Clock size={18} />
+                      Work Status
+                    </CardTitle>
+                    <CardDescription>Current project activity</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {projects.some(p => p.is_active) ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center text-green-500">
+                          <div className="h-3 w-3 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+                          <span className="font-medium">Active Work</span>
+                        </div>
+                        <p className="text-sm text-white/80">
+                          Work is currently in progress on your project
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="flex items-center text-white/70">
+                          <div className="h-3 w-3 rounded-full bg-white/30 mr-2"></div>
+                          <span className="font-medium">No Active Work</span>
+                        </div>
+                        <p className="text-sm text-white/70">
+                          No work is currently in progress
+                        </p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
 
               {/* Recent Projects */}
-              <h2 className="text-2xl font-bold mb-4">Recent Projects</h2>
+              <h2 className="text-2xl font-bold mb-4">Your Projects</h2>
               <div className="space-y-4">
-                {projects.length > 0 ? (
+                {projectsLoading ? (
+                  <div className="text-center py-8">
+                    <Clock className="w-8 h-8 animate-spin mx-auto text-primary mb-2" />
+                    <div>Loading projects...</div>
+                  </div>
+                ) : projects.length > 0 ? (
                   projects.slice(0, 2).map(project => (
-                    <Card key={project.id} className="bg-accent/30 border-accent">
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <h3 className="font-medium">{project.title}</h3>
-                          <Badge variant={
-                            project.status === "completed" ? "default" : 
-                            project.status === "in-progress" ? "secondary" : "outline"
-                          }>
-                            {project.status === "in-progress" ? "In Progress" : 
-                            project.status === "completed" ? "Completed" : "Pending"}
-                          </Badge>
-                        </div>
-                        <Progress value={project.completion} className="h-2" />
-                        <div className="flex justify-between mt-2 text-sm text-white/70">
-                          <div>{project.completion}% complete</div>
-                          <div className="flex items-center gap-1">
-                            <CalendarDays size={14} />
-                            {project.start_date}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <ProjectStatusCard key={project.id} project={project} />
                   ))
                 ) : (
                   <Card className="bg-accent/30 border-accent">
@@ -340,69 +421,15 @@ const Dashboard = () => {
             
             <TabsContent value="projects" className="space-y-6">
               <h2 className="text-2xl font-bold mb-4">Your Projects</h2>
-              {projects.length > 0 ? (
+              {projectsLoading ? (
+                <div className="text-center py-8">
+                  <Clock className="w-8 h-8 animate-spin mx-auto text-primary mb-2" />
+                  <div>Loading projects...</div>
+                </div>
+              ) : projects.length > 0 ? (
                 <div className="space-y-6">
                   {projects.map(project => (
-                    <Card key={project.id} className="bg-accent/30 border-accent">
-                      <CardHeader>
-                        <div className="flex justify-between items-center">
-                          <CardTitle>{project.title}</CardTitle>
-                          <Badge variant={
-                            project.status === "completed" ? "default" : 
-                            project.status === "in-progress" ? "secondary" : "outline"
-                          }>
-                            {project.status === "in-progress" ? "In Progress" : 
-                            project.status === "completed" ? "Completed" : "Pending"}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <Progress value={project.completion} className="h-2" />
-                        <div className="text-sm text-white/70">
-                          {project.completion}% complete
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                          <div className="flex items-center gap-2">
-                            <CalendarDays size={16} className="text-primary" />
-                            <div>
-                              <div className="text-xs text-white/60">Start Date</div>
-                              <div>{project.start_date}</div>
-                            </div>
-                          </div>
-                          {project.due_date && (
-                            <div className="flex items-center gap-2">
-                              <Clock size={16} className="text-primary" />
-                              <div>
-                                <div className="text-xs text-white/60">Due Date</div>
-                                <div>{project.due_date}</div>
-                              </div>
-                            </div>
-                          )}
-                          <div className="flex items-center gap-2">
-                            <Clock size={16} className="text-primary" />
-                            <div>
-                              <div className="text-xs text-white/60">Status</div>
-                              <div className="capitalize">{project.status.replace('-', ' ')}</div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {project.description && (
-                          <div className="mt-4 p-3 bg-primary/10 rounded-md">
-                            <div className="text-xs text-white/60 mb-1">Description</div>
-                            <p className="text-sm">{project.description}</p>
-                          </div>
-                        )}
-                        
-                        {project.feedback && (
-                          <div className="mt-4 p-3 bg-primary/10 rounded-md">
-                            <div className="text-xs text-white/60 mb-1">Client Feedback</div>
-                            <p className="text-sm">"{project.feedback}"</p>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                    <ProjectStatusCard key={project.id} project={project} />
                   ))}
                 </div>
               ) : (
@@ -419,7 +446,12 @@ const Dashboard = () => {
             
             <TabsContent value="invoices" className="space-y-6">
               <h2 className="text-2xl font-bold mb-4">Your Invoices</h2>
-              {invoices.length > 0 ? (
+              {invoicesLoading ? (
+                <div className="text-center py-8">
+                  <Clock className="w-8 h-8 animate-spin mx-auto text-primary mb-2" />
+                  <div>Loading invoices...</div>
+                </div>
+              ) : invoices.length > 0 ? (
                 <Card className="bg-accent/30 border-accent">
                   <CardContent className="p-4">
                     <Table>
@@ -513,8 +545,8 @@ const Dashboard = () => {
                           <UserCircle size={18} className="text-primary" />
                         </div>
                         <div className="w-[calc(100%-4rem)] md:w-[45%] bg-accent/20 rounded-md p-4 ml-4 md:ml-0">
-                          <div className="font-medium">Account Created</div>
-                          <div className="text-sm text-white/60">Your account was successfully registered</div>
+                          <div className="font-medium">Account Approved</div>
+                          <div className="text-sm text-white/60">Your account has been approved by an administrator</div>
                           <div className="text-xs text-white/50 mt-1">Recently</div>
                         </div>
                       </div>
@@ -543,6 +575,22 @@ const Dashboard = () => {
                             <div className="font-medium">New invoice created</div>
                             <div className="text-sm text-white/60">Invoice #{invoices[0].invoice_number} for ${invoices[0].amount}</div>
                             <div className="text-xs text-white/50 mt-1">Recently</div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Show active work session if available */}
+                      {projects.some(p => p.is_active) && (
+                        <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500/20 shrink-0 z-10">
+                            <Clock size={18} className="text-green-500" />
+                          </div>
+                          <div className="w-[calc(100%-4rem)] md:w-[45%] bg-green-500/10 rounded-md p-4 ml-4 md:ml-0">
+                            <div className="font-medium text-green-500">Work in progress</div>
+                            <div className="text-sm text-white/60">
+                              Work on project "{projects.find(p => p.is_active)?.title}" is active
+                            </div>
+                            <div className="text-xs text-white/50 mt-1">Now</div>
                           </div>
                         </div>
                       )}

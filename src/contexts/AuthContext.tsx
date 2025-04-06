@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 interface AuthContextType {
   session: Session | null;
@@ -11,6 +13,8 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
+  isPending: boolean;
+  isApproved: boolean;
 }
 
 // Define a type for additional user data from the users table
@@ -19,6 +23,7 @@ interface UserData {
   full_name: string;
   email: string;
   role: string;
+  status: string;
   profile_image_url: string | null;
   bio: string | null;
 }
@@ -31,6 +36,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
+  const navigate = useNavigate();
 
   // Fetch user data from the users table
   const fetchUserData = async (userId: string) => {
@@ -65,10 +73,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (session?.user) {
           const data = await fetchUserData(session.user.id);
           setUserData(data);
-          setIsAdmin(data?.role === 'admin');
+          
+          if (data) {
+            setIsAdmin(data.role === 'admin');
+            setIsPending(data.status === 'pending');
+            setIsApproved(data.status === 'approved');
+
+            // Redirect pending users to pending page
+            if (data.status === 'pending' && window.location.pathname !== '/pending') {
+              navigate('/pending');
+            }
+            
+            // Redirect rejected users to rejected page
+            if (data.status === 'rejected' && window.location.pathname !== '/rejected') {
+              navigate('/rejected');
+            }
+          } else {
+            setIsAdmin(false);
+            setIsPending(false);
+            setIsApproved(false);
+          }
         } else {
           setUserData(null);
           setIsAdmin(false);
+          setIsPending(false);
+          setIsApproved(false);
         }
         
         setLoading(false);
@@ -84,7 +113,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (session?.user) {
         const data = await fetchUserData(session.user.id);
         setUserData(data);
-        setIsAdmin(data?.role === 'admin');
+        
+        if (data) {
+          setIsAdmin(data.role === 'admin');
+          setIsPending(data.status === 'pending');
+          setIsApproved(data.status === 'approved');
+
+          // Redirect pending users to pending page
+          if (data.status === 'pending' && window.location.pathname !== '/pending') {
+            navigate('/pending');
+          }
+          
+          // Redirect rejected users to rejected page
+          if (data.status === 'rejected' && window.location.pathname !== '/rejected') {
+            navigate('/rejected');
+          }
+        }
       }
       
       setLoading(false);
@@ -93,18 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
-
-  // Modified to use safer query that doesn't cause recursion
-  const checkUserRole = async (userId: string) => {
-    try {
-      const userData = await fetchUserData(userId);
-      setIsAdmin(userData?.role === 'admin');
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      setIsAdmin(false);
-    }
-  };
+  }, [navigate]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -123,12 +156,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.user) {
         const userData = await fetchUserData(data.user.id);
         setUserData(userData);
-        setIsAdmin(userData?.role === 'admin');
+        
+        if (userData) {
+          setIsAdmin(userData.role === 'admin');
+          setIsPending(userData.status === 'pending');
+          setIsApproved(userData.status === 'approved');
+          
+          // Route based on user status
+          if (userData.status === 'pending') {
+            navigate('/pending');
+            toast.info("Your account is pending approval.");
+          } else if (userData.status === 'rejected') {
+            navigate('/rejected');
+            toast.error("Your account has been rejected.");
+          } else if (userData.role === 'admin') {
+            navigate('/admin');
+            toast.success("Welcome, Admin!");
+          } else {
+            navigate('/dashboard');
+            toast.success("Login successful!");
+          }
+        }
       }
       
       console.log("Sign in successful:", data.user?.id);
     } catch (error: any) {
       console.error("Sign in error:", error.message);
+      toast.error(error.message || "Login failed");
       throw error;
     }
   };
@@ -140,6 +194,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(null);
       setUserData(null);
       setIsAdmin(false);
+      setIsPending(false);
+      setIsApproved(false);
       
       // Then sign out from Supabase with global scope to clear all sessions
       const { error } = await supabase.auth.signOut({ scope: 'global' });
@@ -148,9 +204,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Ensure localStorage is also cleared of any Supabase data
       localStorage.removeItem('supabase.auth.token');
       
-      console.log("Successfully logged out");
+      // Navigate back to login page
+      navigate('/login');
+      toast.success("Successfully logged out");
     } catch (error: any) {
       console.error("Error during signOut:", error);
+      // Still navigate to login page even if there's an error
+      navigate('/login');
       throw new Error(error.message || 'Error signing out');
     }
   };
@@ -165,6 +225,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signIn,
         signOut,
         isAdmin,
+        isPending,
+        isApproved,
       }}
     >
       {children}

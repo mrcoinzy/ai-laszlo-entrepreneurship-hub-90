@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Card, 
   CardContent, 
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   Play, 
   Pause,
@@ -17,99 +18,278 @@ import {
   ChevronDown,
   ChevronUp,
   CheckCircle,
-  User
+  User,
+  StopCircle
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { format, formatDistance } from "date-fns";
+import { useAuth } from "@/contexts/AuthContext";
 
-// Mock project data
-const mockProjects = [
-  {
-    id: 1,
-    clientId: 1,
-    clientName: "Jane Cooper",
-    title: "E-commerce Website",
-    description: "Building a complete e-commerce platform with payment processing and inventory management.",
-    startDate: "2023-05-20",
-    dueDate: "2023-07-25",
-    progress: 65,
-    status: "in-progress",
-    timeSpent: "42h 15m",
-    tasks: [
-      { id: 101, title: "Homepage design", status: "completed", timeSpent: "8h 30m" },
-      { id: 102, title: "Product catalog implementation", status: "completed", timeSpent: "12h 45m" },
-      { id: 103, title: "Shopping cart functionality", status: "in-progress", timeSpent: "6h 10m" },
-      { id: 104, title: "Payment gateway integration", status: "not-started", timeSpent: "0h 0m" },
-      { id: 105, title: "User authentication", status: "in-progress", timeSpent: "5h 20m" }
-    ],
-    isActive: false
-  },
-  {
-    id: 2,
-    clientId: 2,
-    clientName: "Wade Warren",
-    title: "Fitness Tracking App",
-    description: "Developing a web application for fitness tracking that integrates with wearable devices.",
-    startDate: "2023-06-05",
-    dueDate: "2023-08-15",
-    progress: 30,
-    status: "in-progress",
-    timeSpent: "22h 45m",
-    tasks: [
-      { id: 201, title: "User interface design", status: "completed", timeSpent: "10h 15m" },
-      { id: 202, title: "Database schema design", status: "completed", timeSpent: "4h 30m" },
-      { id: 203, title: "API development", status: "in-progress", timeSpent: "8h 0m" },
-      { id: 204, title: "Device integration", status: "not-started", timeSpent: "0h 0m" }
-    ],
-    isActive: false
-  },
-  {
-    id: 3,
-    clientId: 3,
-    clientName: "Esther Howard",
-    title: "Salon Business Plan",
-    description: "Creating a comprehensive business plan and marketing strategy for a new salon business.",
-    startDate: "2023-06-12",
-    dueDate: "2023-07-10",
-    progress: 90,
-    status: "in-progress",
-    timeSpent: "18h 30m",
-    tasks: [
-      { id: 301, title: "Market research", status: "completed", timeSpent: "6h 45m" },
-      { id: 302, title: "Competitor analysis", status: "completed", timeSpent: "5h 20m" },
-      { id: 303, title: "Financial projections", status: "completed", timeSpent: "4h 15m" },
-      { id: 304, title: "Marketing plan", status: "in-progress", timeSpent: "2h 10m" }
-    ],
-    isActive: true
-  }
-];
+interface Project {
+  id: string;
+  client_id: string;
+  title: string;
+  description: string;
+  start_time: string | null;
+  end_time: string | null;
+  progress: number;
+  status: string;
+  time_spent: string;
+  is_active: boolean;
+  created_at: string;
+  client_name?: string;
+  client_email?: string;
+}
+
+interface Task {
+  id: string;
+  title: string;
+  status: string;
+  time_spent: string;
+}
+
+interface WorkSession {
+  id: string;
+  project_id: string;
+  admin_id: string;
+  start_time: string;
+  end_time: string | null;
+  duration_minutes: number | null;
+  notes: string | null;
+}
 
 const ProjectsManagement = () => {
-  const [expandedProject, setExpandedProject] = useState<number | null>(null);
-  const [projects, setProjects] = useState(mockProjects);
+  const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [activeProject, setActiveProject] = useState<string | null>(null);
+  const [currentSession, setCurrentSession] = useState<WorkSession | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [stopNotes, setStopNotes] = useState("");
+  const [projectToStop, setProjectToStop] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
   
-  const toggleProjectDetails = (projectId: number) => {
+  // Fetch all projects with client details
+  const { data: projects = [], isLoading } = useQuery({
+    queryKey: ['adminProjects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          users:client_id (id, full_name, email)
+        `);
+      
+      if (error) throw error;
+      
+      // Format project data
+      return data.map((project: any) => ({
+        ...project,
+        client_name: project.users?.full_name,
+        client_email: project.users?.email
+      }));
+    }
+  });
+  
+  // Fetch tasks for projects
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['projectTasks'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+  
+  // Fetch active work session
+  const { data: workSessions = [], refetch: refetchWorkSessions } = useQuery({
+    queryKey: ['workSessions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('work_sessions')
+        .select('*')
+        .is('end_time', null);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+  
+  // Setup real-time subscription for work sessions
+  useEffect(() => {
+    const subscription = supabase
+      .channel('work_sessions_changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'work_sessions' 
+        }, 
+        () => {
+          refetchWorkSessions();
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [refetchWorkSessions]);
+  
+  // Check for active sessions on load
+  useEffect(() => {
+    const currentActiveSession = workSessions.find((session: WorkSession) => 
+      session.admin_id === user?.id && !session.end_time);
+    
+    if (currentActiveSession) {
+      setCurrentSession(currentActiveSession);
+      setActiveProject(currentActiveSession.project_id);
+    } else {
+      setCurrentSession(null);
+      setActiveProject(null);
+    }
+  }, [workSessions, user]);
+  
+  // Start a work session on a project
+  const startProjectMutation = useMutation({
+    mutationFn: async (projectId: string) => {
+      // Only one project can be active at a time
+      if (activeProject) {
+        throw new Error("You already have an active project. Please stop the current one first.");
+      }
+      
+      // Create a new work session
+      const { data: sessionData, error: sessionError } = await supabase
+        .from('work_sessions')
+        .insert({
+          project_id: projectId,
+          admin_id: user?.id,
+          start_time: new Date().toISOString()
+        })
+        .select()
+        .single();
+      
+      if (sessionError) throw sessionError;
+      
+      // Update project status
+      const { error: projectError } = await supabase
+        .from('projects')
+        .update({ 
+          is_active: true,
+          status: 'in-progress',
+          start_time: new Date().toISOString()
+        })
+        .eq('id', projectId);
+      
+      if (projectError) throw projectError;
+      
+      return { project_id: projectId, session: sessionData };
+    },
+    onSuccess: (data) => {
+      setActiveProject(data.project_id);
+      setCurrentSession(data.session);
+      queryClient.invalidateQueries({ queryKey: ['adminProjects'] });
+      queryClient.invalidateQueries({ queryKey: ['workSessions'] });
+      toast.success("Started working on project");
+    },
+    onError: (error: any) => {
+      console.error('Error starting project:', error);
+      toast.error(error.message || "Failed to start project");
+    }
+  });
+  
+  // Stop a work session
+  const stopProjectMutation = useMutation({
+    mutationFn: async ({ projectId, notes }: { projectId: string, notes: string }) => {
+      if (!currentSession) {
+        throw new Error("No active work session found");
+      }
+      
+      const now = new Date();
+      const startTime = new Date(currentSession.start_time);
+      const durationMinutes = Math.round((now.getTime() - startTime.getTime()) / 60000);
+      
+      // Update work session
+      const { error: sessionError } = await supabase
+        .from('work_sessions')
+        .update({
+          end_time: now.toISOString(),
+          duration_minutes: durationMinutes,
+          notes: notes
+        })
+        .eq('id', currentSession.id);
+      
+      if (sessionError) throw sessionError;
+      
+      // Update project status
+      const { error: projectError } = await supabase
+        .from('projects')
+        .update({ 
+          is_active: false
+        })
+        .eq('id', projectId);
+      
+      if (projectError) throw projectError;
+      
+      return { project_id: projectId };
+    },
+    onSuccess: () => {
+      setActiveProject(null);
+      setCurrentSession(null);
+      setStopNotes("");
+      setIsDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['adminProjects'] });
+      queryClient.invalidateQueries({ queryKey: ['workSessions'] });
+      toast.success("Stopped working on project");
+    },
+    onError: (error: any) => {
+      console.error('Error stopping project:', error);
+      toast.error(error.message || "Failed to stop project");
+    }
+  });
+  
+  const toggleProjectDetails = (projectId: string) => {
     setExpandedProject(expandedProject === projectId ? null : projectId);
   };
   
   // Start or pause working on a project
-  const toggleProjectActivity = (projectId: number) => {
-    setProjects(prev => prev.map(project => {
-      // If we're activating this project, deactivate all others
-      if (projectId === project.id) {
-        if (!project.isActive) {
-          toast.success(`Started working on "${project.title}"`);
-        } else {
-          toast.info(`Paused work on "${project.title}"`);
-        }
-        return { ...project, isActive: !project.isActive };
-      } else if (project.isActive && !prev.find(p => p.id === projectId)?.isActive) {
-        // If another project is being activated, deactivate this one
-        return { ...project, isActive: false };
-      }
-      return project;
-    }));
+  const handleStartProject = (projectId: string) => {
+    startProjectMutation.mutate(projectId);
+  };
+  
+  // Prepare to stop a project
+  const prepareStopProject = (projectId: string) => {
+    setProjectToStop(projectId);
+    setIsDialogOpen(true);
+  };
+  
+  // Confirm stopping a project
+  const confirmStopProject = () => {
+    if (projectToStop) {
+      stopProjectMutation.mutate({ 
+        projectId: projectToStop, 
+        notes: stopNotes 
+      });
+    }
+  };
+  
+  // Get project tasks
+  const getProjectTasks = (projectId: string): Task[] => {
+    return tasks.filter((task: any) => task.project_id === projectId);
+  };
+  
+  // Calculate elapsed time for active project
+  const getElapsedTime = () => {
+    if (!currentSession) return "0m";
+    
+    const start = new Date(currentSession.start_time);
+    return formatDistance(new Date(), start, { addSuffix: false });
   };
   
   // Get the status badge color based on status
@@ -121,6 +301,8 @@ const ProjectsManagement = () => {
         return <Badge variant="secondary">In Progress</Badge>;
       case "not-started":
         return <Badge variant="outline">Not Started</Badge>;
+      case "on-hold":
+        return <Badge variant="destructive">On Hold</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -134,7 +316,12 @@ const ProjectsManagement = () => {
           <CardDescription>Track and manage all your client projects</CardDescription>
         </CardHeader>
         <CardContent>
-          {projects.length === 0 ? (
+          {isLoading ? (
+            <div className="text-center py-8">
+              <Clock className="w-8 h-8 animate-spin mx-auto text-primary mb-2" />
+              <div>Loading projects...</div>
+            </div>
+          ) : projects.length === 0 ? (
             <div className="text-center py-6 text-white/70">
               No projects available
             </div>
@@ -146,7 +333,7 @@ const ProjectsManagement = () => {
                     <TableHead className="w-[250px]">Project</TableHead>
                     <TableHead className="hidden md:table-cell">Client</TableHead>
                     <TableHead className="hidden md:table-cell">Progress</TableHead>
-                    <TableHead className="hidden lg:table-cell">Due Date</TableHead>
+                    <TableHead className="hidden lg:table-cell">Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
@@ -154,17 +341,18 @@ const ProjectsManagement = () => {
                 <TableBody>
                   {projects.map((project) => (
                     <React.Fragment key={project.id}>
-                      <TableRow className={`hover:bg-accent/10 ${project.isActive ? 'bg-primary/10' : ''}`}>
+                      <TableRow className={`hover:bg-accent/10 ${project.id === activeProject ? 'bg-green-500/10' : ''}`}>
                         <TableCell className="font-medium">
                           <div className="flex items-center">
-                            {project.isActive && <Badge variant="default" className="mr-2 h-2 w-2 rounded-full p-0 bg-green-500" />}
+                            {project.id === activeProject && 
+                              <Badge variant="default" className="mr-2 h-2 w-2 rounded-full p-0 bg-green-500" />}
                             {project.title}
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           <div className="flex items-center">
                             <User className="mr-2 h-4 w-4 text-white/70" />
-                            {project.clientName}
+                            {project.client_name}
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
@@ -174,30 +362,36 @@ const ProjectsManagement = () => {
                           </div>
                         </TableCell>
                         <TableCell className="hidden lg:table-cell">
-                          <div className="flex items-center">
-                            <Calendar className="mr-2 h-4 w-4 text-white/70" />
-                            {project.dueDate}
-                          </div>
+                          {getStatusBadge(project.status)}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button 
-                            variant={project.isActive ? "destructive" : "default"}
-                            size="sm"
-                            className={project.isActive ? "bg-red-600 hover:bg-red-500" : "bg-green-600 hover:bg-green-500"}
-                            onClick={() => toggleProjectActivity(project.id)}
-                          >
-                            {project.isActive ? (
-                              <>
-                                <Pause className="mr-2 h-4 w-4" />
-                                Pause
-                              </>
-                            ) : (
-                              <>
-                                <Play className="mr-2 h-4 w-4" />
-                                Start Working
-                              </>
-                            )}
-                          </Button>
+                          {project.id === activeProject ? (
+                            <div className="flex items-center justify-end space-x-2">
+                              <div className="text-sm text-green-500 mr-2">
+                                Working: {getElapsedTime()}
+                              </div>
+                              <Button 
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => prepareStopProject(project.id)}
+                                className="bg-red-600 hover:bg-red-500"
+                              >
+                                <StopCircle className="mr-2 h-4 w-4" />
+                                Stop Work
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button 
+                              variant="default"
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-500"
+                              onClick={() => handleStartProject(project.id)}
+                              disabled={!!activeProject}
+                            >
+                              <Play className="mr-2 h-4 w-4" />
+                              Start Working
+                            </Button>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Button 
@@ -226,61 +420,66 @@ const ProjectsManagement = () => {
                               
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                  <h4 className="text-sm font-medium mb-1">Start Date</h4>
+                                  <h4 className="text-sm font-medium mb-1">Start Time</h4>
                                   <div className="flex items-center text-sm">
                                     <Calendar className="mr-2 h-4 w-4 text-white/70" />
-                                    {project.startDate}
+                                    {project.start_time ? format(new Date(project.start_time), 'yyyy-MM-dd HH:mm') : 'Not started'}
+                                  </div>
+                                </div>
+                                <div>
+                                  <h4 className="text-sm font-medium mb-1">End Time</h4>
+                                  <div className="flex items-center text-sm">
+                                    <Calendar className="mr-2 h-4 w-4 text-white/70" />
+                                    {project.end_time ? format(new Date(project.end_time), 'yyyy-MM-dd HH:mm') : 'Not completed'}
                                   </div>
                                 </div>
                                 <div>
                                   <h4 className="text-sm font-medium mb-1">Time Spent</h4>
                                   <div className="flex items-center text-sm">
                                     <Clock className="mr-2 h-4 w-4 text-white/70" />
-                                    {project.timeSpent}
-                                  </div>
-                                </div>
-                                <div>
-                                  <h4 className="text-sm font-medium mb-1">Status</h4>
-                                  <div>
-                                    {getStatusBadge(project.status)}
+                                    {project.time_spent}
                                   </div>
                                 </div>
                               </div>
                               
                               <div>
                                 <h4 className="text-sm font-medium mb-2">Tasks</h4>
-                                <div className="rounded-md border overflow-hidden">
-                                  <Table>
-                                    <TableHeader>
-                                      <TableRow>
-                                        <TableHead>Task</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Time Spent</TableHead>
-                                      </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                      {project.tasks.map((task) => (
-                                        <TableRow key={task.id}>
-                                          <TableCell>{task.title}</TableCell>
-                                          <TableCell>
-                                            {task.status === "completed" ? (
-                                              <div className="flex items-center text-green-500">
-                                                <CheckCircle className="mr-1 h-4 w-4" />
-                                                <span>Completed</span>
-                                              </div>
-                                            ) : getStatusBadge(task.status)}
-                                          </TableCell>
-                                          <TableCell>
-                                            <div className="flex items-center">
-                                              <Clock className="mr-1 h-4 w-4 text-white/70" />
-                                              {task.timeSpent}
-                                            </div>
-                                          </TableCell>
+                                {getProjectTasks(project.id).length > 0 ? (
+                                  <div className="rounded-md border overflow-hidden">
+                                    <Table>
+                                      <TableHeader>
+                                        <TableRow>
+                                          <TableHead>Task</TableHead>
+                                          <TableHead>Status</TableHead>
+                                          <TableHead>Time Spent</TableHead>
                                         </TableRow>
-                                      ))}
-                                    </TableBody>
-                                  </Table>
-                                </div>
+                                      </TableHeader>
+                                      <TableBody>
+                                        {getProjectTasks(project.id).map((task: Task) => (
+                                          <TableRow key={task.id}>
+                                            <TableCell>{task.title}</TableCell>
+                                            <TableCell>
+                                              {task.status === "completed" ? (
+                                                <div className="flex items-center text-green-500">
+                                                  <CheckCircle className="mr-1 h-4 w-4" />
+                                                  <span>Completed</span>
+                                                </div>
+                                              ) : getStatusBadge(task.status)}
+                                            </TableCell>
+                                            <TableCell>
+                                              <div className="flex items-center">
+                                                <Clock className="mr-1 h-4 w-4 text-white/70" />
+                                                {task.time_spent}
+                                              </div>
+                                            </TableCell>
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                  </div>
+                                ) : (
+                                  <div className="text-sm text-white/70 p-2">No tasks available</div>
+                                )}
                               </div>
                               
                               <div className="flex gap-2 pt-2">
@@ -303,6 +502,35 @@ const ProjectsManagement = () => {
           )}
         </CardContent>
       </Card>
+      
+      {/* Dialog for stopping work session */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Stop Working</DialogTitle>
+            <DialogDescription>
+              Add notes about what you accomplished during this work session.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <textarea
+              className="w-full p-2 rounded-md bg-accent/30 border border-accent/50 text-white"
+              rows={4}
+              placeholder="What did you accomplish during this session?"
+              value={stopNotes}
+              onChange={(e) => setStopNotes(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="default" onClick={confirmStopProject}>
+              Stop Work & Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
