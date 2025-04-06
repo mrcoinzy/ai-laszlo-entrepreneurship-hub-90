@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
@@ -15,6 +16,7 @@ interface AuthContextType {
   isPending: boolean;
   isApproved: boolean;
   adminCheck: () => Promise<boolean>;
+  refreshUserSession: () => Promise<void>;
 }
 
 // Define a type for additional user data from the users table
@@ -43,6 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fetch user data from the users table
   const fetchUserData = async (userId: string) => {
     try {
+      console.log("Fetching user data for:", userId);
       const { data, error } = await supabase
         .from('users')
         .select('*')
@@ -54,10 +57,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return null;
       }
       
+      console.log("User data fetched:", data);
       return data as UserData;
     } catch (error) {
       console.error('Error in fetchUserData:', error);
       return null;
+    }
+  };
+
+  // Manually refresh the user session - can be called after role changes
+  const refreshUserSession = async () => {
+    try {
+      console.log("Refreshing user session...");
+      const { data, error } = await supabase.auth.refreshSession();
+      
+      if (error) throw error;
+      
+      if (data && data.session) {
+        console.log("Session refreshed successfully");
+        setSession(data.session);
+        setUser(data.user);
+        
+        // Fetch updated user data
+        if (data.user) {
+          const freshUserData = await fetchUserData(data.user.id);
+          if (freshUserData) {
+            setUserData(freshUserData);
+            setIsAdmin(freshUserData.role === 'admin');
+            setIsPending(freshUserData.status === 'pending');
+            setIsApproved(freshUserData.status === 'approved');
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error refreshing session:", error);
     }
   };
 
@@ -251,6 +284,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isPending,
         isApproved,
         adminCheck,
+        refreshUserSession,
       }}
     >
       {children}

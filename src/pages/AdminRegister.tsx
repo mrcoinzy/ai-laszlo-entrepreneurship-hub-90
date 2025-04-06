@@ -23,7 +23,7 @@ import { Loader2, Shield, Lock } from "lucide-react";
 // Environment variable for admin code - in a real app this would be from environment variables
 const ADMIN_CODE = "admin123"; // This should be properly secured in a real application
 
-// Form validation schema - modified to accept string for adminCode
+// Form validation schema with string type for adminCode
 const formSchema = z.object({
   fullName: z.string().min(2, {
     message: "Full name must be at least 2 characters.",
@@ -46,6 +46,7 @@ type FormData = z.infer<typeof formSchema>;
 
 const AdminRegister = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [registrationTimeout, setRegistrationTimeout] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
   
   const form = useForm<FormData>({
@@ -54,7 +55,7 @@ const AdminRegister = () => {
       fullName: "",
       email: "",
       password: "",
-      adminCode: "", // Empty string is now allowed by the type
+      adminCode: "",
     },
     // Setting mode to onChange to validate as user types
     mode: "onBlur",
@@ -63,7 +64,17 @@ const AdminRegister = () => {
   const onSubmit = async (values: FormData) => {
     setIsLoading(true);
     
+    // Set a timeout to prevent infinite loading state
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+      toast.error("Registration request timed out. Please try again.");
+    }, 15000); // 15 seconds timeout
+    
+    setRegistrationTimeout(timeout);
+    
     try {
+      console.log("Starting admin registration with:", values.email);
+      
       // First, register the user with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: values.email,
@@ -79,6 +90,8 @@ const AdminRegister = () => {
       if (authError) throw authError;
       
       if (authData.user) {
+        console.log("Admin user created:", authData.user.id);
+        
         // Then create a record in the users table with admin role
         const { error: userError } = await supabase
           .from('users')
@@ -92,13 +105,31 @@ const AdminRegister = () => {
         
         if (userError) throw userError;
         
-        toast.success("Admin registration successful!");
+        // Immediately sign in to refresh the session with the new role
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: values.email,
+          password: values.password,
+        });
+
+        if (signInError) throw signInError;
+        
+        console.log("Admin registration complete, redirecting to login");
+        toast.success("Admin registration successful! You can now log in.");
+        
+        // Clear the timeout since we're done
+        if (registrationTimeout) clearTimeout(registrationTimeout);
+        
+        // Navigate to login page after successful registration
         navigate("/login");
       }
     } catch (error: any) {
       console.error("Registration error:", error);
       toast.error(error.message || "Registration failed. Please try again.");
     } finally {
+      // Clear the timeout if it exists
+      if (registrationTimeout) {
+        clearTimeout(registrationTimeout);
+      }
       setIsLoading(false);
     }
   };
