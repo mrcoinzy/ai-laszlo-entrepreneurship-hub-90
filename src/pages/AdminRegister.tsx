@@ -23,7 +23,7 @@ import { Loader2, Shield, Lock } from "lucide-react";
 // Environment variable for admin code - in a real app this would be from environment variables
 const ADMIN_CODE = "admin123"; // This should be properly secured in a real application
 
-// Form validation schema
+// Form validation schema - modified to accept string for adminCode
 const formSchema = z.object({
   fullName: z.string().min(2, {
     message: "Full name must be at least 2 characters.",
@@ -54,7 +54,7 @@ const AdminRegister = () => {
       fullName: "",
       email: "",
       password: "",
-      adminCode: "", // Using empty string for initial value
+      adminCode: "", // Empty string is now allowed by the type
     },
     // Setting mode to onChange to validate as user types
     mode: "onBlur",
