@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -53,8 +52,10 @@ const AdminRegister = () => {
       fullName: "",
       email: "",
       password: "",
-      adminCode: "",  // Fixed: Now correctly initialized as empty string
+      adminCode: "", // This is now a string, not a literal "admin123"
     },
+    // Setting mode to onChange to validate as user types
+    mode: "onBlur",
   });
   
   const onSubmit = async (values: FormData) => {
