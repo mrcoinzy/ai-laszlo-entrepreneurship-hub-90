@@ -10,6 +10,14 @@ const Navigation = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
+  // Add a safe logout handler
+  const handleLogout = () => {
+    // Close mobile menu if it's open
+    if (isOpen) setIsOpen(false);
+    // Navigate to the logout page
+    navigate('/logout');
+  };
+  
   return (
     <nav className="fixed w-full z-50 bg-background/80 backdrop-blur-md">
       <div className="container mx-auto px-4 sm:px-6 py-4">
@@ -49,12 +57,14 @@ const Navigation = () => {
                   <User size={16} className="mr-2" />
                   Account
                 </Button>
-                <Link to="/logout">
-                  <Button variant="outline" className="text-white/80 hover:text-white">
-                    <LogOut size={16} className="mr-2" />
-                    Logout
-                  </Button>
-                </Link>
+                <Button 
+                  variant="outline" 
+                  className="text-white/80 hover:text-white"
+                  onClick={handleLogout}
+                >
+                  <LogOut size={16} className="mr-2" />
+                  Logout
+                </Button>
               </div>
             ) : (
               <>
@@ -111,12 +121,14 @@ const Navigation = () => {
                       Account
                     </Button>
                   </Link>
-                  <Link to="/logout" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full flex items-center justify-center">
-                      <LogOut size={16} className="mr-2" />
-                      Logout
-                    </Button>
-                  </Link>
+                  <Button 
+                    variant="outline" 
+                    className="w-full flex items-center justify-center"
+                    onClick={handleLogout}
+                  >
+                    <LogOut size={16} className="mr-2" />
+                    Logout
+                  </Button>
                 </>
               ) : (
                 <>

@@ -45,6 +45,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
   }, []);
 
   const handleLogout = () => {
+    // Navigate to the logout page
     navigate("/logout");
   };
 

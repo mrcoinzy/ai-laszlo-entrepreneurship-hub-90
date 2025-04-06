@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
@@ -189,6 +188,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
+      console.log("Signing out user...");
+      
       // First clear all local state
       setUser(null);
       setSession(null);
@@ -197,21 +198,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsPending(false);
       setIsApproved(false);
       
-      // Then sign out from Supabase with global scope to clear all sessions
-      const { error } = await supabase.auth.signOut({ scope: 'global' });
-      if (error) throw error;
-      
       // Ensure localStorage is also cleared of any Supabase data
       localStorage.removeItem('supabase.auth.token');
+      sessionStorage.clear();
       
-      // Navigate back to login page
-      navigate('/login');
-      toast.success("Successfully logged out");
+      console.log("Local auth state cleared");
+      return Promise.resolve();
     } catch (error: any) {
-      console.error("Error during signOut:", error);
-      // Still navigate to login page even if there's an error
-      navigate('/login');
-      throw new Error(error.message || 'Error signing out');
+      console.error("Error during local state cleanup in signOut:", error);
+      return Promise.resolve(); // Still resolve to allow logout flow to continue
     }
   };
 
