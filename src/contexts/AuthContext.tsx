@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
@@ -19,7 +18,6 @@ interface AuthContextType {
   refreshUserSession: () => Promise<void>;
 }
 
-// Define a type for additional user data from the users table
 interface UserData {
   id: string;
   full_name: string;
@@ -42,7 +40,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isApproved, setIsApproved] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch user data from the users table
   const fetchUserData = async (userId: string) => {
     try {
       console.log("Fetching user data for:", userId);
@@ -65,7 +62,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Manually refresh the user session - can be called after role changes
   const refreshUserSession = async () => {
     try {
       console.log("Refreshing user session...");
@@ -78,7 +74,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(data.session);
         setUser(data.user);
         
-        // Fetch updated user data
         if (data.user) {
           const freshUserData = await fetchUserData(data.user.id);
           if (freshUserData) {
@@ -91,23 +86,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (error) {
       console.error("Error refreshing session:", error);
+      toast.error("Failed to refresh session. Please try logging in again.");
     }
   };
 
-  // Check if the user is an admin - can be called programmatically from components
   const adminCheck = async (): Promise<boolean> => {
     if (!user) return false;
     
     try {
-      // First check if we already have the user data with admin role
       if (userData && userData.role === 'admin') {
         return true;
       }
       
-      // Otherwise fetch fresh data
       const refreshedData = await fetchUserData(user.id);
       if (refreshedData && refreshedData.role === 'admin') {
-        // Update local state
         setIsAdmin(true);
         setUserData(refreshedData);
         return true;
@@ -121,14 +113,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Set up auth state listener
+    console.log("Setting up auth state listener...");
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         console.log("Auth state changed:", _event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Fetch user data if user is logged in
         if (session?.user) {
           const data = await fetchUserData(session.user.id);
           setUserData(data);
@@ -138,12 +129,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsPending(data.status === 'pending');
             setIsApproved(data.status === 'approved');
 
-            // Redirect pending users to pending page
             if (data.status === 'pending' && window.location.pathname !== '/pending') {
               navigate('/pending');
             }
             
-            // Redirect rejected users to rejected page
             if (data.status === 'rejected' && window.location.pathname !== '/rejected') {
               navigate('/rejected');
             }
@@ -163,7 +152,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    // Get initial session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       console.log("Initial session fetch:", session?.user?.id);
       setSession(session);
@@ -178,19 +166,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setIsPending(data.status === 'pending');
           setIsApproved(data.status === 'approved');
 
-          // Redirect pending users to pending page
           if (data.status === 'pending' && window.location.pathname !== '/pending') {
             navigate('/pending');
           }
           
-          // Redirect rejected users to rejected page
           if (data.status === 'rejected' && window.location.pathname !== '/rejected') {
             navigate('/rejected');
           }
         }
       }
       
-      // Set loading to false after we have checked the initial session
       setLoading(false);
     });
 
@@ -209,7 +194,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (error) throw error;
       
-      // Set user and session immediately
       setUser(data.user);
       setSession(data.session);
       
@@ -222,7 +206,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setIsPending(userData.status === 'pending');
           setIsApproved(userData.status === 'approved');
           
-          // Route based on user status
           if (userData.status === 'pending') {
             navigate('/pending');
             toast.info("Your account is pending approval.");
@@ -251,7 +234,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Signing out user...");
       
-      // First clear all local state
       setUser(null);
       setSession(null);
       setUserData(null);
@@ -259,7 +241,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsPending(false);
       setIsApproved(false);
       
-      // Ensure localStorage is also cleared of any Supabase data
       localStorage.removeItem('supabase.auth.token');
       sessionStorage.clear();
       
@@ -267,7 +248,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return Promise.resolve();
     } catch (error: any) {
       console.error("Error during local state cleanup in signOut:", error);
-      return Promise.resolve(); // Still resolve to allow logout flow to continue
+      return Promise.resolve();
     }
   };
 

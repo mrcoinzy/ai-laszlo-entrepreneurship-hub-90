@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
   Form, 
@@ -17,8 +17,9 @@ import * as z from "zod";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { supabase } from "@/lib/supabase";
-import { Loader2, Shield, Lock } from "lucide-react";
+import { supabase, testConnection } from "@/lib/supabase";
+import { Loader2, Shield, Lock, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // Environment variable for admin code - in a real app this would be from environment variables
 const ADMIN_CODE = "admin123"; // This should be properly secured in a real application
@@ -46,8 +47,25 @@ type FormData = z.infer<typeof formSchema>;
 
 const AdminRegister = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const [registrationTimeout, setRegistrationTimeout] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
+  
+  // Test connection to Supabase on component mount
+  useEffect(() => {
+    const checkConnection = async () => {
+      const result = await testConnection();
+      if (!result.success) {
+        setConnectionError('Unable to connect to the server. Please try again later.');
+        toast.error('Server connection issue detected');
+      } else {
+        setConnectionError(null);
+        toast.success('Connected to Supabase successfully');
+      }
+    };
+    
+    checkConnection();
+  }, []);
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -63,6 +81,11 @@ const AdminRegister = () => {
   
   const onSubmit = async (values: FormData) => {
     setIsLoading(true);
+    
+    // Clear any previous timeout
+    if (registrationTimeout) {
+      clearTimeout(registrationTimeout);
+    }
     
     // Set a timeout to prevent infinite loading state
     const timeout = setTimeout(() => {
@@ -89,47 +112,60 @@ const AdminRegister = () => {
       
       if (authError) throw authError;
       
-      if (authData.user) {
-        console.log("Admin user created:", authData.user.id);
-        
-        // Then create a record in the users table with admin role
-        const { error: userError } = await supabase
-          .from('users')
-          .insert({
-            id: authData.user.id,
-            email: values.email,
-            full_name: values.fullName,
-            role: 'admin',
-            status: 'approved', // Admins are auto-approved
-          });
-        
-        if (userError) throw userError;
-        
-        // Immediately sign in to refresh the session with the new role
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: values.email,
-          password: values.password,
-        });
-
-        if (signInError) throw signInError;
-        
-        console.log("Admin registration complete, redirecting to login");
-        toast.success("Admin registration successful! You can now log in.");
-        
-        // Clear the timeout since we're done
-        if (registrationTimeout) clearTimeout(registrationTimeout);
-        
-        // Navigate to login page after successful registration
-        navigate("/login");
+      if (!authData.user) {
+        throw new Error('User registration failed - no user returned');
       }
+      
+      console.log("Admin user created:", authData.user.id);
+      
+      // Then create a record in the users table with admin role
+      const { error: userError } = await supabase
+        .from('users')
+        .insert({
+          id: authData.user.id,
+          email: values.email,
+          full_name: values.fullName,
+          role: 'admin',
+          status: 'approved', // Admins are auto-approved
+        });
+      
+      if (userError) throw userError;
+      
+      // Clear the timeout since registration was successful
+      clearTimeout(timeout);
+      setRegistrationTimeout(null);
+      
+      toast.success("Admin registration successful! Signing in...");
+      
+      // Immediately sign in to refresh the session with the new role
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (signInError) throw signInError;
+      
+      console.log("Admin registration complete, redirecting to admin dashboard");
+      
+      // Navigate to admin dashboard after successful registration and sign in
+      navigate("/admin");
+      
     } catch (error: any) {
       console.error("Registration error:", error);
-      toast.error(error.message || "Registration failed. Please try again.");
-    } finally {
-      // Clear the timeout if it exists
-      if (registrationTimeout) {
-        clearTimeout(registrationTimeout);
+      
+      // Clear the timeout
+      clearTimeout(timeout);
+      setRegistrationTimeout(null);
+      
+      // Provide detailed error feedback
+      if (error.message.includes('timeout')) {
+        toast.error("Connection to server timed out. Please check your internet connection and try again.");
+      } else if (error.message.includes('already registered')) {
+        toast.error("Email is already registered. Try logging in instead.");
+      } else {
+        toast.error(error.message || "Registration failed. Please try again.");
       }
+    } finally {
       setIsLoading(false);
     }
   };
@@ -152,6 +188,16 @@ const AdminRegister = () => {
             </p>
           </div>
           
+          {connectionError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Connection Error</AlertTitle>
+              <AlertDescription>
+                {connectionError}
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <div className="bg-accent/30 rounded-lg border border-white/10 p-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -166,7 +212,7 @@ const AdminRegister = () => {
                           placeholder="John Doe" 
                           className="bg-background/50" 
                           {...field} 
-                          disabled={isLoading}
+                          disabled={isLoading || !!connectionError}
                         />
                       </FormControl>
                       <FormMessage />
@@ -186,7 +232,7 @@ const AdminRegister = () => {
                           placeholder="admin@example.com" 
                           className="bg-background/50" 
                           {...field} 
-                          disabled={isLoading}
+                          disabled={isLoading || !!connectionError}
                         />
                       </FormControl>
                       <FormMessage />
@@ -206,7 +252,7 @@ const AdminRegister = () => {
                           placeholder="••••••••" 
                           className="bg-background/50" 
                           {...field} 
-                          disabled={isLoading}
+                          disabled={isLoading || !!connectionError}
                         />
                       </FormControl>
                       <FormMessage />
@@ -229,7 +275,7 @@ const AdminRegister = () => {
                           placeholder="Enter admin code" 
                           className="bg-background/50" 
                           {...field} 
-                          disabled={isLoading}
+                          disabled={isLoading || !!connectionError}
                         />
                       </FormControl>
                       <FormMessage />
@@ -241,7 +287,7 @@ const AdminRegister = () => {
                   <Button 
                     type="submit" 
                     className="w-full" 
-                    disabled={isLoading}
+                    disabled={isLoading || !!connectionError}
                   >
                     {isLoading ? (
                       <>
