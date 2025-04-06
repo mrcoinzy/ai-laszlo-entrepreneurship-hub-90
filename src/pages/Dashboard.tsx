@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -37,6 +38,8 @@ const Dashboard = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Add state for sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -95,6 +98,10 @@ const Dashboard = () => {
   const paidInvoices = invoices.filter(invoice => invoice.status === 'paid').length;
   const unpaidInvoices = invoices.filter(invoice => invoice.status === 'unpaid').length;
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -105,7 +112,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background flex">
-      <DashboardSidebar />
+      <DashboardSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
       <main className="flex-1 p-4">
         <div className="container mx-auto">
