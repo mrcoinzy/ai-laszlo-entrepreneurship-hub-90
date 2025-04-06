@@ -8,6 +8,7 @@ import Works from "@/pages/Works"
 import Register from "@/pages/Register"
 import Login from "@/pages/Login"
 import Admin from "@/pages/Admin"
+import AdminRegister from "@/pages/AdminRegister"
 import Dashboard from "@/pages/Dashboard"
 import Billing from "@/pages/Billing"
 import Messages from "@/pages/Messages"
@@ -28,21 +29,44 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 const queryClient = new QueryClient()
 
 // Protected route wrapper
-const ProtectedRoute = ({ children, requiredRole = null, requiredStatus = null }: { 
+const ProtectedRoute = ({ 
+  children, 
+  requiredRole = null, 
+  requiredStatus = null,
+  fallbackPath = "/login"
+}: { 
   children: React.ReactNode, 
   requiredRole?: "admin" | "client" | null,
-  requiredStatus?: "approved" | "pending" | "rejected" | null
+  requiredStatus?: "approved" | "pending" | "rejected" | null,
+  fallbackPath?: string
 }) => {
   const { user, loading, isAdmin, isPending, isApproved } = useAuth();
   
+  // Set a timeout to prevent infinite loading
+  React.useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        console.log("Protected route timeout reached, redirecting to login");
+        window.location.href = "/login"; // Hard redirect if React navigation is stuck
+      }
+    }, 5000);
+    
+    return () => clearTimeout(timeoutId);
+  }, [loading]);
+  
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="animate-pulse text-primary">Loading...</div>
-    </div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+          <div className="text-primary">Verifying authentication...</div>
+        </div>
+      </div>
+    );
   }
   
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to={fallbackPath} />;
   }
   
   // Check role requirements
@@ -81,6 +105,7 @@ function App() {
               <Route path="/works" element={<Works />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/admin-register" element={<AdminRegister />} />
               <Route path="/help" element={<Help />} />
               
               {/* Registration Approval Flow */}
@@ -97,29 +122,29 @@ function App() {
               
               {/* Admin Routes */}
               <Route path="/admin" element={
-                <ProtectedRoute requiredRole="admin">
+                <ProtectedRoute requiredRole="admin" fallbackPath="/login">
                   <Admin />
                 </ProtectedRoute>
               } />
               
               {/* Client Routes (Requires Approval) */}
               <Route path="/dashboard" element={
-                <ProtectedRoute requiredRole="client" requiredStatus="approved">
+                <ProtectedRoute requiredRole="client" requiredStatus="approved" fallbackPath="/login">
                   <Dashboard />
                 </ProtectedRoute>
               } />
               <Route path="/billing" element={
-                <ProtectedRoute requiredRole="client" requiredStatus="approved">
+                <ProtectedRoute requiredRole="client" requiredStatus="approved" fallbackPath="/login">
                   <Billing />
                 </ProtectedRoute>
               } />
               <Route path="/messages" element={
-                <ProtectedRoute requiredRole="client" requiredStatus="approved">
+                <ProtectedRoute requiredRole="client" requiredStatus="approved" fallbackPath="/login">
                   <Messages />
                 </ProtectedRoute>
               } />
               <Route path="/settings" element={
-                <ProtectedRoute requiredStatus="approved">
+                <ProtectedRoute requiredStatus="approved" fallbackPath="/login">
                   <Settings />
                 </ProtectedRoute>
               } />

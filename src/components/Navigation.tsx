@@ -2,12 +2,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { X, Menu, ChevronRight, LogOut, User } from "lucide-react";
+import { X, Menu, ChevronRight, LogOut, User, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   
   // Add a safe logout handler
@@ -39,7 +39,13 @@ const Navigation = () => {
             <Link to="/about" className="text-sm text-white/80 hover:text-white transition-colors">
               About
             </Link>
-            {user && (
+            {user && isAdmin && (
+              <Link to="/admin" className="text-sm text-white/80 hover:text-white transition-colors flex items-center">
+                <Shield size={14} className="mr-1" />
+                Admin
+              </Link>
+            )}
+            {user && !isAdmin && (
               <Link to="/dashboard" className="text-sm text-white/80 hover:text-white transition-colors">
                 Dashboard
               </Link>
@@ -52,7 +58,7 @@ const Navigation = () => {
                 <Button 
                   variant="ghost" 
                   className="text-white/80 hover:text-white"
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate(isAdmin ? '/admin' : '/dashboard')}
                 >
                   <User size={16} className="mr-2" />
                   Account
@@ -76,6 +82,12 @@ const Navigation = () => {
                 <Link to="/register">
                   <Button className="bg-white text-black hover:bg-white/90">
                     Register
+                  </Button>
+                </Link>
+                <Link to="/admin-register">
+                  <Button variant="outline" className="text-white/80 hover:text-white">
+                    <Shield size={16} className="mr-2" />
+                    Admin Access
                   </Button>
                 </Link>
               </>
@@ -107,7 +119,13 @@ const Navigation = () => {
             <Link to="/about" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
               About
             </Link>
-            {user && (
+            {user && isAdmin && (
+              <Link to="/admin" className="text-lg font-medium flex items-center" onClick={() => setIsOpen(false)}>
+                <Shield size={16} className="mr-2" />
+                Admin Panel
+              </Link>
+            )}
+            {user && !isAdmin && (
               <Link to="/dashboard" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
                 Dashboard
               </Link>
@@ -115,7 +133,7 @@ const Navigation = () => {
             <div className="pt-6 flex flex-col space-y-4">
               {user ? (
                 <>
-                  <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                  <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
                     <Button variant="outline" className="w-full flex items-center justify-center">
                       <User size={16} className="mr-2" />
                       Account
@@ -140,6 +158,12 @@ const Navigation = () => {
                   <Link to="/register" onClick={() => setIsOpen(false)}>
                     <Button className="w-full bg-white text-black hover:bg-white/90">
                       Register
+                    </Button>
+                  </Link>
+                  <Link to="/admin-register" onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" className="w-full flex items-center justify-center">
+                      <Shield size={16} className="mr-2" />
+                      Admin Access
                     </Button>
                   </Link>
                 </>

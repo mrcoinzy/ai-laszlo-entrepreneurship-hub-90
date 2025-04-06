@@ -1,5 +1,6 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,12 +9,83 @@ import ClientsManagement from "@/components/admin/ClientsManagement";
 import ProjectsManagement from "@/components/admin/ProjectsManagement";
 import MessagingInterface from "@/components/admin/MessagingInterface";
 import { Card } from "@/components/ui/card";
-import { Menu } from "lucide-react";
+import { Menu, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const { user, loading, isAdmin, adminCheck } = useAuth();
+  const navigate = useNavigate();
+
+  // Check authentication and admin status on mount
+  useEffect(() => {
+    const checkAdminAccess = async () => {
+      // Start a timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        console.log("Admin auth check timeout reached, redirecting to login");
+        navigate("/login");
+        toast.error("Authentication timeout. Please login again.");
+      }, 5000);
+      
+      try {
+        if (!loading) {
+          // If not authenticated at all
+          if (!user) {
+            navigate("/login");
+            toast.error("Please login to access the admin panel");
+            return;
+          }
+          
+          // Verify admin status with a fresh check
+          const isUserAdmin = await adminCheck();
+          
+          if (!isUserAdmin) {
+            navigate("/dashboard");
+            toast.error("Unauthorized: Admin access required");
+            return;
+          }
+          
+          // User is authenticated and is an admin
+          setIsAuthChecking(false);
+        }
+      } catch (error) {
+        console.error("Error checking admin access:", error);
+        navigate("/login");
+        toast.error("Authentication error. Please login again.");
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    };
+    
+    checkAdminAccess();
+  }, [user, loading, isAdmin, navigate, adminCheck]);
+  
+  // If still loading or checking auth, show loading state
+  if (loading || isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+        <h2 className="text-xl font-medium">Verifying admin access...</h2>
+        <p className="text-sm text-white/70 mt-2">Please wait while we authenticate your session</p>
+      </div>
+    );
+  }
+  
+  // If not admin (this shouldn't happen due to the redirect above, but just as a fallback)
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+        <h2 className="text-xl font-medium">Unauthorized Access</h2>
+        <p className="text-sm text-white/70 mt-2 mb-4">You don't have permission to access the admin panel</p>
+        <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

@@ -14,6 +14,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isPending: boolean;
   isApproved: boolean;
+  adminCheck: () => Promise<boolean>;
 }
 
 // Define a type for additional user data from the users table
@@ -57,6 +58,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Error in fetchUserData:', error);
       return null;
+    }
+  };
+
+  // Check if the user is an admin - can be called programmatically from components
+  const adminCheck = async (): Promise<boolean> => {
+    if (!user) return false;
+    
+    try {
+      // First check if we already have the user data with admin role
+      if (userData && userData.role === 'admin') {
+        return true;
+      }
+      
+      // Otherwise fetch fresh data
+      const refreshedData = await fetchUserData(user.id);
+      if (refreshedData && refreshedData.role === 'admin') {
+        // Update local state
+        setIsAdmin(true);
+        setUserData(refreshedData);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
     }
   };
 
@@ -130,6 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
       
+      // Set loading to false after we have checked the initial session
       setLoading(false);
     });
 
@@ -222,6 +250,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAdmin,
         isPending,
         isApproved,
+        adminCheck,
       }}
     >
       {children}
