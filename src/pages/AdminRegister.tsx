@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -40,6 +41,7 @@ const formSchema = z.object({
   }),
 });
 
+// Define the type using the schema
 type FormData = z.infer<typeof formSchema>;
 
 const AdminRegister = () => {
@@ -52,7 +54,7 @@ const AdminRegister = () => {
       fullName: "",
       email: "",
       password: "",
-      adminCode: "", // This is now a string, not a literal "admin123"
+      adminCode: "", // Using empty string for initial value
     },
     // Setting mode to onChange to validate as user types
     mode: "onBlur",
