@@ -53,7 +53,7 @@ const AdminRegister = () => {
       fullName: "",
       email: "",
       password: "",
-      adminCode: "",
+      adminCode: "",  // Fixed: Now correctly initialized as empty string
     },
   });
   
