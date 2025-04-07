@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -17,13 +18,10 @@ import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { supabase, testConnection } from "@/lib/supabase";
-import { Loader2, Shield, Lock, AlertCircle } from "lucide-react";
+import { Loader2, Shield, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-// Environment variable for admin code - in a real app this would be from environment variables
-const ADMIN_CODE = "admin123"; // This should be properly secured in a real application
-
-// Form validation schema with string type for adminCode
+// Form validation schema without admin code
 const formSchema = z.object({
   fullName: z.string().min(2, {
     message: "Full name must be at least 2 characters.",
@@ -33,9 +31,6 @@ const formSchema = z.object({
   }),
   password: z.string().min(6, {
     message: "Password must be at least 6 characters.",
-  }),
-  adminCode: z.string().refine(value => value === ADMIN_CODE, {
-    message: "Invalid admin code.",
   }),
 });
 
@@ -70,7 +65,6 @@ const AdminRegister = () => {
       fullName: "",
       email: "",
       password: "",
-      adminCode: "",
     },
     // Setting mode to onChange to validate as user types
     mode: "onBlur",
@@ -181,7 +175,7 @@ const AdminRegister = () => {
               Admin Registration
             </h1>
             <p className="text-white/70">
-              Register as an administrator with the correct access code
+              Register as an administrator to manage the platform
             </p>
           </div>
           
@@ -257,29 +251,6 @@ const AdminRegister = () => {
                   )}
                 />
                 
-                <FormField
-                  control={form.control}
-                  name="adminCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1 text-white/70">
-                        <Lock className="h-3 w-3" />
-                        Admin Access Code
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder="Enter admin code" 
-                          className="bg-background/50" 
-                          {...field} 
-                          disabled={isLoading || !!connectionError}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
                 <div className="pt-2">
                   <Button 
                     type="submit" 
@@ -312,7 +283,7 @@ const AdminRegister = () => {
           
           <div className="mt-6 text-center text-sm text-white/50">
             <p>
-              For demonstration purposes, use admin code: admin123
+              Administrators have full access to manage users, content and settings.
             </p>
           </div>
         </div>
