@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -35,9 +34,7 @@ const formSchema = z.object({
   password: z.string().min(6, {
     message: "Password must be at least 6 characters.",
   }),
-  adminCode: z.string().min(1, {
-    message: "Admin code is required.",
-  }).refine(value => value === ADMIN_CODE, {
+  adminCode: z.string().refine(value => value === ADMIN_CODE, {
     message: "Invalid admin code.",
   }),
 });
