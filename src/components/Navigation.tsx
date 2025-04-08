@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { X, Menu, ChevronRight } from "lucide-react";
@@ -6,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   
@@ -14,15 +16,42 @@ const Navigation = () => {
     navigate('/logout');
   };
   
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      if (offset > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+  
   return (
-    <nav className="fixed w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/30">
-      <div className="container mx-auto px-4 sm:px-6 py-5">
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${
+      scrolled 
+        ? "bg-background/90 backdrop-blur-md py-3 shadow-lg rounded-b-lg" 
+        : "bg-transparent py-5"
+    }`}>
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            <Link to="/" className="text-xl font-medium text-white">
-              AI László
-            </Link>
-            <span className="text-xs text-white/70 mt-1">Web Development & Marketing in One</span>
+          <div className="flex items-center gap-3">
+            <img 
+              src="/lovable-uploads/7dc661bf-08e1-4e89-a204-b8db3ed738a2.png" 
+              alt="AI László Logo" 
+              className="h-10 w-auto"
+            />
+            <div className="flex flex-col">
+              <Link to="/" className="text-xl font-medium">
+                <span className={scrolled ? "gradient-nav-animation" : "text-white"}>AI László</span>
+              </Link>
+              <span className="text-xs text-white/70 mt-1">Web Development & Marketing in One</span>
+            </div>
           </div>
           
           <div className="hidden md:flex items-center space-x-10">
