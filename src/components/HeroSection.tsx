@@ -12,25 +12,30 @@ const HeroSection = () => {
         <div className="flex flex-col md:flex-row items-center">
           <div className="flex-1 max-w-3xl">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6">
-              Empowering <span className="gradient-text">entrepreneurs</span> to turn ideas into success stories
+              Üzleti ötletét valódi vállalkozássá formáljuk – <span className="gradient-text">mesterséges intelligenciával</span> és stratégiával
             </h1>
             <p className="text-lg md:text-xl text-white/70 mb-8 max-w-2xl">
-              Ai Laszlo is a visionary entrepreneur and mentor who has helped hundreds of startups 
-              transform their ideas into thriving businesses with innovative strategies and cutting-edge AI tools.
+              AI László abban segít Önnek, hogy vállalkozása ne csak jelen legyen az interneten, hanem eredményeket is hozzon. Teljes körű webfejlesztés és marketing – egy kézből, érthetően és hatékonyan.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/works">
+              <Link to="/contact">
                 <Button className="bg-white text-black hover:bg-white/90 px-8 py-6 rounded-md text-base">
-                  Explore My Work
+                  Kérek egy ingyenes konzultációt
                   <ChevronRight size={18} className="ml-2" />
                 </Button>
               </Link>
+              <p className="text-xs text-white/60 mt-2 sm:hidden">
+                48 órán belül személyesen felveszem Önnel a kapcsolatot.
+              </p>
               <Link to="/courses">
                 <Button variant="outline" className="px-8 py-6 rounded-md text-base">
                   Browse Free Courses
                 </Button>
               </Link>
             </div>
+            <p className="text-xs text-white/60 mt-2 hidden sm:block">
+              48 órán belül személyesen felveszem Önnel a kapcsolatot.
+            </p>
           </div>
           <div className="flex-1 mt-12 md:mt-0">
             <div className="relative">

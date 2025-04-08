@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -49,7 +48,7 @@ const Navigation = () => {
               variant="outline" 
               className="bg-white text-black hover:bg-black hover:text-white border-white transition-all duration-300"
             >
-              Request a Free Consultation <ChevronRight className="ml-1 h-4 w-4" />
+              Kérek egy ingyenes konzultációt <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
           
@@ -88,8 +87,11 @@ const Navigation = () => {
                 className="w-full bg-white text-black hover:bg-black hover:text-white border-white transition-all"
                 onClick={() => setIsOpen(false)}
               >
-                Request a Free Consultation <ChevronRight className="ml-1 h-4 w-4" />
+                Kérek egy ingyenes konzultációt <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
+              <p className="text-xs text-white/60 mt-2 text-center">
+                48 órán belül személyesen felveszem Önnel a kapcsolatot.
+              </p>
             </div>
             
             {user && (
