@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { X, Menu, ChevronRight, LogOut, User, Shield } from "lucide-react";
+import { X, Menu, ChevronRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
@@ -10,88 +10,47 @@ const Navigation = () => {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   
-  // Add a safe logout handler
   const handleLogout = () => {
-    // Close mobile menu if it's open
     if (isOpen) setIsOpen(false);
-    // Navigate to the logout page
     navigate('/logout');
   };
   
   return (
-    <nav className="fixed w-full z-50 bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto px-4 sm:px-6 py-4">
+    <nav className="fixed w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/30">
+      <div className="container mx-auto px-4 sm:px-6 py-5">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-xl font-bold gradient-text">
-            Ai Laszlo
-          </Link>
+          <div className="flex flex-col">
+            <Link to="/" className="text-xl font-medium text-white">
+              AI László
+            </Link>
+            <span className="text-xs text-white/70 mt-1">Web Development & Marketing in One</span>
+          </div>
           
-          <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-sm text-white/80 hover:text-white transition-colors">
-              Home
+          <div className="hidden md:flex items-center space-x-10">
+            <Link to="/services" className="text-sm text-white/80 hover:text-white transition-colors">
+              Services
             </Link>
-            <Link to="/works" className="text-sm text-white/80 hover:text-white transition-colors">
-              Works
-            </Link>
-            <Link to="/courses" className="text-sm text-white/80 hover:text-white transition-colors">
-              Courses
+            <Link to="/portfolio" className="text-sm text-white/80 hover:text-white transition-colors">
+              Portfolio
             </Link>
             <Link to="/about" className="text-sm text-white/80 hover:text-white transition-colors">
               About
             </Link>
-            {user && isAdmin && (
-              <Link to="/admin" className="text-sm text-white/80 hover:text-white transition-colors flex items-center">
-                <Shield size={14} className="mr-1" />
-                Admin
-              </Link>
-            )}
-            {user && !isAdmin && (
-              <Link to="/dashboard" className="text-sm text-white/80 hover:text-white transition-colors">
-                Dashboard
-              </Link>
-            )}
+            <Link to="/blog" className="text-sm text-white/80 hover:text-white transition-colors">
+              Blog
+            </Link>
+            <Link to="/contact" className="text-sm text-white/80 hover:text-white transition-colors">
+              Contact
+            </Link>
           </div>
           
-          <div className="hidden md:flex items-center space-x-4">
-            {user ? (
-              <div className="flex items-center space-x-4">
-                <Button 
-                  variant="ghost" 
-                  className="text-white/80 hover:text-white"
-                  onClick={() => navigate(isAdmin ? '/admin' : '/dashboard')}
-                >
-                  <User size={16} className="mr-2" />
-                  Account
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="text-white/80 hover:text-white"
-                  onClick={handleLogout}
-                >
-                  <LogOut size={16} className="mr-2" />
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <>
-                <Link to="/login">
-                  <Button variant="ghost" className="text-white/80 hover:text-white">
-                    Login
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button className="bg-white text-black hover:bg-white/90">
-                    Register
-                  </Button>
-                </Link>
-                <Link to="/admin-register">
-                  <Button variant="outline" className="text-white/80 hover:text-white">
-                    <Shield size={16} className="mr-2" />
-                    Admin Access
-                  </Button>
-                </Link>
-              </>
-            )}
+          <div className="hidden md:block">
+            <Button 
+              variant="outline" 
+              className="bg-white text-black hover:bg-black hover:text-white border-white transition-all duration-300"
+            >
+              Request a Free Consultation <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
           </div>
           
           <button 
@@ -107,68 +66,48 @@ const Navigation = () => {
       {isOpen && (
         <div className="md:hidden h-screen w-full bg-background animate-fade-in">
           <div className="flex flex-col p-8 space-y-6">
-            <Link to="/" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
-              Home
+            <Link to="/services" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+              Services
             </Link>
-            <Link to="/works" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
-              Works
-            </Link>
-            <Link to="/courses" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
-              Courses
+            <Link to="/portfolio" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+              Portfolio
             </Link>
             <Link to="/about" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
               About
             </Link>
-            {user && isAdmin && (
-              <Link to="/admin" className="text-lg font-medium flex items-center" onClick={() => setIsOpen(false)}>
-                <Shield size={16} className="mr-2" />
-                Admin Panel
-              </Link>
-            )}
-            {user && !isAdmin && (
-              <Link to="/dashboard" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
-                Dashboard
-              </Link>
-            )}
-            <div className="pt-6 flex flex-col space-y-4">
-              {user ? (
-                <>
-                  <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full flex items-center justify-center">
-                      <User size={16} className="mr-2" />
-                      Account
-                    </Button>
-                  </Link>
-                  <Button 
-                    variant="outline" 
-                    className="w-full flex items-center justify-center"
-                    onClick={handleLogout}
-                  >
-                    <LogOut size={16} className="mr-2" />
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link to="/register" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full bg-white text-black hover:bg-white/90">
-                      Register
-                    </Button>
-                  </Link>
-                  <Link to="/admin-register" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full flex items-center justify-center">
-                      <Shield size={16} className="mr-2" />
-                      Admin Access
-                    </Button>
-                  </Link>
-                </>
-              )}
+            <Link to="/blog" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+              Blog
+            </Link>
+            <Link to="/contact" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+              Contact
+            </Link>
+            
+            <div className="pt-6">
+              <Button 
+                variant="outline" 
+                className="w-full bg-white text-black hover:bg-black hover:text-white border-white transition-all"
+                onClick={() => setIsOpen(false)}
+              >
+                Request a Free Consultation <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
             </div>
+            
+            {user && (
+              <div className="pt-6 flex flex-col space-y-4">
+                <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
+                  <Button variant="ghost" className="w-full">
+                    Account
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  className="w-full"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
