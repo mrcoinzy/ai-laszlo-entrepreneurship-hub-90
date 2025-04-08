@@ -58,6 +58,19 @@
     background-image: linear-gradient(to bottom, #FFFFFF, #ABABAB);
   }
 
+  .waving-gradient {
+    @apply text-transparent bg-clip-text;
+    background-size: 200% 200%;
+    background-image: linear-gradient(45deg, #FFFFFF, #ABABAB, #D0D0D0, #FFFFFF);
+    animation: waving-gradient-animation 4s ease infinite;
+  }
+
+  @keyframes waving-gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
   .card-hover {
     @apply transition-all duration-300 hover:translate-y-[-5px];
   }
