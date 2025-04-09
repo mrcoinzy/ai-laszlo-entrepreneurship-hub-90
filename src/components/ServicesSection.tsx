@@ -9,18 +9,18 @@ const ServicesSection = () => {
   const services = [
     {
       icon: <Code className="h-12 w-12 text-purple-500 mb-4 transition-all duration-300 group-hover:scale-110" />,
-      title: "Website Development",
-      description: "Modern, responsive business websites optimized for SEO, speed and conversions. Built with code or modern no-code tools."
+      title: "Weboldal Fejlesztés",
+      description: "Modern, reszponzív üzleti weboldalak, amelyek SEO-ra, sebességre és konverziókra vannak optimalizálva. Kóddal vagy modern no-code eszközökkel készítve."
     },
     {
       icon: <Target className="h-12 w-12 text-purple-500 mb-4 transition-all duration-300 group-hover:scale-110" />,
-      title: "Online Marketing Strategy",
-      description: "Customized SEO, PPC, content and email marketing plans that align with your goals and resources."
+      title: "Online Marketing Stratégia",
+      description: "Testre szabott SEO, PPC, tartalom és e-mail marketing tervek, amelyek összhangban vannak az Ön céljaival és erőforrásaival."
     },
     {
       icon: <LineChart className="h-12 w-12 text-purple-500 mb-4 transition-all duration-300 group-hover:scale-110" />,
-      title: "Conversion Optimization",
-      description: "A/B testing, UX enhancements, CTA tuning and analytics – so more visitors become real clients."
+      title: "Konverzió Optimalizálás",
+      description: "A/B tesztelés, UX fejlesztések, CTA hangolás és elemzés – hogy több látogató váljon valódi ügyféllé."
     }
   ];
 
@@ -71,10 +71,10 @@ const ServicesSection = () => {
           variants={headerVariants}
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
-            My Services That Deliver <span className="text-[#8A2BE2]">Results</span>
+            Szolgáltatásaim, amelyek <span className="text-[#8A2BE2]">eredményeket</span> hoznak
           </h2>
           <p className="text-lg text-white/70">
-            Everything you need for a high-converting online presence – in one place, backed by AI.
+            Minden, amire szüksége van egy magas konverziós online jelenléthez – egy helyről, AI támogatással.
           </p>
         </motion.div>
         
@@ -113,7 +113,7 @@ const ServicesSection = () => {
               className="relative bg-white text-black hover:bg-[#8A2BE2] hover:text-white px-8 py-6 rounded-xl text-base transition-all duration-300 hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.3)] hover:-translate-y-1 overflow-hidden group"
             >
               <span className="relative z-10">
-                Not sure what you need? Let's talk – book a free consultation
+                Nem biztos benne, mire van szüksége? Beszéljünk – foglaljon ingyenes konzultációt
               </span>
               <span className="absolute inset-0 bg-[#8A2BE2] origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></span>
             </Button>

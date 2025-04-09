@@ -7,23 +7,23 @@ const ProblemStatement = () => {
   const problems = [
     {
       icon: <X className="h-6 w-6 text-purple-500" />,
-      text: "Your website isn't bringing in new clients – it just 'exists' online."
+      text: "Weboldala nem hoz új ügyfeleket – csupán 'létezik' az interneten."
     },
     {
       icon: <Check className="h-6 w-6 text-purple-500 opacity-0" />,
-      text: "Your ads don't convert, and you have no clear strategy."
+      text: "Hirdetései nem hoznak konverziót, és nincs egyértelmű stratégiája."
     },
     {
       icon: <Clock className="h-6 w-6 text-purple-500" />,
-      text: "You don't have time to find a developer, marketer, and copywriter separately."
+      text: "Nincs ideje külön fejlesztőt, marketingest és szövegírót keresni."
     },
     {
       icon: <Users className="h-6 w-6 text-purple-500" />,
-      text: "Visitors come, but no one books, calls, or buys."
+      text: "A látogatók jönnek, de senki sem foglal, hív vagy vásárol."
     },
     {
       icon: <Zap className="h-6 w-6 text-purple-500" />,
-      text: "You feel behind with AI tools and modern tech."
+      text: "Úgy érzi, lemaradt az AI eszközökkel és a modern technológiával kapcsolatban."
     }
   ];
 
@@ -61,7 +61,7 @@ const ProblemStatement = () => {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center text-white">
-            Do any of these sound <span className="text-[#8A2BE2]">familiar</span>?
+            Ismerős ezek közül <span className="text-[#8A2BE2]">bármelyik</span>?
           </h2>
           
           <motion.div 
@@ -92,7 +92,7 @@ const ProblemStatement = () => {
             viewport={{ once: true }}
             transition={{ delay: 1.2, duration: 0.5 }}
           >
-            It doesn't have to be this way. The solution is <span className="font-medium text-[#8A2BE2]">simpler</span> than you think.
+            Ennek nem kell így lennie. A megoldás <span className="font-medium text-[#8A2BE2]">egyszerűbb</span>, mint gondolná.
           </motion.p>
         </motion.div>
       </div>

@@ -45,7 +45,7 @@ const HeroSection = () => {
               </p>
               <Link to="/courses">
                 <Button variant="outline" className="px-8 py-6 rounded-md text-base hover:bg-white/10 hover:text-white transition-all duration-300">
-                  Browse Free Courses
+                  Ingyenes kurzusok böngészése
                 </Button>
               </Link>
             </motion.div>

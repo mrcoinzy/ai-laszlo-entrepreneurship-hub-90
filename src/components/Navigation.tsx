@@ -50,25 +50,25 @@ const Navigation = () => {
               <Link to="/" className="text-xl font-medium">
                 <span className={scrolled ? "gradient-nav-animation" : "text-white"}>AI László</span>
               </Link>
-              <span className="text-xs text-white/70 mt-1">Web Development & Marketing in One</span>
+              <span className="text-xs text-white/70 mt-1">Webfejlesztés & Marketing – Együtt</span>
             </div>
           </div>
           
           <div className="hidden md:flex items-center space-x-10">
             <Link to="/services" className="text-sm text-white/80 hover:text-white transition-colors">
-              Services
+              Szolgáltatások
             </Link>
             <Link to="/portfolio" className="text-sm text-white/80 hover:text-white transition-colors">
-              Portfolio
+              Portfólió
             </Link>
             <Link to="/about" className="text-sm text-white/80 hover:text-white transition-colors">
-              About
+              Rólam
             </Link>
             <Link to="/blog" className="text-sm text-white/80 hover:text-white transition-colors">
               Blog
             </Link>
             <Link to="/contact" className="text-sm text-white/80 hover:text-white transition-colors">
-              Contact
+              Kapcsolat
             </Link>
           </div>
           
@@ -95,19 +95,19 @@ const Navigation = () => {
         <div className="md:hidden h-screen w-full bg-background animate-fade-in">
           <div className="flex flex-col p-8 space-y-6">
             <Link to="/services" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
-              Services
+              Szolgáltatások
             </Link>
             <Link to="/portfolio" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
-              Portfolio
+              Portfólió
             </Link>
             <Link to="/about" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
-              About
+              Rólam
             </Link>
             <Link to="/blog" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
               Blog
             </Link>
             <Link to="/contact" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
-              Contact
+              Kapcsolat
             </Link>
             
             <div className="pt-6">
@@ -127,7 +127,7 @@ const Navigation = () => {
               <div className="pt-6 flex flex-col space-y-4">
                 <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
                   <Button variant="ghost" className="w-full">
-                    Account
+                    Fiók
                   </Button>
                 </Link>
                 <Button 
@@ -135,7 +135,7 @@ const Navigation = () => {
                   className="w-full"
                   onClick={handleLogout}
                 >
-                  Logout
+                  Kijelentkezés
                 </Button>
               </div>
             )}
