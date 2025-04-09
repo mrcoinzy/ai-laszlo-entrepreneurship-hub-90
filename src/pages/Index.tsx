@@ -3,6 +3,7 @@ import React from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import ProblemStatement from "@/components/ProblemStatement";
+import ServicesSection from "@/components/ServicesSection";
 import CoursesSection from "@/components/CoursesSection";
 import WorkShowcase from "@/components/WorkShowcase";
 import Footer from "@/components/Footer";
@@ -15,6 +16,7 @@ const Index = () => {
       <Navigation />
       <HeroSection />
       <ProblemStatement />
+      <ServicesSection />
       <CoursesSection />
       <WorkShowcase />
       <Footer />
