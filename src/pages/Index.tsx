@@ -2,21 +2,21 @@
 import React from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
-import WorkShowcase from "@/components/WorkShowcase";
+import ProblemStatement from "@/components/ProblemStatement";
 import CoursesSection from "@/components/CoursesSection";
+import WorkShowcase from "@/components/WorkShowcase";
 import Footer from "@/components/Footer";
 import ScrollIndicator from "@/components/ScrollIndicator";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black">
       <ScrollIndicator />
       <Navigation />
-      <main>
-        <HeroSection />
-        <WorkShowcase />
-        <CoursesSection />
-      </main>
+      <HeroSection />
+      <ProblemStatement />
+      <CoursesSection />
+      <WorkShowcase />
       <Footer />
     </div>
   );

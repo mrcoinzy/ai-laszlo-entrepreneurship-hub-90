@@ -1,41 +1,29 @@
 
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 3%;
+    --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
-
-    --card: 0 0% 5%;
+    --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 3%;
+    --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 3%;
-
-    --secondary: 0 0% 12%;
+    --primary: 272 67% 53%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
-
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 65%;
-
-    --accent: 0 0% 15%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 84% 60%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 0 0% 80%;
-
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 272 67% 53%;
     --radius: 0.5rem;
   }
 }
@@ -44,106 +32,94 @@
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground font-sans;
-    background-color: #0A0A0A;
-    position: relative;
+    @apply bg-background text-foreground;
   }
+}
 
-  ::selection {
-    @apply bg-accent text-accent-foreground;
-  }
+/* Existing CSS below */
+.gradient-text {
+  background: linear-gradient(90deg, #8A2BE2, #9370DB);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-  .gradient-text {
-    @apply text-transparent bg-clip-text;
-    background-image: linear-gradient(to bottom, #FFFFFF, #ABABAB);
-  }
+.gradient-nav-animation {
+  background: linear-gradient(90deg, #ffffff, #8A2BE2);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient 3s ease infinite;
+}
 
-  .waving-gradient {
-    @apply text-transparent bg-clip-text;
-    background-size: 200% 200%;
-    background-image: linear-gradient(45deg, #FFFFFF, #8A2BE2, #D0D0D0, #8A2BE2, #FFFFFF);
-    animation: waving-gradient-animation 4s ease infinite;
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
   }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 
-  .gradient-nav-animation {
-    @apply text-transparent bg-clip-text;
-    background-size: 200% 200%;
-    background-image: linear-gradient(45deg, #FFFFFF, #8A2BE2, #D0D0D0, #8A2BE2, #FFFFFF);
-    animation: waving-gradient-animation 4s ease infinite;
-  }
+.waving-gradient {
+  background: linear-gradient(-45deg, #8A2BE2, #9370DB, #9400D3, #8A2BE2);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: waving 6s ease infinite;
+}
 
-  @keyframes waving-gradient-animation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+@keyframes waving {
+  0% {
+    background-position: 0% 50%;
   }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 
-  .card-hover {
-    @apply transition-all duration-300 hover:translate-y-[-5px];
-  }
+/* Scroll Indicator */
+.scroll-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #8A2BE2, #9370DB);
+  z-index: 100;
+  transition: width 0.3s ease;
+}
 
-  .rotating-border {
-    position: relative;
-    z-index: 0;
-  }
+/* Animation for mobile menu */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
 
-  .rotating-border::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    inset: -1px;
-    border-radius: var(--radius);
-    background: conic-gradient(
-      from var(--angle),
-      #FFFFFF,
-      rgba(255, 255, 255, 0.1),
-      #FFFFFF
-    );
-    animation: rotate 4s linear infinite;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
+/* Card hover animation */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-  ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #8A2BE2, #D0D0D0);
-    border-radius: 10px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, #FFFFFF, #8A2BE2);
-  }
-
-  /* Scroll indicator */
-  .scroll-indicator {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #8A2BE2, #FFFFFF);
-    z-index: 9999;
-    width: 0%;
-    transition: width 0.1s ease-out;
-  }
-
-  @property --angle {
-    syntax: "<angle>";
-    initial-value: 0deg;
-    inherits: false;
-  }
-
-  @keyframes rotate {
-    to {
-      --angle: 360deg;
-    }
-  }
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(138, 43, 226, 0.1);
 }
