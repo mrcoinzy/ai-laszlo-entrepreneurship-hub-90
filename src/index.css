@@ -36,7 +36,6 @@
   }
 }
 
-/* Existing CSS below */
 .gradient-text {
   background: linear-gradient(90deg, #8A2BE2, #9370DB);
   -webkit-background-clip: text;
@@ -74,7 +73,6 @@
   animation: waving 6s ease infinite;
 }
 
-/* Új vevőmágnes animáció, sokkal látványosabb */
 .vevomagnes-text {
   background: linear-gradient(-45deg, #ffffff, #e0e0ff, #d3d3ff, #ffffff);
   background-size: 300% 300%;
@@ -123,7 +121,6 @@
   }
 }
 
-/* New special text effects */
 .highlight-text {
   position: relative;
   display: inline-block;
@@ -183,7 +180,6 @@
   }
 }
 
-/* Scroll Indicator */
 .scroll-indicator {
   position: fixed;
   top: 0;
@@ -194,7 +190,6 @@
   transition: width 0.3s ease;
 }
 
-/* Animation for mobile menu */
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -210,7 +205,6 @@
   }
 }
 
-/* Card hover animation */
 .card-hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -220,7 +214,6 @@
   box-shadow: 0 10px 25px -5px rgba(138, 43, 226, 0.1);
 }
 
-/* New section fade-in animation on scroll */
 .fade-in-section {
   opacity: 0;
   transform: translateY(20vh);
@@ -235,7 +228,6 @@
   visibility: visible;
 }
 
-/* Breathing animation for subtle attention */
 .breathing {
   animation: breathing 6s ease-in-out infinite;
 }
@@ -252,7 +244,6 @@
   }
 }
 
-/* Glow effect on hover */
 .hover-glow {
   transition: all 0.3s ease;
 }
@@ -261,7 +252,6 @@
   box-shadow: 0 0 15px 5px rgba(138, 43, 226, 0.25);
 }
 
-/* Pulsing animation */
 .pulse-animation {
   animation: pulse 2s infinite;
 }
@@ -281,7 +271,6 @@
   }
 }
 
-/* Animated Background */
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -322,7 +311,6 @@
   animation: move-background 15s ease infinite;
 }
 
-/* Additional animation for the particles */
 @keyframes particle-float {
   0%, 100% {
     transform: translateY(0) rotate(0deg);
@@ -336,13 +324,18 @@
   animation: particle-float 8s ease-in-out infinite;
 }
 
-/* Navigation Bar Scroll Animation */
 nav.fixed {
-  transform-origin: top;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 nav.fixed.scrolled {
-  border-radius: 0 0 50px 50px;
-  transform: scale(1, 0.8);
+  width: calc(100% - 40px);
+  margin: 0 20px;
+}
+
+@media (min-width: 768px) {
+  nav.fixed.scrolled {
+    width: calc(100% - 80px);
+    margin: 0 40px;
+  }
 }

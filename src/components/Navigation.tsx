@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { X, Menu, ChevronRight } from "lucide-react";
+import { X, Menu, ChevronRight, CalendarClock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
@@ -35,23 +35,19 @@ const Navigation = () => {
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${
       scrolled 
-        ? "bg-background/90 backdrop-blur-md py-2 shadow-lg rounded-b-[50px] scale-y-[0.8] transform origin-top" 
+        ? "px-10 md:px-20 bg-background/90 backdrop-blur-md py-2 shadow-lg rounded-[50px]" 
         : "bg-transparent py-5"
     }`}>
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img 
-              src="/lovable-uploads/7dc661bf-08e1-4e89-a204-b8db3ed738a2.png" 
-              alt="AI László Logo" 
-              className="h-10 w-auto"
-            />
-            <div className="flex flex-col">
-              <Link to="/" className="text-xl font-medium">
-                <span className={scrolled ? "gradient-nav-animation" : "text-white"}>AI László</span>
-              </Link>
-              <span className="text-xs text-white/70 mt-1">Webfejlesztés & Marketing – Együtt</span>
-            </div>
+          <div>
+            <Link to="/">
+              <img 
+                src="/lovable-uploads/7dc661bf-08e1-4e89-a204-b8db3ed738a2.png" 
+                alt="AI László Logo" 
+                className="h-10 w-auto"
+              />
+            </Link>
           </div>
           
           <div className="hidden md:flex items-center space-x-10">
@@ -77,6 +73,7 @@ const Navigation = () => {
               variant="outline" 
               className="bg-white text-black hover:bg-black hover:text-white border-white transition-all duration-300"
             >
+              <CalendarClock className="mr-2 h-4 w-4" />
               Kérek egy ingyenes konzultációt <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
@@ -116,6 +113,7 @@ const Navigation = () => {
                 className="w-full bg-white text-black hover:bg-black hover:text-white border-white transition-all"
                 onClick={() => setIsOpen(false)}
               >
+                <CalendarClock className="mr-2 h-4 w-4" />
                 Kérek egy ingyenes konzultációt <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
               <p className="text-xs text-white/60 mt-2 text-center">
