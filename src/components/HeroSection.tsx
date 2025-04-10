@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import AnimatedBackground from "./AnimatedBackground";
 
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(50,50,50,0.1)_0,rgba(0,0,0,0)_70%)]"></div>
+      <AnimatedBackground />
       <div className="container mx-auto px-4 sm:px-6 pt-32 pb-20">
         <motion.div 
           className="flex flex-col items-center text-center"
