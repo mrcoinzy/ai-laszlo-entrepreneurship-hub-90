@@ -5,8 +5,10 @@ import HeroSection from "@/components/HeroSection";
 import ProblemStatement from "@/components/ProblemStatement";
 import ServicesSection from "@/components/ServicesSection";
 import TrustBuildingSection from "@/components/TrustBuildingSection";
-import CoursesSection from "@/components/CoursesSection";
-import WorkShowcase from "@/components/WorkShowcase";
+import PortfolioSection from "@/components/PortfolioSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import LeadMagnetSection from "@/components/LeadMagnetSection";
+import FinalCTASection from "@/components/FinalCTASection";
 import Footer from "@/components/Footer";
 import ScrollIndicator from "@/components/ScrollIndicator";
 
@@ -19,8 +21,10 @@ const Index = () => {
       <ProblemStatement />
       <ServicesSection />
       <TrustBuildingSection />
-      <CoursesSection />
-      <WorkShowcase />
+      <PortfolioSection />
+      <TestimonialsSection />
+      <LeadMagnetSection />
+      <FinalCTASection />
       <Footer />
     </div>
   );

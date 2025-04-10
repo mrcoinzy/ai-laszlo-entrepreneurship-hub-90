@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Code, Target, LineChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -71,7 +71,7 @@ const ServicesSection = () => {
           variants={headerVariants}
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
-            Szolgáltatásaim, amelyek <span className="text-[#8A2BE2]">eredményeket</span> hoznak
+            Szolgáltatásaim, amelyek <span className="highlight-text">eredményeket</span> hoznak
           </h2>
           <p className="text-lg text-white/70">
             Minden, amire szüksége van egy magas konverziós online jelenléthez – egy helyről, AI támogatással.

@@ -61,7 +61,7 @@ const ProblemStatement = () => {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center text-white">
-            Ismerős ezek közül <span className="text-[#8A2BE2]">bármelyik</span>?
+            Ismerős ezek közül <span className="highlight-text">bármelyik</span>?
           </h2>
           
           <motion.div 
