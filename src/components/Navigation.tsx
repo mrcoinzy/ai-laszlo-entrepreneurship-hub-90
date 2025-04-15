@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { X, Menu, ChevronRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,15 +9,17 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, isAdmin } = useAuth();
-  const navigate = useNavigate();
   
-  const handleLogout = () => {
-    if (isOpen) setIsOpen(false);
-    navigate('/logout');
+  const handleScroll = (elementId: string) => {
+    setIsOpen(false);
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
   
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScrollEffect = () => {
       const offset = window.scrollY;
       if (offset > 50) {
         setScrolled(true);
@@ -26,9 +28,9 @@ const Navigation = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScrollEffect);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScrollEffect);
     };
   }, []);
   
@@ -40,36 +42,26 @@ const Navigation = () => {
     }`}>
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img 
-              src="/lovable-uploads/7dc661bf-08e1-4e89-a204-b8db3ed738a2.png" 
-              alt="AI László Logo" 
-              className="h-10 w-auto"
-            />
-            <div className="flex flex-col">
-              <Link to="/" className="text-xl font-medium">
-                <span className={scrolled ? "gradient-nav-animation" : "text-white"}>AI László</span>
-              </Link>
-              <span className="text-xs text-white/70 mt-1">Webfejlesztés & Marketing – Együtt</span>
-            </div>
-          </div>
+          <Link to="/" className="text-xl font-medium">
+            <span className={scrolled ? "gradient-nav-animation" : "text-white"}>AI László</span>
+          </Link>
           
           <div className="hidden md:flex items-center space-x-10">
-            <Link to="/services" className="text-sm text-white/80 hover:text-white transition-colors">
+            <button onClick={() => handleScroll('services')} className="text-sm text-white/80 hover:text-white transition-colors">
               Szolgáltatások
-            </Link>
-            <Link to="/portfolio" className="text-sm text-white/80 hover:text-white transition-colors">
+            </button>
+            <button onClick={() => handleScroll('portfolio')} className="text-sm text-white/80 hover:text-white transition-colors">
               Portfólió
-            </Link>
-            <Link to="/about" className="text-sm text-white/80 hover:text-white transition-colors">
+            </button>
+            <button onClick={() => handleScroll('about')} className="text-sm text-white/80 hover:text-white transition-colors">
               Rólam
-            </Link>
-            <Link to="/blog" className="text-sm text-white/80 hover:text-white transition-colors">
+            </button>
+            <button onClick={() => handleScroll('blog')} className="text-sm text-white/80 hover:text-white transition-colors">
               Blog
-            </Link>
-            <Link to="/contact" className="text-sm text-white/80 hover:text-white transition-colors">
+            </button>
+            <button onClick={() => handleScroll('contact')} className="text-sm text-white/80 hover:text-white transition-colors">
               Kapcsolat
-            </Link>
+            </button>
           </div>
           
           <div className="hidden md:block">
@@ -94,21 +86,21 @@ const Navigation = () => {
       {isOpen && (
         <div className="md:hidden h-screen w-full bg-background animate-fade-in">
           <div className="flex flex-col p-8 space-y-6">
-            <Link to="/services" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+            <button onClick={() => handleScroll('services')} className="text-lg font-medium">
               Szolgáltatások
-            </Link>
-            <Link to="/portfolio" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+            </button>
+            <button onClick={() => handleScroll('portfolio')} className="text-lg font-medium">
               Portfólió
-            </Link>
-            <Link to="/about" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+            </button>
+            <button onClick={() => handleScroll('about')} className="text-lg font-medium">
               Rólam
-            </Link>
-            <Link to="/blog" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+            </button>
+            <button onClick={() => handleScroll('blog')} className="text-lg font-medium">
               Blog
-            </Link>
-            <Link to="/contact" className="text-lg font-medium" onClick={() => setIsOpen(false)}>
+            </button>
+            <button onClick={() => handleScroll('contact')} className="text-lg font-medium">
               Kapcsolat
-            </Link>
+            </button>
             
             <div className="pt-6">
               <Button 
@@ -130,13 +122,15 @@ const Navigation = () => {
                     Fiók
                   </Button>
                 </Link>
-                <Button 
-                  variant="ghost" 
-                  className="w-full"
-                  onClick={handleLogout}
-                >
-                  Kijelentkezés
-                </Button>
+                <Link to="/logout">
+                  <Button 
+                    variant="ghost" 
+                    className="w-full"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Kijelentkezés
+                  </Button>
+                </Link>
               </div>
             )}
           </div>

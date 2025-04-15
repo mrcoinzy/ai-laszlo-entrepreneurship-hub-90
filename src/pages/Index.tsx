@@ -18,13 +18,22 @@ const Index = () => {
       <ScrollIndicator />
       <Navigation />
       <HeroSection />
-      <ProblemStatement />
-      <ServicesSection />
-      <TrustBuildingSection />
-      <PortfolioSection />
+      <div id="services">
+        <ServicesSection />
+      </div>
+      <div id="about">
+        <TrustBuildingSection />
+      </div>
+      <div id="portfolio">
+        <PortfolioSection />
+      </div>
       <TestimonialsSection />
-      <LeadMagnetSection />
-      <FinalCTASection />
+      <div id="blog">
+        <LeadMagnetSection />
+      </div>
+      <div id="contact">
+        <FinalCTASection />
+      </div>
       <Footer />
     </div>
   );
