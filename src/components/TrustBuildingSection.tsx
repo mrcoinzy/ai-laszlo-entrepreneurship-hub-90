@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ShieldCheck, UserCheck, Zap, Target, Award } from "lucide-react";
 import { motion } from "framer-motion";
