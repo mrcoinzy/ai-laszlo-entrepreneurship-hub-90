@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
@@ -160,9 +159,7 @@ const HeroSection = () => {
               transition={{ delay: 1.2, duration: 0.5 }}
             >
               <div className="grid grid-cols-3 gap-8 md:gap-12 lg:gap-20 items-center max-w-3xl mx-auto">
-                <img src="/lovable-uploads/6ab4697c-84e2-4cbc-9d93-646a500bf266.png" alt="Partner Logo" className="h-6 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-                <img src="/lovable-uploads/29be933e-5bf8-4b71-8ab8-dc0061de73ba.png" alt="Partner Logo" className="h-6 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-                <img src="/lovable-uploads/6ab4697c-84e2-4cbc-9d93-646a500bf266.png" alt="Partner Logo" className="h-6 object-contain opacity-70 hover:opacity-100 transition-opacity" />
+                {/* No logos section */}
               </div>
             </motion.div>
           </div>
