@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Code, Target, LineChart } from "lucide-react";
+import { Code, Target, LineChart, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
