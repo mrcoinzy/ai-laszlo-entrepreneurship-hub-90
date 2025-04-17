@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
@@ -90,24 +91,27 @@ const HeroSection = () => {
               <p className="text-lg md:text-xl mb-4 font-medium text-white/90">
                 🧠 Egyedi rendszert építek vállalkozásod köré:
               </p>
-              <ul className="flex flex-col space-y-2 mb-6">
-                <li className="flex items-center">
+              
+              {/* Modified: Side-by-side layout for the list items */}
+              <ul className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <li className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 flex items-center hover:bg-white/10 transition-colors">
                   <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
-                  <span className="text-white/80">marketingstratégia,</span>
+                  <span className="text-white/80">marketingstratégia</span>
                 </li>
-                <li className="flex items-center">
+                <li className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 flex items-center hover:bg-white/10 transition-colors">
                   <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
-                  <span className="text-white/80">weboldal,</span>
+                  <span className="text-white/80">weboldal</span>
                 </li>
-                <li className="flex items-center">
+                <li className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 flex items-center hover:bg-white/10 transition-colors">
                   <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
-                  <span className="text-white/80">hirdetések,</span>
+                  <span className="text-white/80">hirdetések</span>
                 </li>
-                <li className="flex items-center">
+                <li className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 flex items-center hover:bg-white/10 transition-colors">
                   <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
-                  <span className="text-white/80">videós tartalom –</span>
+                  <span className="text-white/80">videós tartalom</span>
                 </li>
               </ul>
+              
               <p className="text-white/90 font-medium">
                 mindezt úgy, hogy valóban ügyfeleid legyenek, ne csak nézőid.
               </p>
