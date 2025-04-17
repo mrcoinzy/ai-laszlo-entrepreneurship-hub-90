@@ -44,7 +44,14 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         purple: {
+          400: "#A78BFA",
           500: "#8A2BE2",
+          600: "#7B1FA2",
+        },
+        blue: {
+          400: "#60A5FA",
+          500: "#3B82F6",
+          600: "#2563EB", 
         },
       },
       borderRadius: {

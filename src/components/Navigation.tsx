@@ -38,20 +38,19 @@ const Navigation = () => {
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${
       scrolled 
-        ? "bg-black/70 backdrop-blur-xl py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)]" 
+        ? "bg-black/60 backdrop-blur-xl py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)]" 
         : "bg-transparent py-5"
     }`}>
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between">
           <Link to="/" className="text-xl font-medium relative">
             <motion.span 
-              className={scrolled ? "gradient-nav-animation" : "text-white"}
+              className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent font-bold"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               AI László
             </motion.span>
-            <div className={`absolute -bottom-1 left-0 h-[2px] bg-gradient-to-r from-[#8A2BE2] to-transparent transition-all duration-300 ${scrolled ? 'w-full' : 'w-0'}`}></div>
           </Link>
           
           <div className="hidden md:flex items-center space-x-10">
@@ -59,21 +58,20 @@ const Navigation = () => {
               <button 
                 key={item}
                 onClick={() => handleScroll(item)} 
-                className="text-sm text-white/80 hover:text-white transition-colors relative group"
+                className="text-sm text-white/80 hover:text-white transition-colors relative overflow-hidden group"
               >
                 {item.charAt(0).toUpperCase() + item.slice(1)}
-                <span className="absolute left-0 bottom-0 w-0 h-[1px] bg-[#8A2BE2] transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute left-0 bottom-0 w-0 h-[1px] bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
           </div>
           
           <div className="hidden md:block">
             <Button 
-              variant="outline" 
-              className="bg-white/5 backdrop-blur-lg text-white border-white/20 hover:bg-[#8A2BE2] hover:text-white hover:border-[#8A2BE2]/50 transition-all duration-300 hover:shadow-[0_10px_20px_-10px_rgba(138,43,226,0.5)]"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 hover:shadow-[0_8px_15px_-5px_rgba(138,43,226,0.5)] rounded-full px-6 py-2 transition-all duration-300 hover:-translate-y-1"
               onClick={() => handleScroll('contact')}
             >
-              Kérek egy ingyenes konzultációt <ChevronRight className="ml-1 h-4 w-4" />
+              Konzultáció <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
           
@@ -117,8 +115,7 @@ const Navigation = () => {
               transition={{ delay: 0.4, duration: 0.3 }}
             >
               <Button 
-                variant="outline" 
-                className="w-full bg-gradient-to-r from-[#8A2BE2] to-[#7B1FA2] text-white border-none hover:from-[#9A4BF2] hover:to-[#8A2BE2] hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.3)] transition-all py-6"
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 hover:shadow-[0_8px_15px_-5px_rgba(138,43,226,0.5)] rounded-xl py-6"
                 onClick={() => {
                   setIsOpen(false);
                   handleScroll('contact');
