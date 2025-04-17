@@ -92,25 +92,36 @@ const HeroSection = () => {
                 🧠 Egyedi rendszert építek vállalkozásod köré:
               </p>
               
-              {/* Modified: Side-by-side layout for the list items */}
-              <ul className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                <li className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 flex items-center hover:bg-white/10 transition-colors">
-                  <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
-                  <span className="text-white/80">marketingstratégia</span>
-                </li>
-                <li className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 flex items-center hover:bg-white/10 transition-colors">
-                  <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
-                  <span className="text-white/80">weboldal</span>
-                </li>
-                <li className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 flex items-center hover:bg-white/10 transition-colors">
-                  <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
-                  <span className="text-white/80">hirdetések</span>
-                </li>
-                <li className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 flex items-center hover:bg-white/10 transition-colors">
-                  <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
-                  <span className="text-white/80">videós tartalom</span>
-                </li>
-              </ul>
+              {/* Improved styling for the boxes */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                  <div className="flex items-center">
+                    <CheckCircle size={18} className="text-purple-400 mr-2 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base truncate">marketingstratégia</span>
+                  </div>
+                </div>
+                
+                <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                  <div className="flex items-center">
+                    <CheckCircle size={18} className="text-purple-400 mr-2 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base truncate">weboldal</span>
+                  </div>
+                </div>
+                
+                <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                  <div className="flex items-center">
+                    <CheckCircle size={18} className="text-purple-400 mr-2 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base truncate">hirdetések</span>
+                  </div>
+                </div>
+                
+                <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                  <div className="flex items-center">
+                    <CheckCircle size={18} className="text-purple-400 mr-2 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base truncate">videós tartalom</span>
+                  </div>
+                </div>
+              </div>
               
               <p className="text-white/90 font-medium">
                 mindezt úgy, hogy valóban ügyfeleid legyenek, ne csak nézőid.
