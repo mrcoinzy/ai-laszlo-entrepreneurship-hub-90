@@ -16,7 +16,7 @@ const AnimatedBackground = () => {
     let height = canvas.height = window.innerHeight;
     
     const particles: Particle[] = [];
-    const particleCount = 30;
+    const particleCount = 40;
     const colors = [
       "rgba(138, 43, 226, 0.6)", // Purple
       "rgba(147, 112, 219, 0.5)", // Medium Purple
@@ -39,18 +39,18 @@ const AnimatedBackground = () => {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: Math.random() * 15 + 5,
-        speedX: Math.random() * 1 - 0.5,
-        speedY: Math.random() * 1 - 0.5,
+        size: Math.random() * 20 + 10,
+        speedX: Math.random() * 1.5 - 0.75,
+        speedY: Math.random() * 1.5 - 0.75,
         color: colors[Math.floor(Math.random() * colors.length)],
-        glow: Math.random() * 10 + 5
+        glow: Math.random() * 15 + 10
       });
     }
     
     function drawParticle(particle: Particle) {
       if (!ctx) return;
       
-      // Add glow effect
+      // Enhanced glow effect
       ctx.shadowBlur = particle.glow;
       ctx.shadowColor = particle.color;
       
@@ -66,20 +66,20 @@ const AnimatedBackground = () => {
     function createGradient() {
       if (!ctx) return;
       
-      // More interesting background gradient
+      // More dynamic background gradient
       const gradient = ctx.createRadialGradient(
         width / 2, 
         height / 2, 
         0, 
         width / 2, 
         height / 2, 
-        Math.max(width, height) / 1.5
+        Math.max(width, height) / 1.2
       );
       
-      // Darker, more modern gradient
-      gradient.addColorStop(0, "rgba(15, 15, 20, 1)");
-      gradient.addColorStop(0.5, "rgba(10, 10, 15, 1)");
-      gradient.addColorStop(1, "rgba(5, 5, 10, 1)");
+      // More vibrant gradient colors
+      gradient.addColorStop(0, "rgba(30, 20, 40, 1)");
+      gradient.addColorStop(0.5, "rgba(20, 15, 30, 1)");
+      gradient.addColorStop(1, "rgba(10, 5, 20, 1)");
       
       return gradient;
     }
@@ -92,10 +92,10 @@ const AnimatedBackground = () => {
           const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
-          if (distance < 150) {
+          if (distance < 180) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(138, 43, 226, ${0.2 - distance/750})`;
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = `rgba(138, 43, 226, ${0.2 - distance/900})`;
+            ctx.lineWidth = 0.7;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
@@ -114,24 +114,9 @@ const AnimatedBackground = () => {
         particle.x += particle.speedX;
         particle.y += particle.speedY;
         
-        // More natural bouncing
-        if (particle.x > width) {
-          particle.x = width;
-          particle.speedX *= -1;
-        } 
-        else if (particle.x < 0) {
-          particle.x = 0;
-          particle.speedX *= -1;
-        }
-        
-        if (particle.y > height) {
-          particle.y = height;
-          particle.speedY *= -1;
-        } 
-        else if (particle.y < 0) {
-          particle.y = 0;
-          particle.speedY *= -1;
-        }
+        // More fluid boundary handling
+        if (particle.x > width || particle.x < 0) particle.speedX *= -1;
+        if (particle.y > height || particle.y < 0) particle.speedY *= -1;
         
         drawParticle(particle);
       });
@@ -160,31 +145,31 @@ const AnimatedBackground = () => {
         className="absolute top-0 left-0 w-full h-full"
       />
       
-      {/* Dynamic ambient lights */}
+      {/* Enhanced dynamic ambient lights */}
       <motion.div 
         className="absolute top-0 left-0 w-full h-full opacity-40"
         animate={{ 
           background: [
-            "radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.15), transparent 70%)",
-            "radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.15), transparent 70%)",
-            "radial-gradient(circle at 80% 20%, rgba(106, 90, 205, 0.15), transparent 70%)",
-            "radial-gradient(circle at 20% 80%, rgba(147, 112, 219, 0.15), transparent 70%)",
-            "radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.15), transparent 70%)",
+            "radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.2), transparent 70%)",
+            "radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.2), transparent 70%)",
+            "radial-gradient(circle at 80% 20%, rgba(106, 90, 205, 0.2), transparent 70%)",
+            "radial-gradient(circle at 20% 80%, rgba(147, 112, 219, 0.2), transparent 70%)",
+            "radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.2), transparent 70%)",
           ]
         }}
         transition={{
-          duration: 20,
+          duration: 15,
           repeat: Infinity,
           ease: "linear"
         }}
       />
       
-      {/* Additional decor elements */}
-      <div className="absolute left-[10%] top-[30%] w-32 h-32 bg-purple-500/5 rounded-full blur-3xl"></div>
-      <div className="absolute right-[15%] bottom-[20%] w-40 h-40 bg-blue-500/5 rounded-full blur-3xl"></div>
+      {/* Enhanced decorative elements */}
+      <div className="absolute left-[10%] top-[30%] w-48 h-48 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute right-[15%] bottom-[20%] w-56 h-56 bg-blue-500/10 rounded-full blur-3xl"></div>
       
       {/* Dark gradient overlay for better text contrast */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/80"></div>
     </div>
   );
 };
