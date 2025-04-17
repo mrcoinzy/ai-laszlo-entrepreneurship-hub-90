@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { X, Menu, ChevronRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { motion } from "framer-motion";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,106 +36,126 @@ const Navigation = () => {
   }, []);
   
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${
+    <nav className={`fixed w-full z-50 transition-all duration-500 ${
       scrolled 
-        ? "bg-background/90 backdrop-blur-md py-3 shadow-lg rounded-b-lg" 
+        ? "bg-black/70 backdrop-blur-xl py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)]" 
         : "bg-transparent py-5"
     }`}>
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-xl font-medium">
-            <span className={scrolled ? "gradient-nav-animation" : "text-white"}>AI László</span>
+          <Link to="/" className="text-xl font-medium relative">
+            <motion.span 
+              className={scrolled ? "gradient-nav-animation" : "text-white"}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              AI László
+            </motion.span>
+            <div className={`absolute -bottom-1 left-0 h-[2px] bg-gradient-to-r from-[#8A2BE2] to-transparent transition-all duration-300 ${scrolled ? 'w-full' : 'w-0'}`}></div>
           </Link>
           
           <div className="hidden md:flex items-center space-x-10">
-            <button onClick={() => handleScroll('services')} className="text-sm text-white/80 hover:text-white transition-colors">
-              Szolgáltatások
-            </button>
-            <button onClick={() => handleScroll('portfolio')} className="text-sm text-white/80 hover:text-white transition-colors">
-              Portfólió
-            </button>
-            <button onClick={() => handleScroll('about')} className="text-sm text-white/80 hover:text-white transition-colors">
-              Rólam
-            </button>
-            <button onClick={() => handleScroll('blog')} className="text-sm text-white/80 hover:text-white transition-colors">
-              Blog
-            </button>
-            <button onClick={() => handleScroll('contact')} className="text-sm text-white/80 hover:text-white transition-colors">
-              Kapcsolat
-            </button>
+            {["services", "portfolio", "about", "blog", "contact"].map((item) => (
+              <button 
+                key={item}
+                onClick={() => handleScroll(item)} 
+                className="text-sm text-white/80 hover:text-white transition-colors relative group"
+              >
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+                <span className="absolute left-0 bottom-0 w-0 h-[1px] bg-[#8A2BE2] transition-all duration-300 group-hover:w-full"></span>
+              </button>
+            ))}
           </div>
           
           <div className="hidden md:block">
             <Button 
               variant="outline" 
-              className="bg-white text-black hover:bg-black hover:text-white border-white transition-all duration-300"
+              className="bg-white/5 backdrop-blur-lg text-white border-white/20 hover:bg-[#8A2BE2] hover:text-white hover:border-[#8A2BE2]/50 transition-all duration-300 hover:shadow-[0_10px_20px_-10px_rgba(138,43,226,0.5)]"
+              onClick={() => handleScroll('contact')}
             >
               Kérek egy ingyenes konzultációt <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
           
-          <button 
+          <motion.button 
             className="md:hidden text-white"
             onClick={() => setIsOpen(!isOpen)}
+            whileTap={{ scale: 0.9 }}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          </motion.button>
         </div>
       </div>
       
-      {/* Mobile menu */}
+      {/* Mobile menu with improved animation */}
       {isOpen && (
-        <div className="md:hidden h-screen w-full bg-background animate-fade-in">
+        <motion.div 
+          className="md:hidden h-screen w-full bg-black/90 backdrop-blur-lg"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+        >
           <div className="flex flex-col p-8 space-y-6">
-            <button onClick={() => handleScroll('services')} className="text-lg font-medium">
-              Szolgáltatások
-            </button>
-            <button onClick={() => handleScroll('portfolio')} className="text-lg font-medium">
-              Portfólió
-            </button>
-            <button onClick={() => handleScroll('about')} className="text-lg font-medium">
-              Rólam
-            </button>
-            <button onClick={() => handleScroll('blog')} className="text-lg font-medium">
-              Blog
-            </button>
-            <button onClick={() => handleScroll('contact')} className="text-lg font-medium">
-              Kapcsolat
-            </button>
+            {["services", "portfolio", "about", "blog", "contact"].map((item, index) => (
+              <motion.button 
+                key={item}
+                onClick={() => handleScroll(item)} 
+                className="text-lg font-medium text-white/90 hover:text-white py-2 border-b border-white/10 transition-colors"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 + 0.1, duration: 0.3 }}
+              >
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+              </motion.button>
+            ))}
             
-            <div className="pt-6">
+            <motion.div 
+              className="pt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+            >
               <Button 
                 variant="outline" 
-                className="w-full bg-white text-black hover:bg-black hover:text-white border-white transition-all"
-                onClick={() => setIsOpen(false)}
+                className="w-full bg-gradient-to-r from-[#8A2BE2] to-[#7B1FA2] text-white border-none hover:from-[#9A4BF2] hover:to-[#8A2BE2] hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.3)] transition-all py-6"
+                onClick={() => {
+                  setIsOpen(false);
+                  handleScroll('contact');
+                }}
               >
                 Kérek egy ingyenes konzultációt <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
               <p className="text-xs text-white/60 mt-2 text-center">
                 48 órán belül személyesen felveszem Önnel a kapcsolatot.
               </p>
-            </div>
+            </motion.div>
             
             {user && (
-              <div className="pt-6 flex flex-col space-y-4">
+              <motion.div 
+                className="pt-6 flex flex-col space-y-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.3 }}
+              >
                 <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
-                  <Button variant="ghost" className="w-full">
+                  <Button variant="ghost" className="w-full text-white/80 hover:text-white hover:bg-white/10">
                     Fiók
                   </Button>
                 </Link>
                 <Link to="/logout">
                   <Button 
                     variant="ghost" 
-                    className="w-full"
+                    className="w-full text-white/80 hover:text-white hover:bg-white/10"
                     onClick={() => setIsOpen(false)}
                   >
                     Kijelentkezés
                   </Button>
                 </Link>
-              </div>
+              </motion.div>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
     </nav>
   );
