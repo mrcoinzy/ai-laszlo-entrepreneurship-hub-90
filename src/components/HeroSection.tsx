@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import CTAButton from "./ui/cta-button";
 
 const HeroSection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -92,33 +93,33 @@ const HeroSection = () => {
                 🧠 Egyedi rendszert építek vállalkozásod köré:
               </p>
               
-              {/* Improved styling for the boxes */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+              {/* Improved styling for the boxes - Modified to use 2 columns and 2 rows */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
                   <div className="flex items-center">
-                    <CheckCircle size={18} className="text-purple-400 mr-2 flex-shrink-0" />
-                    <span className="text-white/80 text-sm sm:text-base truncate">marketingstratégia</span>
+                    <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base">marketingstratégia</span>
                   </div>
                 </div>
                 
-                <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
                   <div className="flex items-center">
-                    <CheckCircle size={18} className="text-purple-400 mr-2 flex-shrink-0" />
-                    <span className="text-white/80 text-sm sm:text-base truncate">weboldal</span>
+                    <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base">weboldal</span>
                   </div>
                 </div>
                 
-                <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
                   <div className="flex items-center">
-                    <CheckCircle size={18} className="text-purple-400 mr-2 flex-shrink-0" />
-                    <span className="text-white/80 text-sm sm:text-base truncate">hirdetések</span>
+                    <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base">hirdetések</span>
                   </div>
                 </div>
                 
-                <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
                   <div className="flex items-center">
-                    <CheckCircle size={18} className="text-purple-400 mr-2 flex-shrink-0" />
-                    <span className="text-white/80 text-sm sm:text-base truncate">videós tartalom</span>
+                    <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base">videós tartalom</span>
                   </div>
                 </div>
               </div>
