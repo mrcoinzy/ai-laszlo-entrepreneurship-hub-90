@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -42,14 +42,37 @@ const HeroSection = () => {
               AI-alapú ügyfélszerzés <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egyedülálló</span> megközelítéssel
             </h1>
             
-            <motion.p 
+            <motion.div 
               className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.6 }}
             >
-              Egyedi rendszert építek vállalkozása köré: marketingstratégia, weboldal, hirdetések, videós tartalom – úgy, hogy valóban ügyfelei legyenek, ne csak nézői.
-            </motion.p>
+              <p className="text-lg md:text-xl mb-4 font-medium text-white/90">
+                🧠 Egyedi rendszert építek vállalkozásod köré:
+              </p>
+              <ul className="flex flex-col space-y-2 mb-6">
+                <li className="flex items-center">
+                  <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
+                  <span className="text-white/80">marketingstratégia,</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
+                  <span className="text-white/80">weboldal,</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
+                  <span className="text-white/80">hirdetések,</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle size={20} className="text-purple-400 mr-2 flex-shrink-0" />
+                  <span className="text-white/80">videós tartalom –</span>
+                </li>
+              </ul>
+              <p className="text-white/90 font-medium">
+                mindezt úgy, hogy valóban ügyfeleid legyenek, ne csak nézőid.
+              </p>
+            </motion.div>
             
             <motion.div 
               className="flex flex-col sm:flex-row gap-5 justify-center"
@@ -75,19 +98,32 @@ const HeroSection = () => {
             </motion.div>
             
             <motion.div 
-              className="text-center mt-16"
+              className="text-center mt-10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 0.5 }}
+            >
+              <p className="text-white/60 text-sm mb-6 flex flex-wrap justify-center gap-x-6 gap-y-1">
+                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> 5+ év tapasztalat</span> 
+                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 50+ projekt</span> 
+                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 100% magyar nyelven</span>
+              </p>
+              <p className="text-white/60 text-sm">
+                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> Garantált figyelem, nem sablonmunka</span>
+              </p>
+            </motion.div>
+            
+            <motion.div 
+              className="mt-16"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2, duration: 0.5 }}
             >
               <div className="grid grid-cols-3 gap-8 md:gap-12 lg:gap-20 items-center max-w-3xl mx-auto">
                 <img src="/lovable-uploads/6ab4697c-84e2-4cbc-9d93-646a500bf266.png" alt="Partner Logo" className="h-6 object-contain opacity-70 hover:opacity-100 transition-opacity" />
                 <img src="/lovable-uploads/29be933e-5bf8-4b71-8ab8-dc0061de73ba.png" alt="Partner Logo" className="h-6 object-contain opacity-70 hover:opacity-100 transition-opacity" />
                 <img src="/lovable-uploads/6ab4697c-84e2-4cbc-9d93-646a500bf266.png" alt="Partner Logo" className="h-6 object-contain opacity-70 hover:opacity-100 transition-opacity" />
               </div>
-              <p className="text-sm text-white/50 mt-6">
-                Garantált figyelem, nem sablonmunka • 5+ év tapasztalat • 50+ projekt
-              </p>
             </motion.div>
           </div>
         </motion.div>
