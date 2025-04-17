@@ -8,6 +8,7 @@ import Spline from '@splinetool/react-spline';
 
 const HeroSection = () => {
   const [isSplineLoading, setIsSplineLoading] = useState(true);
+  const [isSplineError, setIsSplineError] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -23,6 +24,12 @@ const HeroSection = () => {
     };
   }, []);
 
+  const handleSplineError = () => {
+    console.log("Spline loading error occurred");
+    setIsSplineError(true);
+    setIsSplineLoading(false);
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden">
       {/* Subtle gradient overlay */}
@@ -31,17 +38,27 @@ const HeroSection = () => {
       {/* Subtle grid overlay */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10 z-0"></div>
       
+      {/* Visual background elements, shown when Spline fails or on mobile */}
+      {(isSplineError || isMobile) && (
+        <>
+          <div className="absolute top-1/4 -left-32 w-64 h-64 bg-purple-600/20 rounded-full filter blur-[120px]"></div>
+          <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-blue-600/20 rounded-full filter blur-[120px]"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-600/10 rounded-full filter blur-[80px]"></div>
+        </>
+      )}
+      
       {/* Spline animation container */}
       <div className="absolute inset-0 z-0">
-        {isSplineLoading && (
+        {isSplineLoading && !isSplineError && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="h-8 w-8 border-4 border-t-purple-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
           </div>
         )}
-        {!isMobile && (
+        {!isMobile && !isSplineError && (
           <Spline 
             scene="https://prod.spline.design/a1f156f7-ef01-42d1-bf7b-5be1b7967b0a/scene.splinecode" 
             onLoad={() => setIsSplineLoading(false)}
+            onError={handleSplineError}
             className="w-full h-full"
           />
         )}
