@@ -1,17 +1,17 @@
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, MessageCircle } from "lucide-react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { MessageCircle, Calendar } from "lucide-react";
+import CTAButton from "@/components/ui/cta-button";
 
 const FinalCTASection = () => {
   return (
-    <section className="py-28 bg-black overflow-hidden relative">
-      {/* Animated background elements */}
+    <section className="w-full bg-black py-24 relative overflow-hidden">
+      {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-10 -right-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#0A0A1A] to-transparent"></div>
+        <div className="absolute bottom-0 left-1/4 w-full h-96 bg-gradient-to-tr from-purple-600/10 to-transparent rounded-full filter blur-[100px]"></div>
+        <div className="absolute top-1/3 right-0 w-96 h-96 bg-blue-600/10 rounded-full filter blur-[100px]"></div>
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
@@ -20,59 +20,67 @@ const FinalCTASection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center"
+          className="max-w-5xl mx-auto text-center"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
-            Készen áll arra, hogy vállalkozása végre <span className="gradient-text">valódi eredményeket</span> érjen el online?
+          <div className="inline-flex mb-4">
+            <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              Egyszerű következő lépés
+            </span>
+          </div>
+          
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
+            Kérek egy konzultációt
           </h2>
-          <p className="text-lg text-white/70 mb-10">
-            Foglaljon időpontot egy ingyenes konzultációra, ahol átbeszéljük, hogyan alakíthatjuk át az online jelenlétét ügyfélszerző gépezetté – érthetően, konkrétan, sablonok nélkül.
+          
+          <p className="text-lg text-white/70 max-w-3xl mx-auto mb-12">
+            48 órán belül személyesen felveszem Önnel a kapcsolatot.
           </p>
           
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="mb-8"
-          >
-            <Link to="/contact">
-              <Button
-                className="bg-[#8A2BE2] text-white hover:bg-[#9A4BF2] hover:shadow-[0_15px_35px_-5px_rgba(138,43,226,0.4)] hover:-translate-y-1 px-10 py-7 rounded-xl text-lg transition-all duration-300 group"
-              >
-                <span className="flex items-center">
-                  Kérek egy konzultációt
-                  <ArrowRight className="ml-2 transition-all duration-300 group-hover:translate-x-1" size={20} />
-                </span>
-              </Button>
-            </Link>
-            <p className="text-xs text-white/50 mt-4">
-              48 órán belül személyesen felveszem Önnel a kapcsolatot.
-            </p>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="flex justify-center space-x-4 mt-8"
-          >
-            <a 
-              href="#" 
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-900/70 border border-zinc-800 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all duration-300 group"
-              aria-label="Messenger"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="bg-gradient-to-br from-white/8 to-white/2 backdrop-blur-sm rounded-xl border border-white/10 p-8 text-center transition-all duration-300 hover:border-purple-500/30 hover:shadow-[0_10px_40px_-15px_rgba(138,43,226,0.3)]"
             >
-              <MessageCircle className="h-5 w-5 text-white/70 group-hover:text-purple-400" />
-            </a>
-            <a 
-              href="#" 
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-900/70 border border-zinc-800 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all duration-300 group"
-              aria-label="Calendar"
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/20 flex items-center justify-center border border-white/20">
+                  <MessageCircle className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              
+              <h3 className="text-xl font-bold mb-4 text-white">Üzenet küldése</h3>
+              
+              <p className="text-white/70 mb-6">
+                Küldjön üzenetet, és részletezze projektjét, én pedig 48 órán belül válaszolok.
+              </p>
+              
+              <CTAButton text="Üzenet küldése" to="/contact" variant="secondary" />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="bg-gradient-to-br from-white/8 to-white/2 backdrop-blur-sm rounded-xl border border-white/10 p-8 text-center transition-all duration-300 hover:border-purple-500/30 hover:shadow-[0_10px_40px_-15px_rgba(138,43,226,0.3)]"
             >
-              <Calendar className="h-5 w-5 text-white/70 group-hover:text-purple-400" />
-            </a>
-          </motion.div>
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/20 flex items-center justify-center border border-white/20">
+                  <Calendar className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              
+              <h3 className="text-xl font-bold mb-4 text-white">Konzultáció foglalása</h3>
+              
+              <p className="text-white/70 mb-6">
+                Foglaljon egy 30 perces ingyenes konzultációt, hogy megbeszéljük az Ön projektjét és céljait.
+              </p>
+              
+              <CTAButton text="Időpont foglalása" to="/contact" variant="primary" />
+            </motion.div>
+          </div>
         </motion.div>
       </div>
     </section>

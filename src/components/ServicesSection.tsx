@@ -1,8 +1,7 @@
 
 import React from "react";
 import { Code, Target, LineChart, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import CTAButton from "@/components/ui/cta-button";
 import { motion } from "framer-motion";
 
 const ServicesSection = () => {
@@ -119,16 +118,10 @@ const ServicesSection = () => {
           viewport={{ once: true }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          <Link to="/contact">
-            <Button 
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] px-8 py-6 rounded-xl text-base transition-all duration-300 hover:-translate-y-1"
-            >
-              <span className="relative z-10 flex items-center">
-                Nem biztos benne, mire van szüksége? Beszéljünk – foglaljon ingyenes konzultációt
-                <ChevronRight className="ml-2" size={18} />
-              </span>
-            </Button>
-          </Link>
+          <CTAButton 
+            text="Nem biztos benne, mire van szüksége? Beszéljünk – foglaljon ingyenes konzultációt" 
+            to="/contact" 
+          />
         </motion.div>
       </div>
     </section>

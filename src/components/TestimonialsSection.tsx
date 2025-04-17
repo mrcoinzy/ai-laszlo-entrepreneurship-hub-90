@@ -1,8 +1,7 @@
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Star } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Star } from "lucide-react";
+import CTAButton from "@/components/ui/cta-button";
 import { motion } from "framer-motion";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
@@ -32,10 +31,10 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   return (
-    <section className="py-24 bg-[#0A0A1A] overflow-hidden relative">
+    <section className="py-24 bg-black overflow-hidden relative">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#0A0A1A] to-transparent"></div>
+        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-black to-transparent"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full filter blur-[100px]"></div>
         <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-600/10 rounded-full filter blur-[100px]"></div>
       </div>
@@ -149,16 +148,7 @@ const TestimonialsSection = () => {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="flex justify-center"
         >
-          <Link to="/contact">
-            <Button
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] px-8 py-6 rounded-xl text-base transition-all duration-300 hover:-translate-y-1 group"
-            >
-              <span className="relative z-10 flex items-center">
-                Kérek egy konzultációt
-                <ArrowRight className="ml-2 transition-all duration-300 group-hover:translate-x-1" size={18} />
-              </span>
-            </Button>
-          </Link>
+          <CTAButton text="Kérek egy konzultációt" to="/contact" />
         </motion.div>
       </div>
     </section>

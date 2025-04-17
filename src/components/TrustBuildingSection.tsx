@@ -2,9 +2,7 @@
 import React from "react";
 import { ShieldCheck, UserCheck, Zap, Target, Award } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import CTAButton from "@/components/ui/cta-button";
 
 const TrustBuildingSection = () => {
   const valuePropositions = [
@@ -59,7 +57,7 @@ const TrustBuildingSection = () => {
   };
 
   return (
-    <section className="w-full bg-gradient-to-b from-black to-[#0A0A1A] py-24 relative overflow-hidden">
+    <section className="w-full bg-black py-24 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-black to-transparent"></div>
       <div className="absolute top-1/4 right-0 w-96 h-96 bg-purple-600/10 rounded-full filter blur-[100px]"></div>
@@ -86,7 +84,7 @@ const TrustBuildingSection = () => {
               Ön nem csupán egy újabb projekt – <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Ön a prioritás</span>.
             </h2>
             <p className="text-lg text-white/70 max-w-3xl mx-auto">
-              Ellentétben egy ügynökséggel, én közvetlenül Önnel dolgozom – az alapoktól építem fel az online sikerét, teljes fókuszsal és felelősséggel.
+              Ellentétben egy ügynökséggel, én közvetlenül Önnel dolgozom – az alapoktól építem fel az online sikerét, teljes fókuszal és felelősséggel.
             </p>
           </div>
           
@@ -139,16 +137,7 @@ const TrustBuildingSection = () => {
             <h3 className="text-2xl font-medium mb-6 text-white">
               Készen áll egy olyan webes jelenlétre, amely valóban az Ön céljaira van szabva?
             </h3>
-            <Link to="/contact">
-              <Button
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] px-8 py-6 rounded-xl text-base transition-all duration-300 hover:-translate-y-1"
-              >
-                <span className="relative z-10 flex items-center">
-                  Kérek egy konzultációt
-                  <ChevronRight className="ml-2 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Button>
-            </Link>
+            <CTAButton text="Kérek egy konzultációt" to="/contact" />
           </motion.div>
         </motion.div>
       </div>
