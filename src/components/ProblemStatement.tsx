@@ -128,7 +128,7 @@ const ProblemStatement = () => {
           <Button 
             className="bg-[#8A2BE2] text-white shadow-lg hover:bg-[#7B1FA2] hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.3)] px-6 py-4 rounded-full text-sm transition-all duration-300"
           >
-            Ingyenes konzultációt kérek
+            Kérek egy díjmentes konzultációt
           </Button>
         </Link>
       </div>

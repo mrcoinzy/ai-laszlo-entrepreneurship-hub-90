@@ -18,6 +18,7 @@ const Index = () => {
       <ScrollIndicator />
       <Navigation />
       <HeroSection />
+      <ProblemStatement />
       <div id="services">
         <ServicesSection />
       </div>
