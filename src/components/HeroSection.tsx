@@ -1,11 +1,28 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import Spline from '@splinetool/react-spline';
 
 const HeroSection = () => {
+  const [isSplineLoading, setIsSplineLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden">
       {/* Subtle gradient overlay */}
@@ -13,6 +30,22 @@ const HeroSection = () => {
       
       {/* Subtle grid overlay */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10 z-0"></div>
+      
+      {/* Spline animation container */}
+      <div className="absolute inset-0 z-0">
+        {isSplineLoading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="h-8 w-8 border-4 border-t-purple-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+        {!isMobile && (
+          <Spline 
+            scene="https://prod.spline.design/a1f156f7-ef01-42d1-bf7b-5be1b7967b0a/scene.splinecode" 
+            onLoad={() => setIsSplineLoading(false)}
+            className="w-full h-full"
+          />
+        )}
+      </div>
       
       {/* Decorative elements */}
       <div className="absolute bottom-10 left-10 w-32 h-32 bg-purple-600/20 rounded-full filter blur-3xl"></div>
