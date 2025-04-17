@@ -2,11 +2,13 @@
 import React from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
+import MiniIntroSection from "@/components/MiniIntroSection";
 import ProblemStatement from "@/components/ProblemStatement";
 import ServicesSection from "@/components/ServicesSection";
 import TrustBuildingSection from "@/components/TrustBuildingSection";
 import PortfolioSection from "@/components/PortfolioSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import EmailLeadMagnetSection from "@/components/EmailLeadMagnetSection";
 import LeadMagnetSection from "@/components/LeadMagnetSection";
 import FinalCTASection from "@/components/FinalCTASection";
 import Footer from "@/components/Footer";
@@ -18,6 +20,7 @@ const Index = () => {
       <ScrollIndicator />
       <Navigation />
       <HeroSection />
+      <MiniIntroSection />
       <ProblemStatement />
       <div id="services">
         <ServicesSection />
@@ -29,6 +32,7 @@ const Index = () => {
         <PortfolioSection />
       </div>
       <TestimonialsSection />
+      <EmailLeadMagnetSection />
       <div id="blog">
         <LeadMagnetSection />
       </div>
