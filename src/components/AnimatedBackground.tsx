@@ -23,7 +23,7 @@ const AnimatedBackground = () => {
     const particles: Particle[] = [];
     const particleCount = 60; // Increased particle count for better visual effect
     
-    // Enhanced color palette with more vibrant purples
+    // Enhanced color palette with more vibrant purples - Fixed RGBA format
     const colors = [
       "rgba(148, 0, 211, 0.7)",  // Dark Violet
       "rgba(138, 43, 226, 0.6)", // Blue Violet
@@ -130,8 +130,26 @@ const AnimatedBackground = () => {
                 particles[j].x, 
                 particles[j].y
               );
-              gradient.addColorStop(0, particles[i].color.replace(')', `, ${opacity})`).replace('rgba', 'rgba'));
-              gradient.addColorStop(1, particles[j].color.replace(')', `, ${opacity})`).replace('rgba', 'rgba'));
+              
+              // Fixed RGBA format here - extracting the base color and applying new opacity
+              const color1 = particles[i].color.replace(/rgba?\([^)]+\)/, (match) => {
+                const parts = match.match(/\d+/g);
+                if (parts && parts.length >= 3) {
+                  return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${opacity})`;
+                }
+                return `rgba(148, 0, 211, ${opacity})`;
+              });
+              
+              const color2 = particles[j].color.replace(/rgba?\([^)]+\)/, (match) => {
+                const parts = match.match(/\d+/g);
+                if (parts && parts.length >= 3) {
+                  return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${opacity})`;
+                }
+                return `rgba(148, 0, 211, ${opacity})`;
+              });
+              
+              gradient.addColorStop(0, color1);
+              gradient.addColorStop(1, color2);
               
               ctx.strokeStyle = gradient;
               ctx.lineWidth = 1.5;
