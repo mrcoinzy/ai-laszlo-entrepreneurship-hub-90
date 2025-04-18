@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -76,31 +75,22 @@ const Consultation = () => {
       
       console.log("Transformed data for Supabase:", supabaseData);
       
-      const connectionTest = await testConnection();
-      console.log("Connection test result:", connectionTest);
-      
-      if (!connectionTest.success) {
-        console.error("Connection test failed:", connectionTest.error);
-        toast.error("Sikertelen kapcsolódás az adatbázishoz. Kérjük próbálja újra!");
-        setSubmitting(false);
-        return;
-      }
-      
       const { data, error } = await supabase
         .from('consultations')
         .insert(supabaseData);
       
       if (error) {
         console.error("Error inserting data into Supabase:", error);
-        throw error;
+        toast.error("Hiba történt a küldés során. Kérjük próbálja újra!");
+        return;
       }
       
       console.log("Successfully submitted to Supabase:", data);
       toast.success("Köszönjük a kitöltést!");
       navigate("/consultation-thankyou");
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Hiba történt a küldés során. Kérjük próbálja újra!");
+      console.error("Unexpected error submitting form:", error);
+      toast.error("Váratlan hiba történt. Kérjük próbálja újra!");
     } finally {
       setSubmitting(false);
     }
