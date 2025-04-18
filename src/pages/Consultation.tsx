@@ -1,11 +1,9 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -63,24 +61,8 @@ const Consultation = () => {
       
       console.log("Submitting consultation:", values);
       
-      const { error } = await supabase
-        .from('consultations')
-        .insert({
-          name: values.name,
-          email: values.email,
-          website: values.website,
-          business_type: values.businessType,
-          main_goal: values.mainGoal,
-          online_presence: values.onlinePresence,
-          challenge: values.biggestChallenge,
-          interested_services: values.interestedServices,
-          budget_range: values.budgetRange[0]
-        });
-      
-      if (error) {
-        console.error("Supabase error:", error);
-        throw error;
-      }
+      // Simulate API call with a timeout
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast.success("Köszönjük a kitöltést!");
       navigate("/consultation-thankyou");

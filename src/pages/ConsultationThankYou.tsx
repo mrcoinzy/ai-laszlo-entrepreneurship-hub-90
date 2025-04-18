@@ -3,12 +3,21 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle, Download, ArrowRight } from "lucide-react";
+import { downloadAndTrackPdf } from "@/lib/pdfTracking";
+import { toast } from "sonner";
 
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 const ConsultationThankYou = () => {
+  const handleDownloadPdf = () => {
+    // Use a temporary email since we don't have user authentication
+    const tempEmail = "guest@example.com";
+    downloadAndTrackPdf("marketing_guide.pdf", tempEmail);
+    toast.success("PDF letöltése megkezdődött");
+  };
+
   return (
     <div className="min-h-screen bg-black flex flex-col">
       <Navigation />
@@ -54,18 +63,19 @@ const ConsultationThankYou = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.9, duration: 0.5 }}
             >
-              <Link to="/works">
+              <Link to="/">
                 <Button 
                   variant="outline" 
                   className="border-white/20 text-white hover:bg-white/10 hover:text-white w-full md:w-auto"
                 >
-                  Esettanulmányok
+                  Vissza a főoldalra
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               
               <Button 
                 className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 hover:shadow-[0_8px_15px_-5px_rgba(138,43,226,0.5)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto"
+                onClick={handleDownloadPdf}
               >
                 PDF útmutató letöltése
                 <Download className="ml-2 h-4 w-4" />

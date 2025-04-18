@@ -3,13 +3,11 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { X, Menu, ChevronRight } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   
   const handleScroll = (elementId: string) => {
@@ -151,30 +149,6 @@ const Navigation = () => {
                 48 órán belül személyesen felveszem Önnel a kapcsolatot.
               </p>
             </motion.div>
-            
-            {user && (
-              <motion.div 
-                className="pt-6 flex flex-col space-y-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.3 }}
-              >
-                <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setIsOpen(false)}>
-                  <Button variant="ghost" className="w-full text-white/80 hover:text-white hover:bg-white/10">
-                    Fiók
-                  </Button>
-                </Link>
-                <Link to="/logout">
-                  <Button 
-                    variant="ghost" 
-                    className="w-full text-white/80 hover:text-white hover:bg-white/10"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Kijelentkezés
-                  </Button>
-                </Link>
-              </motion.div>
-            )}
           </div>
         </motion.div>
       )}

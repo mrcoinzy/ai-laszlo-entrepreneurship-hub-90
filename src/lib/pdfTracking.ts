@@ -1,8 +1,6 @@
 
-import { supabase } from "@/integrations/supabase/client";
-
 /**
- * Track PDF download in Supabase
+ * Track PDF download (stub function)
  * 
  * @param userEmail Email of the user downloading the PDF
  * @param fileName Name of the PDF file being downloaded
@@ -16,20 +14,8 @@ export const trackPdfDownload = async (userEmail: string, fileName: string) => {
     }
 
     console.log(`Tracking PDF download: ${fileName} by ${userEmail}`);
-    
-    const { error } = await supabase
-      .from('pdf_downloads')
-      .insert({
-        user_email: userEmail,
-        file_name: fileName,
-        downloaded_at: new Date().toISOString()
-      });
-    
-    if (error) {
-      console.error("Error tracking PDF download:", error);
-    } else {
-      console.log("PDF download tracked successfully");
-    }
+    // In a real application, this would save the download info to a database
+    // For now, we just log it to the console
   } catch (err) {
     console.error("Failed to track PDF download:", err);
   }
@@ -44,7 +30,7 @@ export const trackPdfDownload = async (userEmail: string, fileName: string) => {
 export const getPdfUrl = (fileName: string): string => {
   // This is a placeholder implementation
   // In a real application, this would be replaced with actual URLs to PDF files,
-  // possibly using Supabase Storage or another file storage solution
+  // possibly using a file storage solution
   
   // For demonstration purposes only
   const pdfs: Record<string, string> = {
