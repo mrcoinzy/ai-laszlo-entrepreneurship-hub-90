@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldCheck } from "lucide-react";
 
 // Form validation schema
 const formSchema = z.object({
@@ -35,14 +35,18 @@ type FormData = z.infer<typeof formSchema>;
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { signIn, user } = useAuth();
+  const { signIn, user, isAdmin } = useAuth();
   
   // Redirect user if already logged in
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     }
-  }, [user, navigate]);
+  }, [user, navigate, isAdmin]);
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -58,11 +62,16 @@ const Login = () => {
     try {
       console.log("Attempting login with:", values.email);
       await signIn(values.email, values.password);
-      toast.success("Login successful!");
       
       // Add a slight delay to ensure the auth state is updated
       setTimeout(() => {
-        navigate("/dashboard");
+        if (isAdmin) {
+          toast.success("Admin login successful!");
+          navigate("/admin");
+        } else {
+          toast.success("Login successful!");
+          navigate("/dashboard");
+        }
       }, 500);
     } catch (error: any) {
       console.error("Login error:", error);
@@ -87,11 +96,14 @@ const Login = () => {
       <div className="container mx-auto px-4 py-10 sm:py-20">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <ShieldCheck className="h-12 w-12 text-primary" />
+            </div>
             <h1 className="text-2xl sm:text-3xl font-bold mb-3 gradient-text">
-              Log In to Your Account
+              Admin Login
             </h1>
             <p className="text-white/70">
-              Enter your credentials to access your dashboard
+              Enter your admin credentials to access the dashboard
             </p>
           </div>
           
@@ -107,7 +119,7 @@ const Login = () => {
                       <FormControl>
                         <Input 
                           type="email" 
-                          placeholder="you@example.com" 
+                          placeholder="admin@example.com" 
                           className="bg-background/50" 
                           {...field} 
                           disabled={isLoading}
@@ -149,7 +161,7 @@ const Login = () => {
                         <Loader2 size={16} className="mr-2 animate-spin" />
                         Logging in...
                       </>
-                    ) : "Log In"}
+                    ) : "Log In as Admin"}
                   </Button>
                 </div>
               </form>
@@ -157,12 +169,12 @@ const Login = () => {
             
             <div className="mt-4 text-center text-sm text-white/50">
               <p>
-                Don't have an account?{" "}
+                Need an admin account?{" "}
                 <Link 
-                  to="/register" 
+                  to="/admin-register" 
                   className="text-sky-400 hover:underline"
                 >
-                  Sign up
+                  Register Here
                 </Link>
               </p>
             </div>
@@ -174,9 +186,6 @@ const Login = () => {
             </p>
             <p className="mt-1">
               Admin: admin@example.com / password123
-            </p>
-            <p className="mt-1">
-              User: jane@example.com / password123
             </p>
           </div>
         </div>

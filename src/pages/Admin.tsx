@@ -5,12 +5,12 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
-import { Menu, AlertCircle, Loader2, Mail, MessageSquare } from "lucide-react";
+import { Menu, AlertCircle, Loader2, FileText, MessageSquare, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import ConsultationsList from "@/components/admin/ConsultationsList";
-import EmailList from "@/components/admin/EmailList";
+import PdfDownloadsList from "@/components/admin/PdfDownloadsList";
 import { supabase } from "@/lib/supabase";
 
 const Admin = () => {
@@ -119,9 +119,9 @@ const Admin = () => {
       
       <main className="flex-1 container mx-auto px-4 py-8 md:py-12">
         <div className="flex flex-col space-y-4 mb-8 hidden md:flex">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold gradient-text">Admin Panel</h1>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold gradient-text">Admin Dashboard</h1>
           <p className="text-white/70">
-            Kezelje a konzultációs kéréseket és email feliratkozókat
+            Manage consultation requests and PDF downloads in one place
           </p>
         </div>
 
@@ -135,18 +135,18 @@ const Admin = () => {
             <TabsList className="grid grid-cols-2">
               <TabsTrigger value="consultations">
                 <MessageSquare className="h-4 w-4 mr-2" />
-                Konzultációk
+                Consultations
               </TabsTrigger>
-              <TabsTrigger value="emails">
-                <Mail className="h-4 w-4 mr-2" />
-                Email Lista
+              <TabsTrigger value="pdf-downloads">
+                <FileText className="h-4 w-4 mr-2" />
+                PDF Downloads
               </TabsTrigger>
             </TabsList>
             <TabsContent value="consultations" className="p-2 md:p-4">
               <ConsultationsList />
             </TabsContent>
-            <TabsContent value="emails" className="p-2 md:p-4">
-              <EmailList />
+            <TabsContent value="pdf-downloads" className="p-2 md:p-4">
+              <PdfDownloadsList />
             </TabsContent>
           </Tabs>
         </Card>
