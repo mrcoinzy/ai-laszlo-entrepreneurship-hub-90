@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -6,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { CheckIcon, ArrowDownIcon } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -18,7 +18,6 @@ import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Define the schema for our consultation form
 const consultationFormSchema = z.object({
   name: z.string().min(2, { message: "A név legalább 2 karakter hosszú kell legyen" }),
   email: z.string().email({ message: "Érvénytelen email cím" }),
@@ -40,7 +39,6 @@ const Consultation = () => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   
-  // Define form with react-hook-form
   const form = useForm<ConsultationFormValues>({
     resolver: zodResolver(consultationFormSchema),
     defaultValues: {
@@ -61,11 +59,21 @@ const Consultation = () => {
     try {
       setSubmitting(true);
       
-      // Here you would normally send the data to your backend
-      console.log("Form submitted with values:", values);
+      const { error } = await supabase
+        .from('consultations')
+        .insert({
+          name: values.name,
+          email: values.email,
+          website: values.website,
+          business_type: values.businessType,
+          main_goal: values.mainGoal,
+          online_presence: values.onlinePresence,
+          challenge: values.biggestChallenge,
+          interested_services: values.interestedServices,
+          budget_range: values.budgetRange[0]
+        });
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      if (error) throw error;
       
       toast.success("Köszönjük a kitöltést!");
       navigate("/consultation-thankyou");

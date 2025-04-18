@@ -70,6 +70,8 @@ export const withPdfTracking = (Component: React.ComponentType<any>) => {
       }
     };
     
-    return <Component {...props} onDownload={handleDownload} />;
+    return (
+      <Component {...props} onDownload={handleDownload} />
+    );
   };
 };
