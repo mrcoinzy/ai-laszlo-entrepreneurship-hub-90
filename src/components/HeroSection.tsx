@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import CTAButton from "./ui/cta-button";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 
 const HeroSection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -60,12 +59,7 @@ const HeroSection = () => {
       <div className="absolute top-20 right-10 w-32 h-32 bg-blue-600/20 rounded-full filter blur-3xl"></div>
       
       <div className="container mx-auto px-4 sm:px-6 pt-32 pb-20 relative z-10">
-        <motion.div 
-          className="flex flex-col items-center text-center"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
+        <motion.div className="flex flex-col items-center text-center">
           <div className="max-w-3xl relative">
             {/* Small badge/ribbon */}
             <motion.div
@@ -136,14 +130,12 @@ const HeroSection = () => {
               transition={{ delay: 0.7, duration: 0.5 }}
             >
               <Link to="/contact">
-                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] 
-                  hover:-translate-y-1 px-8 py-6 rounded-xl text-base 
-                  transition-all duration-300 group border-0">
+                <RainbowButton>
                   <span className="relative z-10 flex items-center">
                     Kérek egy díjmentes konzultációt
                     <ChevronRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
-                </Button>
+                </RainbowButton>
               </Link>
               <Link to="/courses">
                 <Button variant="outline" className="px-8 py-6 rounded-xl text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
