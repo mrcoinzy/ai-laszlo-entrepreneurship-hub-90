@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -78,10 +79,16 @@ const Consultation = () => {
       const connectionTest = await testConnection();
       console.log("Connection test result:", connectionTest);
       
+      if (!connectionTest.success) {
+        console.error("Connection test failed:", connectionTest.error);
+        toast.error("Sikertelen kapcsolódás az adatbázishoz. Kérjük próbálja újra!");
+        setSubmitting(false);
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('consultations')
-        .insert(supabaseData)
-        .select();
+        .insert(supabaseData);
       
       if (error) {
         console.error("Error inserting data into Supabase:", error);
@@ -101,8 +108,18 @@ const Consultation = () => {
 
   const testConnection = async () => {
     try {
-      const { data, error } = await supabase.from('consultations').select('id').limit(1);
-      return { success: !error, data, error };
+      console.log("Testing connection to Supabase...");
+      const { data, error } = await supabase
+        .from('consultations')
+        .select('id')
+        .limit(1);
+        
+      if (error) {
+        console.error("Supabase connection test failed:", error);
+        return { success: false, error };
+      }
+      
+      return { success: true, data };
     } catch (err) {
       console.error("Connection test failed:", err);
       return { success: false, error: err };

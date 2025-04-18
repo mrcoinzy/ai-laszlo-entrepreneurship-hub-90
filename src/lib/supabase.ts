@@ -7,17 +7,13 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 console.log('Initializing Supabase client with URL:', supabaseUrl);
 
-// Create and export a single Supabase client instance with auth disabled for public access
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false
-  }
-});
+// Create and export a single Supabase client instance for public access
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Helper function to test connection to Supabase
 export const testConnection = async () => {
   try {
+    console.log('Testing connection to Supabase...');
     const { data, error } = await supabase
       .from('consultations')
       .select('id')
