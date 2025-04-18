@@ -18,6 +18,8 @@ import NotFound from "@/pages/NotFound"
 import Logout from "@/pages/Logout"
 import PendingApproval from "@/pages/PendingApproval"
 import RejectedAccount from "@/pages/RejectedAccount"
+import Consultation from "@/pages/Consultation"
+import ConsultationThankYou from "@/pages/ConsultationThankYou"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from "sonner"
@@ -107,6 +109,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/admin-register" element={<AdminRegister />} />
               <Route path="/help" element={<Help />} />
+              <Route path="/consultation" element={<Consultation />} />
+              <Route path="/consultation-thankyou" element={<ConsultationThankYou />} />
               
               {/* Registration Approval Flow */}
               <Route path="/pending" element={
