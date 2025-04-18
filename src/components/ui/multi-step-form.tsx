@@ -140,6 +140,4 @@ const MultiStepForm = ({ children, onSubmit, className }: MultiStepFormProps) =>
   );
 };
 
-MultiStepForm.Step = FormStep;
-
 export { MultiStepForm, FormStep };

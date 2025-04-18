@@ -56,8 +56,12 @@ const Consultation = () => {
   });
 
   const onSubmit = async (values: ConsultationFormValues) => {
+    if (submitting) return; // Prevent multiple submissions
+    
     try {
       setSubmitting(true);
+      
+      console.log("Submitting consultation:", values);
       
       const { error } = await supabase
         .from('consultations')
@@ -73,7 +77,10 @@ const Consultation = () => {
           budget_range: values.budgetRange[0]
         });
       
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
       
       toast.success("Köszönjük a kitöltést!");
       navigate("/consultation-thankyou");
