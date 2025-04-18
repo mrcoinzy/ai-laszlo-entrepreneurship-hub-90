@@ -118,7 +118,6 @@ const Consultation = () => {
           <div className="bg-gradient-to-br from-white/8 to-white/2 backdrop-blur-sm border border-white/10 rounded-xl p-6 md:p-10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.3)]">
             <Form {...form}>
               <MultiStepForm onSubmit={form.handleSubmit(onSubmit)}>
-                {/* Step 1: Basic Information */}
                 <FormStep 
                   title="Alapvető információk" 
                   description="Ezek az adatok segítenek, hogy felvehessem Önnel a kapcsolatot."
@@ -181,7 +180,6 @@ const Consultation = () => {
                   </div>
                 </FormStep>
 
-                {/* Step 2: Business Information */}
                 <FormStep 
                   title="Vállalkozásának adatai" 
                   description="Segítsen jobban megérteni a vállalkozását."
@@ -279,7 +277,6 @@ const Consultation = () => {
                   </div>
                 </FormStep>
 
-                {/* Step 3: Goals and Challenges */}
                 <FormStep 
                   title="Célok és kihívások" 
                   description="Segítsen megérteni, mire van szüksége."
@@ -323,7 +320,6 @@ const Consultation = () => {
                   </div>
                 </FormStep>
 
-                {/* Step 4: Additional Information */}
                 <FormStep 
                   title="További információk a hatékonyabb segítségnyújtáshoz" 
                   description="Ezek az információk segítenek, hogy célzottabb tanácsokat adhassak."
