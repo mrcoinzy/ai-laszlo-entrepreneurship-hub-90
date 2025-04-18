@@ -7,6 +7,7 @@ interface MultiStepFormProps {
   children: React.ReactNode;
   onSubmit: (e: React.FormEvent) => void;
   className?: string;
+  isSubmitting?: boolean;
 }
 
 interface FormStepProps {
@@ -24,7 +25,7 @@ const FormStep = ({ children, title, description, className }: FormStepProps) =>
   </div>
 );
 
-const MultiStepForm = ({ children, onSubmit, className }: MultiStepFormProps) => {
+const MultiStepForm = ({ children, onSubmit, className, isSubmitting = false }: MultiStepFormProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [steps, setSteps] = useState<React.ReactElement[]>([]);
 
@@ -121,9 +122,13 @@ const MultiStepForm = ({ children, onSubmit, className }: MultiStepFormProps) =>
           {isLastStep ? (
             <button
               type="submit"
-              className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium hover:shadow-[0_8px_15px_-5px_rgba(138,43,226,0.5)] transition-all duration-300 hover:-translate-y-1"
+              disabled={isSubmitting}
+              className={cn(
+                "px-8 py-3 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium hover:shadow-[0_8px_15px_-5px_rgba(138,43,226,0.5)] transition-all duration-300 hover:-translate-y-1",
+                isSubmitting && "opacity-70 cursor-not-allowed"
+              )}
             >
-              Konzultáció kérése
+              {isSubmitting ? "Küldés folyamatban..." : "Konzultáció kérése"}
             </button>
           ) : (
             <button

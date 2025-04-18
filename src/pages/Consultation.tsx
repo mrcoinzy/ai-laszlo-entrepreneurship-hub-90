@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -21,6 +21,7 @@ const consultationFormSchema = z.object({
   name: z.string().min(2, { message: "A név legalább 2 karakter hosszú kell legyen" }),
   email: z.string().email({ message: "Érvénytelen email cím" }),
   website: z.string().optional(),
+  phone: z.string().optional(),
   businessType: z.string().min(1, { message: "Kérjük válasszon egy üzleti típust" }),
   businessDetails: z.string().optional(),
   mainGoal: z.string().min(1, { message: "Kérjük adja meg fő célját" }),
@@ -44,6 +45,7 @@ const Consultation = () => {
       name: "",
       email: "",
       website: "",
+      phone: "",
       businessType: "",
       businessDetails: "",
       mainGoal: "",
@@ -59,12 +61,36 @@ const Consultation = () => {
     
     try {
       setSubmitting(true);
+      console.log("Starting form submission with values:", values);
       
-      console.log("Submitting consultation:", values);
+      // Transform form data to match Supabase schema
+      const supabaseData = {
+        name: values.name,
+        email: values.email,
+        website: values.website || null,
+        phone: values.phone || null,
+        business_type: values.businessType,
+        online_presence: values.onlinePresence,
+        goal: values.mainGoal,
+        main_challenge: values.biggestChallenge,
+        services_interested: values.interestedServices,
+        budget: values.budgetRange[0]
+      };
       
-      // Simulate API call with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log("Transformed data for Supabase:", supabaseData);
       
+      // Insert data into Supabase
+      const { data, error } = await supabase
+        .from('consultations')
+        .insert(supabaseData)
+        .select();
+      
+      if (error) {
+        console.error("Error inserting data into Supabase:", error);
+        throw error;
+      }
+      
+      console.log("Successfully submitted to Supabase:", data);
       toast.success("Köszönjük a kitöltést!");
       navigate("/consultation-thankyou");
     } catch (error) {
@@ -153,6 +179,24 @@ const Consultation = () => {
                             <Input 
                               {...field} 
                               placeholder="https://az-on-oldala.hu" 
+                              className="border-white/20 bg-white/5 text-white"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-white">Telefonszám (opcionális)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              placeholder="+36 30 123 4567" 
                               className="border-white/20 bg-white/5 text-white"
                             />
                           </FormControl>
