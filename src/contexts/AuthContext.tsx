@@ -1,9 +1,8 @@
 
 import React from 'react';
 
-// This is a simplified AuthContext that does nothing
-// It's kept as a placeholder in case we want to add authentication back later
-// For now, it prevents errors when using the useAuth hook
+// Simple AuthContext that does nothing but provides the required context
+// to prevent errors in components that might still reference it
 
 interface AuthContextType {
   user: null;

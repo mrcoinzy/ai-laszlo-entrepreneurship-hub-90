@@ -1,6 +1,6 @@
 
 import React from "react"
-import { Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import Index from "@/pages/Index"
 import Consultation from "@/pages/Consultation"
 import ConsultationThankYou from "@/pages/ConsultationThankYou"

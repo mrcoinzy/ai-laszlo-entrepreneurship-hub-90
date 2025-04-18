@@ -28,7 +28,7 @@ interface DashboardSidebarProps {
 const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
-  const { userData } = useAuth();
+  const { user } = useAuth();
   
   // Check if screen is mobile
   useEffect(() => {
@@ -45,40 +45,40 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
   }, []);
 
   const handleLogout = () => {
-    // Navigate to the logout page
-    navigate("/logout");
+    // Navigate to the login page
+    navigate("/");
   };
 
   const navItems = [
     {
       icon: LayoutDashboard,
       label: "Dashboard",
-      href: "/dashboard",
+      href: "/"
     },
     {
       icon: FileText,
       label: "Projects",
-      href: "/dashboard/projects"
+      href: "/"
     },
     {
       icon: CreditCard,
       label: "Billing",
-      href: "/billing"
+      href: "/"
     },
     {
       icon: BarChart3,
       label: "Reports",
-      href: "/dashboard/reports"
+      href: "/"
     },
     {
       icon: MessageSquare,
       label: "Messages",
-      href: "/messages"
+      href: "/"
     },
     {
       icon: Settings,
       label: "Settings",
-      href: "/settings"
+      href: "/"
     }
   ];
 
@@ -145,8 +145,8 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
       <div className="p-4 border-t border-white/10 space-y-2">
         {(isOpen || isMobile) && (
           <div className="px-3 py-2">
-            <div className="text-sm font-medium">{userData?.full_name || 'User'}</div>
-            <div className="text-xs text-white/60">{userData?.email || ''}</div>
+            <div className="text-sm font-medium">Guest User</div>
+            <div className="text-xs text-white/60">guest@example.com</div>
           </div>
         )}
         
@@ -154,7 +154,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
           <li>
             {isOpen || isMobile ? (
               <Link
-                to="/help"
+                to="/"
                 className="flex items-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
               >
                 <HelpCircle size={18} className="mr-3" />
@@ -164,7 +164,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link
-                    to="/help"
+                    to="/"
                     className="flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
                   >
                     <HelpCircle size={18} />
