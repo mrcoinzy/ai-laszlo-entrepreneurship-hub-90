@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Linkedin, Mail, Twitter, MapPin, Phone } from "lucide-react";
@@ -139,7 +138,7 @@ const Footer = () => {
         <div className="border-t border-white/10 pt-8 text-center">
           <p className="text-white/50 text-sm">
             <TextEffect per="word" preset="fade" delay={0.4}>
-              © {new Date().getFullYear()} AI László. Minden jog fenntartva.
+              © {new Date().getFullYear().toString()} AI László. Minden jog fenntartva.
             </TextEffect>
           </p>
         </div>

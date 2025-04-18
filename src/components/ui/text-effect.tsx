@@ -13,7 +13,7 @@ import React from 'react';
 type PresetType = 'blur' | 'shake' | 'scale' | 'fade' | 'slide';
 
 type TextEffectProps = {
-  children: string;
+  children: React.ReactNode;
   per?: 'word' | 'char' | 'line';
   as?: keyof React.JSX.IntrinsicElements;
   variants?: {
@@ -159,14 +159,22 @@ export function TextEffect({
   onAnimationComplete,
   segmentWrapperClassName,
 }: TextEffectProps) {
-  let segments: string[];
+  // Convert children to string to ensure we can split it
+  const childrenText = React.Children.toArray(children).join('');
+  
+  let segments: string[] = [];
 
-  if (per === 'line') {
-    segments = children.split('\n');
-  } else if (per === 'word') {
-    segments = children.split(/(\s+)/);
+  if (typeof childrenText === 'string') {
+    if (per === 'line') {
+      segments = childrenText.split('\n');
+    } else if (per === 'word') {
+      segments = childrenText.split(/(\s+)/);
+    } else {
+      segments = childrenText.split('');
+    }
   } else {
-    segments = children.split('');
+    // If we couldn't convert to string correctly, just render the children directly
+    segments = [String(childrenText)];
   }
 
   const MotionTag = motion[as as keyof typeof motion] as typeof motion.div;
@@ -175,7 +183,7 @@ export function TextEffect({
     : { container: defaultContainerVariants, item: defaultItemVariants };
   const containerVariants = variants?.container || selectedVariants.container;
   const itemVariants = variants?.item || selectedVariants.item;
-  const ariaLabel = per === 'line' ? undefined : children;
+  const ariaLabel = per === 'line' ? undefined : childrenText;
 
   const stagger = defaultStaggerTimes[per];
 
