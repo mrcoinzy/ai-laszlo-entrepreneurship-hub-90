@@ -95,71 +95,76 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return false;
     
     try {
-      // First check if we already have userData cached
-      if (userData && userData.role === 'admin') {
+      // First, if we already have verified userData that shows admin
+      if (userData && userData.role === 'admin' && userData.status === 'approved') {
         return true;
       }
       
-      // Check if the user is registered as an admin in the metadata
-      const isAdminInMetadata = user.user_metadata && user.user_metadata.role === 'admin';
+      // Direct database check for most up-to-date status
+      const { data, error } = await supabase
+        .from('users')
+        .select('role, status')
+        .eq('id', user.id)
+        .single();
+        
+      if (error) {
+        console.error('Error during admin database check:', error);
+      }
       
-      // If admin in metadata, verify in database
-      if (isAdminInMetadata) {
-        const refreshedData = await fetchUserData(user.id);
-        
-        // If found in database and is admin, update state and return true
-        if (refreshedData && refreshedData.role === 'admin') {
-          setIsAdmin(true);
-          setUserData(refreshedData);
-          
-          // Also update status
-          setIsPending(refreshedData.status === 'pending');
-          setIsApproved(refreshedData.status === 'approved');
-          
-          return true;
-        }
-        
-        // If admin in metadata but not in database yet, create the record
-        if (!refreshedData) {
-          try {
-            const { data, error } = await supabase
-              .from('users')
-              .insert({
-                id: user.id,
-                email: user.email,
-                full_name: user.user_metadata.full_name || '',
-                role: 'admin',
-                status: 'approved'
-              })
-              .select()
-              .single();
-            
-            if (error) throw error;
-            
-            if (data) {
-              setUserData(data as UserData);
-              setIsAdmin(true);
-              setIsApproved(true);
-              setIsPending(false);
-              return true;
-            }
-          } catch (error) {
-            console.error("Error creating admin user record:", error);
+      // If we found a record and it shows admin status
+      if (data && data.role === 'admin' && data.status === 'approved') {
+        // Update local state
+        if (userData) {
+          setUserData({...userData, role: data.role, status: data.status});
+        } else {
+          // Fetch full user data if we don't have it
+          const fullUserData = await fetchUserData(user.id);
+          if (fullUserData) {
+            setUserData(fullUserData);
           }
         }
-      }
-      
-      // Final database check - important for cases where metadata doesn't have role
-      const refreshedData = await fetchUserData(user.id);
-      if (refreshedData && refreshedData.role === 'admin') {
-        setIsAdmin(true);
-        setUserData(refreshedData);
         
-        // Also update status
-        setIsPending(refreshedData.status === 'pending');
-        setIsApproved(refreshedData.status === 'approved');
+        setIsAdmin(true);
+        setIsApproved(data.status === 'approved');
+        setIsPending(data.status === 'pending');
         
         return true;
+      }
+      
+      // Check if admin in user metadata
+      const isAdminInMetadata = user.user_metadata && user.user_metadata.role === 'admin';
+      
+      // If admin in metadata but not found in database, create the record
+      if (isAdminInMetadata && (!data || data.role !== 'admin')) {
+        try {
+          const { data: insertData, error: insertError } = await supabase
+            .from('users')
+            .upsert({
+              id: user.id,
+              email: user.email || '',
+              full_name: user.user_metadata.full_name || '',
+              role: 'admin',
+              status: 'approved'
+            }, { onConflict: 'id' })
+            .select()
+            .single();
+          
+          if (insertError) {
+            console.error("Error creating admin user record:", insertError);
+            return false;
+          }
+          
+          if (insertData) {
+            setUserData(insertData as UserData);
+            setIsAdmin(true);
+            setIsApproved(true);
+            setIsPending(false);
+            return true;
+          }
+        } catch (error) {
+          console.error("Error creating admin user record:", error);
+          return false;
+        }
       }
       
       return false;
@@ -276,6 +281,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             navigate('/dashboard');
             toast.success("Login successful!");
           }
+        } else if (data.user.user_metadata?.role === 'admin') {
+          // Create user record for admins who don't have one yet
+          try {
+            const { error: insertError } = await supabase
+              .from('users')
+              .upsert({
+                id: data.user.id,
+                email: data.user.email || '',
+                full_name: data.user.user_metadata.full_name || '',
+                role: 'admin',
+                status: 'approved'
+              }, { onConflict: 'id' });
+              
+            if (!insertError) {
+              setIsAdmin(true);
+              setIsApproved(true);
+              navigate('/admin');
+              toast.success("Welcome, Admin!");
+            }
+          } catch (error) {
+            console.error("Error creating admin user record during login:", error);
+            navigate('/dashboard');
+          }
+        } else {
+          navigate('/dashboard');
+          toast.success("Login successful!");
         }
       }
       
@@ -291,6 +322,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Signing out user...");
       
+      // First clean up local state
       setUser(null);
       setSession(null);
       setUserData(null);
@@ -298,13 +330,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsPending(false);
       setIsApproved(false);
       
+      // Then sign out from Supabase
+      await supabase.auth.signOut();
+      
       localStorage.removeItem('supabase.auth.token');
       sessionStorage.clear();
       
-      console.log("Local auth state cleared");
+      console.log("Sign out completed");
+      navigate('/login');
       return Promise.resolve();
     } catch (error: any) {
-      console.error("Error during local state cleanup in signOut:", error);
+      console.error("Error during signOut:", error);
       return Promise.resolve();
     }
   };

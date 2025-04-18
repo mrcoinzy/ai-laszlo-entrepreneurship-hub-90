@@ -39,7 +39,6 @@ type FormData = z.infer<typeof formSchema>;
 const AdminRegister = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const [registrationTimeout, setRegistrationTimeout] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
   const { adminCheck } = useAuth();
   
@@ -71,17 +70,6 @@ const AdminRegister = () => {
   const onSubmit = async (values: FormData) => {
     setIsLoading(true);
     
-    if (registrationTimeout) {
-      clearTimeout(registrationTimeout);
-    }
-    
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-      toast.error("Registration request timed out. Please try again.");
-    }, 15000);
-    
-    setRegistrationTimeout(timeout);
-    
     try {
       console.log("Starting admin registration with:", values.email);
       
@@ -105,7 +93,7 @@ const AdminRegister = () => {
       
       console.log("Admin user created:", authData.user.id);
       
-      // Ensure admin record exists in the users table
+      // Create or update the admin user record directly
       const { error: userError } = await supabase
         .from('users')
         .upsert({
@@ -117,12 +105,11 @@ const AdminRegister = () => {
         }, { onConflict: 'id' });
       
       if (userError) {
-        console.warn("Warning: Error ensuring admin record:", userError);
-        // Continue despite this error - we'll rely on the trigger
+        console.error("Error ensuring admin record:", userError);
+        toast.error("Admin record creation failed. Please try again.");
+        setIsLoading(false);
+        return;
       }
-      
-      clearTimeout(timeout);
-      setRegistrationTimeout(null);
       
       toast.success("Admin registration successful! Signing in...");
       
@@ -134,27 +121,19 @@ const AdminRegister = () => {
 
       if (signInError) throw signInError;
       
-      console.log("Admin registration complete, verifying admin status");
+      // Reset form after successful registration
+      form.reset();
       
-      // Verify admin status before redirecting
-      const isAdmin = await adminCheck();
-      
-      console.log("Admin check result:", isAdmin);
-      
-      // Force a delay to allow the database trigger to execute
+      // Redirect to admin page
+      toast.success("Registration successful! Redirecting to admin panel...");
       setTimeout(() => {
         navigate("/admin");
-      }, 500);
+      }, 1000);
       
     } catch (error: any) {
       console.error("Registration error:", error);
       
-      clearTimeout(timeout);
-      setRegistrationTimeout(null);
-      
-      if (error.message.includes('timeout')) {
-        toast.error("Connection to server timed out. Please check your internet connection and try again.");
-      } else if (error.message.includes('already registered')) {
+      if (error.message?.includes('already registered')) {
         toast.error("Email is already registered. Try logging in instead.");
       } else {
         toast.error(error.message || "Registration failed. Please try again.");

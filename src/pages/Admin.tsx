@@ -11,66 +11,75 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import ConsultationsList from "@/components/admin/ConsultationsList";
 import EmailList from "@/components/admin/EmailList";
+import { supabase } from "@/lib/supabase";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("consultations");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
-  const { user, loading, isAdmin, adminCheck } = useAuth();
+  const { user, loading, isAdmin, adminCheck, userData } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAdminAccess = async () => {
-      const timeoutId = setTimeout(() => {
-        console.log("Admin auth check timeout reached, redirecting to login");
-        navigate("/login");
-        toast.error("Authentication timeout. Please login again.");
-      }, 5000);
-      
       try {
-        if (!loading) {
-          if (!user) {
-            navigate("/login");
-            toast.error("Please login to access the admin panel");
-            return;
-          }
-          
-          // Check if user is admin, with retries
-          let retries = 0;
-          let isUserAdmin = false;
-          
-          while (retries < 3 && !isUserAdmin) {
-            isUserAdmin = await adminCheck();
-            
-            if (!isUserAdmin) {
-              console.log(`Admin check failed, retry ${retries + 1}/3`);
-              // Short delay between retries
-              await new Promise(resolve => setTimeout(resolve, 500));
-              retries++;
-            }
-          }
-          
-          if (!isUserAdmin) {
-            console.log("User is not an admin after retries, redirecting");
-            navigate("/dashboard");
-            toast.error("Unauthorized: Admin access required");
-            return;
-          }
-          
-          console.log("Admin access verified successfully");
-          setIsAuthChecking(false);
+        if (loading) return;
+        
+        if (!user) {
+          console.log("No user found, redirecting to login");
+          navigate("/login");
+          toast.error("Please login to access the admin panel");
+          return;
         }
+        
+        // Check if we already have userData and it indicates admin status
+        if (userData?.role === 'admin' && userData?.status === 'approved') {
+          console.log("Admin access confirmed via userData");
+          setIsAuthChecking(false);
+          return;
+        }
+        
+        // Direct database check for admin status
+        const { data, error } = await supabase
+          .from('users')
+          .select('role, status')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) {
+          console.error("Error checking admin status:", error);
+          navigate("/dashboard");
+          toast.error("Error verifying admin access");
+          return;
+        }
+        
+        if (data?.role === 'admin' && data?.status === 'approved') {
+          console.log("Admin access verified via direct DB check");
+          setIsAuthChecking(false);
+          return;
+        }
+        
+        // Final check using adminCheck helper
+        const isUserAdmin = await adminCheck();
+        if (isUserAdmin) {
+          console.log("Admin access verified via adminCheck");
+          setIsAuthChecking(false);
+          return;
+        }
+        
+        console.log("User is not an admin, redirecting");
+        navigate("/dashboard");
+        toast.error("Unauthorized: Admin access required");
+        
       } catch (error) {
         console.error("Error checking admin access:", error);
         navigate("/login");
         toast.error("Authentication error. Please login again.");
-      } finally {
-        clearTimeout(timeoutId);
       }
     };
     
     checkAdminAccess();
-  }, [user, loading, isAdmin, navigate, adminCheck]);
+  }, [user, loading, navigate, adminCheck, userData]);
   
   if (loading || isAuthChecking) {
     return (
