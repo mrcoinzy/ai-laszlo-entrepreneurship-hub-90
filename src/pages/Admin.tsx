@@ -1,30 +1,25 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AdminDashboard from "@/components/admin/AdminDashboard";
-import ClientsManagement from "@/components/admin/ClientsManagement";
-import ProjectsManagement from "@/components/admin/ProjectsManagement";
-import MessagingInterface from "@/components/admin/MessagingInterface";
 import { Card } from "@/components/ui/card";
-import { Menu, AlertCircle, Loader2 } from "lucide-react";
+import { Menu, AlertCircle, Loader2, Mail, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import ConsultationsList from "@/components/admin/ConsultationsList";
+import EmailList from "@/components/admin/EmailList";
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("consultations");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
   const { user, loading, isAdmin, adminCheck } = useAuth();
   const navigate = useNavigate();
 
-  // Check authentication and admin status on mount
   useEffect(() => {
     const checkAdminAccess = async () => {
-      // Start a timeout to prevent infinite loading
       const timeoutId = setTimeout(() => {
         console.log("Admin auth check timeout reached, redirecting to login");
         navigate("/login");
@@ -33,14 +28,12 @@ const Admin = () => {
       
       try {
         if (!loading) {
-          // If not authenticated at all
           if (!user) {
             navigate("/login");
             toast.error("Please login to access the admin panel");
             return;
           }
           
-          // Verify admin status with a fresh check
           const isUserAdmin = await adminCheck();
           
           if (!isUserAdmin) {
@@ -49,7 +42,6 @@ const Admin = () => {
             return;
           }
           
-          // User is authenticated and is an admin
           setIsAuthChecking(false);
         }
       } catch (error) {
@@ -64,7 +56,6 @@ const Admin = () => {
     checkAdminAccess();
   }, [user, loading, isAdmin, navigate, adminCheck]);
   
-  // If still loading or checking auth, show loading state
   if (loading || isAuthChecking) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center">
@@ -75,7 +66,6 @@ const Admin = () => {
     );
   }
   
-  // If not admin (this shouldn't happen due to the redirect above, but just as a fallback)
   if (!isAdmin) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center">
@@ -106,34 +96,32 @@ const Admin = () => {
         <div className="flex flex-col space-y-4 mb-8 hidden md:flex">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold gradient-text">Admin Panel</h1>
           <p className="text-white/70">
-            Manage clients, projects, and track your performance
+            Kezelje a konzultációs kéréseket és email feliratkozókat
           </p>
         </div>
 
         <Card className="bg-accent/30 border-accent p-1 mb-8">
           <Tabs 
-            defaultValue="dashboard" 
+            defaultValue="consultations" 
             value={activeTab} 
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 mb-4">
-              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-              <TabsTrigger value="clients">Clients</TabsTrigger>
-              <TabsTrigger value="projects">Projects</TabsTrigger>
-              <TabsTrigger value="messages">Messages</TabsTrigger>
+            <TabsList className="grid grid-cols-2">
+              <TabsTrigger value="consultations">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Konzultációk
+              </TabsTrigger>
+              <TabsTrigger value="emails">
+                <Mail className="h-4 w-4 mr-2" />
+                Email Lista
+              </TabsTrigger>
             </TabsList>
-            <TabsContent value="dashboard" className="p-2 md:p-4">
-              <AdminDashboard />
+            <TabsContent value="consultations" className="p-2 md:p-4">
+              <ConsultationsList />
             </TabsContent>
-            <TabsContent value="clients" className="p-2 md:p-4">
-              <ClientsManagement />
-            </TabsContent>
-            <TabsContent value="projects" className="p-2 md:p-4">
-              <ProjectsManagement />
-            </TabsContent>
-            <TabsContent value="messages" className="p-2 md:p-4">
-              <MessagingInterface />
+            <TabsContent value="emails" className="p-2 md:p-4">
+              <EmailList />
             </TabsContent>
           </Tabs>
         </Card>
