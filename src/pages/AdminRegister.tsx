@@ -44,13 +44,19 @@ const AdminRegister = () => {
   
   useEffect(() => {
     const checkConnection = async () => {
-      const result = await testConnection();
-      if (!result.success) {
-        setConnectionError('Unable to connect to the server. Please try again later.');
-        toast.error('Server connection issue detected');
-      } else {
-        setConnectionError(null);
-        toast.success('Connected to Supabase successfully');
+      try {
+        const result = await testConnection();
+        if (!result.success) {
+          setConnectionError('Unable to connect to the server. Please try again later.');
+          toast.error('Server connection issue detected');
+        } else {
+          setConnectionError(null);
+          toast.success('Connected to Supabase successfully');
+        }
+      } catch (error) {
+        console.error("Connection test error:", error);
+        setConnectionError('Error testing connection. Please try again later.');
+        toast.error('Connection test failed');
       }
     };
     
@@ -68,6 +74,8 @@ const AdminRegister = () => {
   });
   
   const onSubmit = async (values: FormData) => {
+    if (isLoading) return; // Prevent multiple submissions
+    
     setIsLoading(true);
     
     try {
@@ -106,9 +114,7 @@ const AdminRegister = () => {
       
       if (userError) {
         console.error("Error ensuring admin record:", userError);
-        toast.error("Admin record creation failed. Please try again.");
-        setIsLoading(false);
-        return;
+        throw new Error(userError.message || "Failed to create admin record");
       }
       
       toast.success("Admin registration successful! Signing in...");
