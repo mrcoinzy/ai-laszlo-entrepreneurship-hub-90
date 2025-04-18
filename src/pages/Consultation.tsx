@@ -1,10 +1,10 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { CheckIcon, ArrowDownIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import Navigation from "@/components/Navigation";

@@ -9,123 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      consultations: {
-        Row: {
-          budget_range: number | null
-          business_type: string
-          challenge: string | null
-          created_at: string | null
-          email: string
-          id: string
-          interested_services: string[] | null
-          main_goal: string
-          name: string
-          online_presence: string | null
-          website: string | null
-        }
-        Insert: {
-          budget_range?: number | null
-          business_type: string
-          challenge?: string | null
-          created_at?: string | null
-          email: string
-          id?: string
-          interested_services?: string[] | null
-          main_goal: string
-          name: string
-          online_presence?: string | null
-          website?: string | null
-        }
-        Update: {
-          budget_range?: number | null
-          business_type?: string
-          challenge?: string | null
-          created_at?: string | null
-          email?: string
-          id?: string
-          interested_services?: string[] | null
-          main_goal?: string
-          name?: string
-          online_presence?: string | null
-          website?: string | null
-        }
-        Relationships: []
-      }
-      email_subscribers: {
-        Row: {
-          created_at: string | null
-          email: string
-          id: string
-          source: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          id?: string
-          source?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          id?: string
-          source?: string | null
-        }
-        Relationships: []
-      }
-      pdf_downloads: {
-        Row: {
-          created_at: string
-          download_date: string
-          file_name: string
-          id: string
-          user_email: string
-        }
-        Insert: {
-          created_at?: string
-          download_date?: string
-          file_name: string
-          id?: string
-          user_email: string
-        }
-        Update: {
-          created_at?: string
-          download_date?: string
-          file_name?: string
-          id?: string
-          user_email?: string
-        }
-        Relationships: []
-      }
-      users: {
-        Row: {
-          created_at: string | null
-          email: string
-          full_name: string | null
-          id: string
-          role: Database["public"]["Enums"]["user_role"] | null
-          status: Database["public"]["Enums"]["user_status"] | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          full_name?: string | null
-          id: string
-          role?: Database["public"]["Enums"]["user_role"] | null
-          status?: Database["public"]["Enums"]["user_status"] | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          full_name?: string | null
-          id?: string
-          role?: Database["public"]["Enums"]["user_role"] | null
-          status?: Database["public"]["Enums"]["user_status"] | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
@@ -145,7 +29,7 @@ export type Database = {
       }
     }
     Enums: {
-      user_role: "client" | "admin"
+      user_role: "admin" | "client"
       user_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
@@ -262,7 +146,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      user_role: ["client", "admin"],
+      user_role: ["admin", "client"],
       user_status: ["pending", "approved", "rejected"],
     },
   },
