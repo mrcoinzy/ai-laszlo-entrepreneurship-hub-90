@@ -61,7 +61,7 @@ export const createTrackedPdfDownload = (pdfUrl: string, fileName: string, userE
  * @returns A wrapped component that tracks PDF downloads
  */
 export const withPdfTracking = (Component: React.ComponentType<any>) => {
-  return (props: any) => {
+  return function WrappedComponent(props: any) {
     const handleDownload = async (pdfUrl: string, fileName: string, userEmail: string) => {
       await trackPdfDownload(userEmail, fileName);
       // Continue with the original download functionality

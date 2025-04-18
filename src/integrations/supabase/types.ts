@@ -72,6 +72,30 @@ export type Database = {
         }
         Relationships: []
       }
+      pdf_downloads: {
+        Row: {
+          created_at: string
+          download_date: string
+          file_name: string
+          id: string
+          user_email: string
+        }
+        Insert: {
+          created_at?: string
+          download_date?: string
+          file_name: string
+          id?: string
+          user_email: string
+        }
+        Update: {
+          created_at?: string
+          download_date?: string
+          file_name?: string
+          id?: string
+          user_email?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           created_at: string | null
