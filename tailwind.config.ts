@@ -53,11 +53,6 @@ export default {
           500: "#3B82F6",
           600: "#2563EB", 
         },
-        "--color-1": "300deg 100% 50%",
-        "--color-2": "259deg 100% 50%",
-        "--color-3": "220deg 100% 50%",
-        "--color-4": "180deg 100% 50%",
-        "--color-5": "40deg 100% 50%",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -73,19 +68,10 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        rainbow: {
-          "0%, 100%": {
-            "background-position": "0% 50%",
-          },
-          "50%": {
-            "background-position": "100% 50%",
-          },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        rainbow: "rainbow 12s linear infinite",
       },
     },
   },

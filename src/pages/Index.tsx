@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import MiniIntroSection from "@/components/MiniIntroSection";
@@ -13,7 +13,6 @@ import LeadMagnetSection from "@/components/LeadMagnetSection";
 import FinalCTASection from "@/components/FinalCTASection";
 import Footer from "@/components/Footer";
 import ScrollIndicator from "@/components/ScrollIndicator";
-import { TextEffectPerChar, TextEffectWithPreset, TextEffectWithCustomVariants, TextEffectWithCustomDelay, TextEffectPerLine, TextEffectWithExit } from "@/components/ui/text-effect-demo";
 
 const Index = () => {
   return (

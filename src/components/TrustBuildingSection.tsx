@@ -3,7 +3,6 @@ import React from "react";
 import { ShieldCheck, UserCheck, Zap, Target, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import CTAButton from "@/components/ui/cta-button";
-import { TextEffect } from "@/components/ui/text-effect";
 
 const TrustBuildingSection = () => {
   const valuePropositions = [
@@ -78,20 +77,14 @@ const TrustBuildingSection = () => {
           <div className="text-center mb-16">
             <div className="inline-flex mb-4">
               <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                <TextEffect per="char" preset="fade">
-                  Miért válasszon engem?
-                </TextEffect>
+                Miért válasszon engem?
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
-              <TextEffect per="word" preset="slide">
-                Ön nem csupán egy újabb projekt – Ön a prioritás.
-              </TextEffect>
+              Ön nem csupán egy újabb projekt – <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Ön a prioritás</span>.
             </h2>
             <p className="text-lg text-white/70 max-w-3xl mx-auto">
-              <TextEffect per="word" preset="fade" delay={0.3}>
-                Ellentétben egy ügynökséggel, én közvetlenül Önnel dolgozom – az alapoktól építem fel az online sikerét, teljes fókuszal és felelősséggel.
-              </TextEffect>
+              Ellentétben egy ügynökséggel, én közvetlenül Önnel dolgozom – az alapoktól építem fel az online sikerét, teljes fókuszal és felelősséggel.
             </p>
           </div>
           
@@ -112,16 +105,8 @@ const TrustBuildingSection = () => {
                   {prop.icon}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-2 text-white">
-                    <TextEffect per="word" preset="fade" delay={0.3 + index * 0.1}>
-                      {prop.title}
-                    </TextEffect>
-                  </h3>
-                  <p className="text-white/70">
-                    <TextEffect per="word" preset="fade" delay={0.4 + index * 0.1}>
-                      {prop.description}
-                    </TextEffect>
-                  </p>
+                  <h3 className="text-xl font-bold mb-2 text-white">{prop.title}</h3>
+                  <p className="text-white/70">{prop.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -135,14 +120,10 @@ const TrustBuildingSection = () => {
             transition={{ delay: 0.4, duration: 0.5 }}
           >
             <h3 className="text-2xl font-bold mb-3 text-white">
-              <TextEffect per="word" preset="slide">
-                Nem fizet, amíg Ön nem mondja: „Igen – ez működik."
-              </TextEffect>
+              Nem fizet, amíg Ön nem mondja: <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">„Igen – ez működik."</span>
             </h3>
             <p className="text-white/70">
-              <TextEffect per="word" preset="fade" delay={0.3}>
-                Ez nem marketing szöveg – így dolgozom.
-              </TextEffect>
+              Ez nem marketing szöveg – így dolgozom.
             </p>
           </motion.div>
           
@@ -154,18 +135,9 @@ const TrustBuildingSection = () => {
             transition={{ delay: 0.6, duration: 0.5 }}
           >
             <h3 className="text-2xl font-medium mb-6 text-white">
-              <TextEffect per="word" preset="fade">
-                Készen áll egy olyan webes jelenlétre, amely valóban az Ön céljaira van szabva?
-              </TextEffect>
+              Készen áll egy olyan webes jelenlétre, amely valóban az Ön céljaira van szabva?
             </h3>
-            <CTAButton 
-              text={
-                <TextEffect per="word" preset="fade" delay={0.2}>
-                  Kérek egy konzultációt
-                </TextEffect>
-              } 
-              to="/contact" 
-            />
+            <CTAButton text="Kérek egy konzultációt" to="/contact" />
           </motion.div>
         </motion.div>
       </div>

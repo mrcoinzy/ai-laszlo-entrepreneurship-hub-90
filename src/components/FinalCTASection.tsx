@@ -2,10 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, Calendar } from "lucide-react";
-import { Link } from "react-router-dom";
-import { RainbowButton } from "@/components/ui/rainbow-button";
-import { Button } from "@/components/ui/button";
-import { TextEffect } from "@/components/ui/text-effect";
+import CTAButton from "@/components/ui/cta-button";
 
 const FinalCTASection = () => {
   return (
@@ -27,22 +24,16 @@ const FinalCTASection = () => {
         >
           <div className="inline-flex mb-4">
             <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              <TextEffect per="char" preset="fade">
-                Egyszerű következő lépés
-              </TextEffect>
+              Egyszerű következő lépés
             </span>
           </div>
           
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
-            <TextEffect per="word" preset="slide">
-              Kérek egy konzultációt
-            </TextEffect>
+            Kérek egy konzultációt
           </h2>
           
           <p className="text-lg text-white/70 max-w-3xl mx-auto mb-12">
-            <TextEffect per="word" preset="fade" delay={0.3}>
-              48 órán belül személyesen felveszem Önnel a kapcsolatot.
-            </TextEffect>
+            48 órán belül személyesen felveszem Önnel a kapcsolatot.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
@@ -59,25 +50,13 @@ const FinalCTASection = () => {
                 </div>
               </div>
               
-              <h3 className="text-xl font-bold mb-4 text-white">
-                <TextEffect per="word" preset="fade" delay={0.3}>
-                  Üzenet küldése
-                </TextEffect>
-              </h3>
+              <h3 className="text-xl font-bold mb-4 text-white">Üzenet küldése</h3>
               
               <p className="text-white/70 mb-6">
-                <TextEffect per="word" preset="fade" delay={0.4}>
-                  Küldjön üzenetet, és részletezze projektjét, én pedig 48 órán belül válaszolok.
-                </TextEffect>
+                Küldjön üzenetet, és részletezze projektjét, én pedig 48 órán belül válaszolok.
               </p>
               
-              <Link to="/contact">
-                <Button variant="secondary" className="px-8 py-6 rounded-xl text-base">
-                  <TextEffect per="word" preset="fade" delay={0.5}>
-                    Üzenet küldése
-                  </TextEffect>
-                </Button>
-              </Link>
+              <CTAButton text="Üzenet küldése" to="/contact" variant="secondary" />
             </motion.div>
             
             <motion.div
@@ -93,25 +72,13 @@ const FinalCTASection = () => {
                 </div>
               </div>
               
-              <h3 className="text-xl font-bold mb-4 text-white">
-                <TextEffect per="word" preset="fade" delay={0.3}>
-                  Konzultáció foglalása
-                </TextEffect>
-              </h3>
+              <h3 className="text-xl font-bold mb-4 text-white">Konzultáció foglalása</h3>
               
               <p className="text-white/70 mb-6">
-                <TextEffect per="word" preset="fade" delay={0.4}>
-                  Foglaljon egy 30 perces ingyenes konzultációt, hogy megbeszéljük az Ön projektjét és céljait.
-                </TextEffect>
+                Foglaljon egy 30 perces ingyenes konzultációt, hogy megbeszéljük az Ön projektjét és céljait.
               </p>
               
-              <Link to="/contact">
-                <RainbowButton>
-                  <TextEffect per="word" preset="fade" delay={0.5}>
-                    Időpont foglalása
-                  </TextEffect>
-                </RainbowButton>
-              </Link>
+              <CTAButton text="Időpont foglalása" to="/contact" variant="primary" />
             </motion.div>
           </div>
         </motion.div>

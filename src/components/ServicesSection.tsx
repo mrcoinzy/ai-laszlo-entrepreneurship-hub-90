@@ -3,7 +3,6 @@ import React from "react";
 import { Code, Target, LineChart, ChevronRight } from "lucide-react";
 import CTAButton from "@/components/ui/cta-button";
 import { motion } from "framer-motion";
-import { TextEffect } from "@/components/ui/text-effect";
 
 const ServicesSection = () => {
   const services = [
@@ -78,20 +77,14 @@ const ServicesSection = () => {
         >
           <div className="inline-flex mb-4">
             <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              <TextEffect per="char" preset="fade">
-                Szolgáltatások
-              </TextEffect>
+              Szolgáltatások
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
-            <TextEffect per="word" preset="slide">
-              Szolgáltatásaim, amelyek eredményeket hoznak
-            </TextEffect>
+            Szolgáltatásaim, amelyek eredményeket hoznak
           </h2>
           <p className="text-lg text-white/70">
-            <TextEffect per="word" preset="fade" delay={0.3}>
-              Minden, amire szüksége van egy magas konverziós online jelenléthez – egy helyről, AI támogatással.
-            </TextEffect>
+            Minden, amire szüksége van egy magas konverziós online jelenléthez – egy helyről, AI támogatással.
           </p>
         </motion.div>
         
@@ -112,16 +105,8 @@ const ServicesSection = () => {
                 {service.icon}
                 <div className="absolute inset-0 bg-purple-500/10 rounded-full filter blur-xl opacity-0 group-hover:opacity-70 transition-opacity duration-300 scale-75 group-hover:scale-110"></div>
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-white">
-                <TextEffect per="word" preset="fade" delay={0.4 + index * 0.2}>
-                  {service.title}
-                </TextEffect>
-              </h3>
-              <p className="text-white/70">
-                <TextEffect per="word" preset="fade" delay={0.6 + index * 0.2}>
-                  {service.description}
-                </TextEffect>
-              </p>
+              <h3 className="text-xl font-semibold mb-3 text-white">{service.title}</h3>
+              <p className="text-white/70">{service.description}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -134,11 +119,7 @@ const ServicesSection = () => {
           transition={{ delay: 0.6, duration: 0.5 }}
         >
           <CTAButton 
-            text={
-              <TextEffect per="word" preset="fade">
-                Nem biztos benne, mire van szüksége? Beszéljünk – foglaljon ingyenes konzultációt
-              </TextEffect>
-            } 
+            text="Nem biztos benne, mire van szüksége? Beszéljünk – foglaljon ingyenes konzultációt" 
             to="/contact" 
           />
         </motion.div>

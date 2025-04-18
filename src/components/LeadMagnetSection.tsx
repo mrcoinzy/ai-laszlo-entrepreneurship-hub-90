@@ -1,10 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { RainbowButton } from "@/components/ui/rainbow-button";
-import { Button } from "@/components/ui/button";
-import { TextEffect } from "@/components/ui/text-effect";
+import CTAButton from "@/components/ui/cta-button";
 
 const LeadMagnetSection = () => {
   return (
@@ -36,13 +33,9 @@ const LeadMagnetSection = () => {
               transition={{ delay: 0.2, duration: 0.6 }}
               className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent"
             >
-              <TextEffect per="word" preset="slide">
-                Nem fizet, amíg Ön nem mondja:
-              </TextEffect>
+              Nem fizet, amíg Ön nem mondja:
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mt-2">
-                <TextEffect per="word" preset="slide" delay={0.3}>
-                  „Igen – ez működik."
-                </TextEffect>
+                „Igen – ez működik."
               </span>
             </motion.h2>
             
@@ -53,9 +46,7 @@ const LeadMagnetSection = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="text-lg text-white/70 max-w-3xl mx-auto mb-10"
             >
-              <TextEffect per="word" preset="fade" delay={0.5}>
-                Ez nem marketing szöveg – így dolgozom.
-              </TextEffect>
+              Ez nem marketing szöveg – így dolgozom.
             </motion.p>
             
             <motion.div
@@ -65,13 +56,7 @@ const LeadMagnetSection = () => {
               transition={{ delay: 0.6, duration: 0.5 }}
               className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
             >
-              <Link to="/contact">
-                <RainbowButton>
-                  <TextEffect per="word" preset="fade" delay={0.7}>
-                    Kérek egy konzultációt
-                  </TextEffect>
-                </RainbowButton>
-              </Link>
+              <CTAButton text="Kérek egy konzultációt" to="/contact" />
             </motion.div>
           </motion.div>
           
@@ -84,25 +69,9 @@ const LeadMagnetSection = () => {
             className="mt-16 text-center"
           >
             <h3 className="text-2xl md:text-3xl font-bold mb-6 text-white">
-              <TextEffect per="word" preset="fade">
-                Készen áll egy olyan webes jelenlétre, amely valóban az
-              </TextEffect> 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                <TextEffect per="word" preset="fade" delay={0.3}>
-                  Ön céljaira
-                </TextEffect>
-              </span> 
-              <TextEffect per="word" preset="fade" delay={0.4}>
-                van szabva?
-              </TextEffect>
+              Készen áll egy olyan webes jelenlétre, amely valóban az <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Ön céljaira</span> van szabva?
             </h3>
-            <Link to="/courses">
-              <Button variant="outline" className="px-8 py-6 rounded-xl text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
-                <TextEffect per="word" preset="fade" delay={0.5}>
-                  Nézze meg, hogyan dolgozom
-                </TextEffect>
-              </Button>
-            </Link>
+            <CTAButton text="Nézze meg, hogyan dolgozom" to="/courses" variant="outline" />
           </motion.div>
         </div>
       </div>
