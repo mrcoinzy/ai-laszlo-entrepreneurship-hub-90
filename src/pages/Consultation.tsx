@@ -21,7 +21,6 @@ const consultationFormSchema = z.object({
   name: z.string().min(2, { message: "A név legalább 2 karakter hosszú kell legyen" }),
   email: z.string().email({ message: "Érvénytelen email cím" }),
   website: z.string().optional(),
-  phone: z.string().optional(),
   businessType: z.string().min(1, { message: "Kérjük válasszon egy üzleti típust" }),
   businessDetails: z.string().optional(),
   mainGoal: z.string().min(1, { message: "Kérjük adja meg fő célját" }),
@@ -45,7 +44,6 @@ const Consultation = () => {
       name: "",
       email: "",
       website: "",
-      phone: "",
       businessType: "",
       businessDetails: "",
       mainGoal: "",
@@ -57,18 +55,16 @@ const Consultation = () => {
   });
 
   const onSubmit = async (values: ConsultationFormValues) => {
-    if (submitting) return; // Prevent multiple submissions
+    if (submitting) return;
     
     try {
       setSubmitting(true);
       console.log("Starting form submission with values:", values);
       
-      // Transform form data to match Supabase schema exactly
       const supabaseData = {
         name: values.name,
         email: values.email,
         website: values.website || null,
-        phone: values.phone || null,
         business_type: values.businessType,
         online_presence: values.onlinePresence,
         goal: values.mainGoal,
@@ -79,11 +75,9 @@ const Consultation = () => {
       
       console.log("Transformed data for Supabase:", supabaseData);
       
-      // Test connection before attempting insert
       const connectionTest = await testConnection();
       console.log("Connection test result:", connectionTest);
       
-      // Insert data into Supabase without auth
       const { data, error } = await supabase
         .from('consultations')
         .insert(supabaseData)
@@ -105,7 +99,6 @@ const Consultation = () => {
     }
   };
 
-  // Helper function to test Supabase connection
   const testConnection = async () => {
     try {
       const { data, error } = await supabase.from('consultations').select('id').limit(1);
@@ -194,24 +187,6 @@ const Consultation = () => {
                             <Input 
                               {...field} 
                               placeholder="https://az-on-oldala.hu" 
-                              className="border-white/20 bg-white/5 text-white"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-white">Telefonszám (opcionális)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              {...field} 
-                              placeholder="+36 30 123 4567" 
                               className="border-white/20 bg-white/5 text-white"
                             />
                           </FormControl>
