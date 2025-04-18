@@ -2,7 +2,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, Calendar } from "lucide-react";
-import CTAButton from "@/components/ui/cta-button";
+import { Link } from "react-router-dom";
+import { RainbowButton } from "@/components/ui/rainbow-button";
+import { Button } from "@/components/ui/button";
 
 const FinalCTASection = () => {
   return (
@@ -56,7 +58,9 @@ const FinalCTASection = () => {
                 Küldjön üzenetet, és részletezze projektjét, én pedig 48 órán belül válaszolok.
               </p>
               
-              <CTAButton text="Üzenet küldése" to="/contact" variant="secondary" />
+              <Link to="/contact">
+                <Button variant="secondary" className="px-8 py-6 rounded-xl text-base">Üzenet küldése</Button>
+              </Link>
             </motion.div>
             
             <motion.div
@@ -78,7 +82,9 @@ const FinalCTASection = () => {
                 Foglaljon egy 30 perces ingyenes konzultációt, hogy megbeszéljük az Ön projektjét és céljait.
               </p>
               
-              <CTAButton text="Időpont foglalása" to="/contact" variant="primary" />
+              <Link to="/contact">
+                <RainbowButton>Időpont foglalása</RainbowButton>
+              </Link>
             </motion.div>
           </div>
         </motion.div>

@@ -1,7 +1,9 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import CTAButton from "@/components/ui/cta-button";
+import { Link } from "react-router-dom";
+import { RainbowButton } from "@/components/ui/rainbow-button";
+import { Button } from "@/components/ui/button";
 
 const LeadMagnetSection = () => {
   return (
@@ -56,7 +58,9 @@ const LeadMagnetSection = () => {
               transition={{ delay: 0.6, duration: 0.5 }}
               className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
             >
-              <CTAButton text="Kérek egy konzultációt" to="/contact" />
+              <Link to="/contact">
+                <RainbowButton>Kérek egy konzultációt</RainbowButton>
+              </Link>
             </motion.div>
           </motion.div>
           
@@ -71,7 +75,11 @@ const LeadMagnetSection = () => {
             <h3 className="text-2xl md:text-3xl font-bold mb-6 text-white">
               Készen áll egy olyan webes jelenlétre, amely valóban az <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Ön céljaira</span> van szabva?
             </h3>
-            <CTAButton text="Nézze meg, hogyan dolgozom" to="/courses" variant="outline" />
+            <Link to="/courses">
+              <Button variant="outline" className="px-8 py-6 rounded-xl text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
+                Nézze meg, hogyan dolgozom
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </div>
