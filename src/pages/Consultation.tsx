@@ -63,7 +63,7 @@ const Consultation = () => {
       setSubmitting(true);
       console.log("Starting form submission with values:", values);
       
-      // Transform form data to match Supabase schema
+      // Transform form data to match Supabase schema exactly
       const supabaseData = {
         name: values.name,
         email: values.email,
@@ -79,7 +79,11 @@ const Consultation = () => {
       
       console.log("Transformed data for Supabase:", supabaseData);
       
-      // Insert data into Supabase
+      // Test connection before attempting insert
+      const connectionTest = await testConnection();
+      console.log("Connection test result:", connectionTest);
+      
+      // Insert data into Supabase without auth
       const { data, error } = await supabase
         .from('consultations')
         .insert(supabaseData)
@@ -98,6 +102,17 @@ const Consultation = () => {
       toast.error("Hiba történt a küldés során. Kérjük próbálja újra!");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // Helper function to test Supabase connection
+  const testConnection = async () => {
+    try {
+      const { data, error } = await supabase.from('consultations').select('id').limit(1);
+      return { success: !error, data, error };
+    } catch (err) {
+      console.error("Connection test failed:", err);
+      return { success: false, error: err };
     }
   };
 
@@ -126,7 +141,7 @@ const Consultation = () => {
           
           <div className="bg-gradient-to-br from-white/8 to-white/2 backdrop-blur-sm border border-white/10 rounded-xl p-6 md:p-10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.3)]">
             <Form {...form}>
-              <MultiStepForm onSubmit={form.handleSubmit(onSubmit)}>
+              <MultiStepForm onSubmit={form.handleSubmit(onSubmit)} isSubmitting={submitting}>
                 <FormStep 
                   title="Alapvető információk" 
                   description="Ezek az adatok segítenek, hogy felvehessem Önnel a kapcsolatot."
