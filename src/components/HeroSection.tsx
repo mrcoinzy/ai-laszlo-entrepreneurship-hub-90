@@ -5,6 +5,7 @@ import { ChevronRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { RainbowButton } from "@/components/ui/rainbow-button";
+import { TextEffect } from "@/components/ui/text-effect";
 
 const HeroSection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -70,12 +71,16 @@ const HeroSection = () => {
               className="mb-6 inline-block"
             >
               <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                Új szolgáltatások érhetők el!
+                <TextEffect per="char" preset="fade" delay={0.3}>
+                  Új szolgáltatások érhetők el!
+                </TextEffect>
               </span>
             </motion.div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
-              AI-alapú ügyfélszerzés <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egyedülálló</span> megközelítéssel
+              <TextEffect per="word" preset="slide" delay={0.5}>
+                AI-alapú ügyfélszerzés egyedülálló megközelítéssel
+              </TextEffect>
             </h1>
             
             <motion.div 
@@ -85,7 +90,9 @@ const HeroSection = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
             >
               <p className="text-lg md:text-xl mb-4 font-medium text-white/90">
-                🧠 Egyedi rendszert építek vállalkozásod köré:
+                <TextEffect per="word" preset="fade" delay={0.8}>
+                  🧠 Egyedi rendszert építek vállalkozásod köré:
+                </TextEffect>
               </p>
               
               {/* Improved styling for the boxes - Modified to use 2 columns and 2 rows */}
@@ -93,34 +100,44 @@ const HeroSection = () => {
                 <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
                   <div className="flex items-center">
                     <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
-                    <span className="text-white/80 text-sm sm:text-base">marketingstratégia</span>
+                    <span className="text-white/80 text-sm sm:text-base">
+                      <TextEffect per="char" preset="blur" delay={1}>marketingstratégia</TextEffect>
+                    </span>
                   </div>
                 </div>
                 
                 <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
                   <div className="flex items-center">
                     <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
-                    <span className="text-white/80 text-sm sm:text-base">weboldal</span>
+                    <span className="text-white/80 text-sm sm:text-base">
+                      <TextEffect per="char" preset="blur" delay={1.2}>weboldal</TextEffect>
+                    </span>
                   </div>
                 </div>
                 
                 <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
                   <div className="flex items-center">
                     <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
-                    <span className="text-white/80 text-sm sm:text-base">hirdetések</span>
+                    <span className="text-white/80 text-sm sm:text-base">
+                      <TextEffect per="char" preset="blur" delay={1.4}>hirdetések</TextEffect>
+                    </span>
                   </div>
                 </div>
                 
                 <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
                   <div className="flex items-center">
                     <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
-                    <span className="text-white/80 text-sm sm:text-base">videós tartalom</span>
+                    <span className="text-white/80 text-sm sm:text-base">
+                      <TextEffect per="char" preset="blur" delay={1.6}>videós tartalom</TextEffect>
+                    </span>
                   </div>
                 </div>
               </div>
               
               <p className="text-white/90 font-medium">
-                mindezt úgy, hogy valóban ügyfeleid legyenek, ne csak nézőid.
+                <TextEffect per="word" preset="fade" delay={1.8}>
+                  mindezt úgy, hogy valóban ügyfeleid legyenek, ne csak nézőid.
+                </TextEffect>
               </p>
             </motion.div>
             
@@ -133,14 +150,18 @@ const HeroSection = () => {
               <Link to="/contact">
                 <RainbowButton>
                   <span className="relative z-10 flex items-center">
-                    Kérek egy díjmentes konzultációt
+                    <TextEffect per="word" preset="fade">
+                      Kérek egy díjmentes konzultációt
+                    </TextEffect>
                     <ChevronRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
                 </RainbowButton>
               </Link>
               <Link to="/courses">
                 <Button variant="outline" className="px-8 py-6 rounded-xl text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
-                  Nézze meg, hogyan dolgozom
+                  <TextEffect per="word" preset="fade">
+                    Nézze meg, hogyan dolgozom
+                  </TextEffect>
                 </Button>
               </Link>
             </motion.div>
@@ -152,12 +173,20 @@ const HeroSection = () => {
               transition={{ delay: 1, duration: 0.5 }}
             >
               <p className="text-white/60 text-sm mb-6 flex flex-wrap justify-center gap-x-6 gap-y-1">
-                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> 5+ év tapasztalat</span> 
-                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 50+ projekt</span> 
-                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 100% magyar nyelven</span>
+                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> 
+                  <TextEffect per="word" preset="fade" delay={2}>5+ év tapasztalat</TextEffect>
+                </span> 
+                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 
+                  <TextEffect per="word" preset="fade" delay={2.1}>50+ projekt</TextEffect>
+                </span> 
+                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 
+                  <TextEffect per="word" preset="fade" delay={2.2}>100% magyar nyelven</TextEffect>
+                </span>
               </p>
               <p className="text-white/60 text-sm">
-                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> Garantált figyelem, nem sablonmunka</span>
+                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> 
+                  <TextEffect per="word" preset="fade" delay={2.3}>Garantált figyelem, nem sablonmunka</TextEffect>
+                </span>
               </p>
             </motion.div>
             

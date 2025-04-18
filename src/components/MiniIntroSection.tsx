@@ -5,6 +5,7 @@ import { User, ArrowRight } from "lucide-react";
 import CTAButton from "./ui/cta-button";
 import AnimatedSection from "./ui/animated-section";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { TextEffect } from "@/components/ui/text-effect";
 
 const MiniIntroSection = () => {
   return (
@@ -41,25 +42,35 @@ const MiniIntroSection = () => {
             <div className="mb-4 inline-flex items-center">
               <User size={18} className="text-purple-400 mr-2" />
               <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
-                Ki az az AI László?
+                <TextEffect per="char" preset="fade" delay={0.2}>
+                  Ki az az AI László?
+                </TextEffect>
               </h2>
             </div>
             
             <div className="space-y-4 text-white/80">
               <p>
-                Több mint 5 éve segítek vállalkozóknak abban, hogy a digitális jelenlétük valódi üzleti eredményt hozzon – nem csak szép dizájnt.
+                <TextEffect per="word" preset="slide" delay={0.4}>
+                  Több mint 5 éve segítek vállalkozóknak abban, hogy a digitális jelenlétük valódi üzleti eredményt hozzon – nem csak szép dizájnt.
+                </TextEffect>
               </p>
               <p>
-                Egy kézben adok mindent: AI-alapú ügyfélszerző weboldalt, hirdetéseket, kampánytartalmat és stratégiát.
+                <TextEffect per="word" preset="slide" delay={0.6}>
+                  Egy kézben adok mindent: AI-alapú ügyfélszerző weboldalt, hirdetéseket, kampánytartalmat és stratégiát.
+                </TextEffect>
               </p>
               <p>
-                Nem „ügynökségként", hanem személyesen, üzleti szemlélettel dolgozom – mert a cél nem a lájk, hanem az ügyfél.
+                <TextEffect per="word" preset="slide" delay={0.8}>
+                  Nem „ügynökségként", hanem személyesen, üzleti szemlélettel dolgozom – mert a cél nem a lájk, hanem az ügyfél.
+                </TextEffect>
               </p>
             </div>
             
             <div className="mt-6">
               <a href="#services" className="inline-flex items-center text-purple-400 hover:text-white group transition-colors">
-                <span>Nézze meg a módszert, amit használok</span>
+                <TextEffect per="word" preset="fade" delay={1}>
+                  Nézze meg a módszert, amit használok
+                </TextEffect>
                 <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
               </a>
             </div>

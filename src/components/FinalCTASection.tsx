@@ -5,6 +5,7 @@ import { MessageCircle, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Button } from "@/components/ui/button";
+import { TextEffect } from "@/components/ui/text-effect";
 
 const FinalCTASection = () => {
   return (
@@ -26,16 +27,22 @@ const FinalCTASection = () => {
         >
           <div className="inline-flex mb-4">
             <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              Egyszerű következő lépés
+              <TextEffect per="char" preset="fade">
+                Egyszerű következő lépés
+              </TextEffect>
             </span>
           </div>
           
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
-            Kérek egy konzultációt
+            <TextEffect per="word" preset="slide">
+              Kérek egy konzultációt
+            </TextEffect>
           </h2>
           
           <p className="text-lg text-white/70 max-w-3xl mx-auto mb-12">
-            48 órán belül személyesen felveszem Önnel a kapcsolatot.
+            <TextEffect per="word" preset="fade" delay={0.3}>
+              48 órán belül személyesen felveszem Önnel a kapcsolatot.
+            </TextEffect>
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
@@ -52,14 +59,24 @@ const FinalCTASection = () => {
                 </div>
               </div>
               
-              <h3 className="text-xl font-bold mb-4 text-white">Üzenet küldése</h3>
+              <h3 className="text-xl font-bold mb-4 text-white">
+                <TextEffect per="word" preset="fade" delay={0.3}>
+                  Üzenet küldése
+                </TextEffect>
+              </h3>
               
               <p className="text-white/70 mb-6">
-                Küldjön üzenetet, és részletezze projektjét, én pedig 48 órán belül válaszolok.
+                <TextEffect per="word" preset="fade" delay={0.4}>
+                  Küldjön üzenetet, és részletezze projektjét, én pedig 48 órán belül válaszolok.
+                </TextEffect>
               </p>
               
               <Link to="/contact">
-                <Button variant="secondary" className="px-8 py-6 rounded-xl text-base">Üzenet küldése</Button>
+                <Button variant="secondary" className="px-8 py-6 rounded-xl text-base">
+                  <TextEffect per="word" preset="fade" delay={0.5}>
+                    Üzenet küldése
+                  </TextEffect>
+                </Button>
               </Link>
             </motion.div>
             
@@ -76,14 +93,24 @@ const FinalCTASection = () => {
                 </div>
               </div>
               
-              <h3 className="text-xl font-bold mb-4 text-white">Konzultáció foglalása</h3>
+              <h3 className="text-xl font-bold mb-4 text-white">
+                <TextEffect per="word" preset="fade" delay={0.3}>
+                  Konzultáció foglalása
+                </TextEffect>
+              </h3>
               
               <p className="text-white/70 mb-6">
-                Foglaljon egy 30 perces ingyenes konzultációt, hogy megbeszéljük az Ön projektjét és céljait.
+                <TextEffect per="word" preset="fade" delay={0.4}>
+                  Foglaljon egy 30 perces ingyenes konzultációt, hogy megbeszéljük az Ön projektjét és céljait.
+                </TextEffect>
               </p>
               
               <Link to="/contact">
-                <RainbowButton>Időpont foglalása</RainbowButton>
+                <RainbowButton>
+                  <TextEffect per="word" preset="fade" delay={0.5}>
+                    Időpont foglalása
+                  </TextEffect>
+                </RainbowButton>
               </Link>
             </motion.div>
           </div>

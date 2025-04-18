@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Linkedin, Mail, Twitter, MapPin, Phone } from "lucide-react";
 import CTAButton from "@/components/ui/cta-button";
+import { TextEffect } from "@/components/ui/text-effect";
 
 const Footer = () => {
   return (
@@ -19,11 +20,17 @@ const Footer = () => {
           {/* Brand column */}
           <div>
             <Link to="/" className="inline-block mb-6">
-              <h3 className="text-2xl font-bold text-white">AI László</h3>
+              <h3 className="text-2xl font-bold text-white">
+                <TextEffect per="char" preset="fade">
+                  AI László
+                </TextEffect>
+              </h3>
             </Link>
             
             <p className="text-white/70 mb-6">
-              Segítek a vállalkozóknak, hogy üzleteiket sikertörténetekké alakítsák innovatív stratégiákkal és élvonalbeli AI eszközökkel.
+              <TextEffect per="word" preset="fade" delay={0.3}>
+                Segítek a vállalkozóknak, hogy üzleteiket sikertörténetekké alakítsák innovatív stratégiákkal és élvonalbeli AI eszközökkel.
+              </TextEffect>
             </p>
             
             <div className="flex space-x-4">
@@ -41,52 +48,86 @@ const Footer = () => {
           
           {/* Quick links */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-6">Gyors Linkek</h4>
+            <h4 className="text-lg font-semibold text-white mb-6">
+              <TextEffect per="word" preset="fade" delay={0.2}>
+                Gyors Linkek
+              </TextEffect>
+            </h4>
             
             <ul className="space-y-3">
               <li>
-                <Link to="/" className="text-white/70 hover:text-white transition-colors">Főoldal</Link>
+                <Link to="/" className="text-white/70 hover:text-white transition-colors">
+                  <TextEffect per="word" preset="fade" delay={0.3}>
+                    Főoldal
+                  </TextEffect>
+                </Link>
               </li>
               <li>
-                <Link to="/about" className="text-white/70 hover:text-white transition-colors">Munkáim</Link>
+                <Link to="/about" className="text-white/70 hover:text-white transition-colors">
+                  <TextEffect per="word" preset="fade" delay={0.4}>
+                    Munkáim
+                  </TextEffect>
+                </Link>
               </li>
               <li>
-                <Link to="/services" className="text-white/70 hover:text-white transition-colors">Kurzusok</Link>
+                <Link to="/services" className="text-white/70 hover:text-white transition-colors">
+                  <TextEffect per="word" preset="fade" delay={0.5}>
+                    Kurzusok
+                  </TextEffect>
+                </Link>
               </li>
               <li>
-                <Link to="/portfolio" className="text-white/70 hover:text-white transition-colors">Rólam</Link>
+                <Link to="/portfolio" className="text-white/70 hover:text-white transition-colors">
+                  <TextEffect per="word" preset="fade" delay={0.6}>
+                    Rólam
+                  </TextEffect>
+                </Link>
               </li>
             </ul>
           </div>
           
           {/* Contact information */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-6">Kapcsolat</h4>
+            <h4 className="text-lg font-semibold text-white mb-6">
+              <TextEffect per="word" preset="fade" delay={0.2}>
+                Kapcsolat
+              </TextEffect>
+            </h4>
             
             <ul className="space-y-4">
               <li className="flex items-start">
                 <Mail className="h-5 w-5 text-purple-400 mr-3 mt-1" />
                 <a href="mailto:contact@ailaszlo.com" className="text-white/70 hover:text-white transition-colors">
-                  contact@ailaszlo.com
+                  <TextEffect per="word" preset="fade" delay={0.3}>
+                    contact@ailaszlo.com
+                  </TextEffect>
                 </a>
               </li>
               <li className="flex items-start">
                 <Twitter className="h-5 w-5 text-purple-400 mr-3 mt-1" />
                 <a href="#" className="text-white/70 hover:text-white transition-colors">
-                  Twitter
+                  <TextEffect per="word" preset="fade" delay={0.4}>
+                    Twitter
+                  </TextEffect>
                 </a>
               </li>
               <li className="flex items-start">
                 <Linkedin className="h-5 w-5 text-purple-400 mr-3 mt-1" />
                 <a href="#" className="text-white/70 hover:text-white transition-colors">
-                  LinkedIn
+                  <TextEffect per="word" preset="fade" delay={0.5}>
+                    LinkedIn
+                  </TextEffect>
                 </a>
               </li>
             </ul>
             
             <div className="mt-8">
               <CTAButton 
-                text="Kérek egy konzultációt" 
+                text={
+                  <TextEffect per="word" preset="fade" delay={0.6}>
+                    Kérek egy konzultációt
+                  </TextEffect>
+                } 
                 to="/contact" 
                 variant="secondary" 
                 className="w-full justify-center"
@@ -97,7 +138,9 @@ const Footer = () => {
         
         <div className="border-t border-white/10 pt-8 text-center">
           <p className="text-white/50 text-sm">
-            © {new Date().getFullYear()} AI László. Minden jog fenntartva.
+            <TextEffect per="word" preset="fade" delay={0.4}>
+              © {new Date().getFullYear()} AI László. Minden jog fenntartva.
+            </TextEffect>
           </p>
         </div>
       </div>
