@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
@@ -94,14 +95,70 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return false;
     
     try {
+      // First check if we already have userData cached
       if (userData && userData.role === 'admin') {
         return true;
       }
       
+      // Check if the user is registered as an admin in the metadata
+      const isAdminInMetadata = user.user_metadata && user.user_metadata.role === 'admin';
+      
+      // If admin in metadata, verify in database
+      if (isAdminInMetadata) {
+        const refreshedData = await fetchUserData(user.id);
+        
+        // If found in database and is admin, update state and return true
+        if (refreshedData && refreshedData.role === 'admin') {
+          setIsAdmin(true);
+          setUserData(refreshedData);
+          
+          // Also update status
+          setIsPending(refreshedData.status === 'pending');
+          setIsApproved(refreshedData.status === 'approved');
+          
+          return true;
+        }
+        
+        // If admin in metadata but not in database yet, create the record
+        if (!refreshedData) {
+          try {
+            const { data, error } = await supabase
+              .from('users')
+              .insert({
+                id: user.id,
+                email: user.email,
+                full_name: user.user_metadata.full_name || '',
+                role: 'admin',
+                status: 'approved'
+              })
+              .select()
+              .single();
+            
+            if (error) throw error;
+            
+            if (data) {
+              setUserData(data as UserData);
+              setIsAdmin(true);
+              setIsApproved(true);
+              setIsPending(false);
+              return true;
+            }
+          } catch (error) {
+            console.error("Error creating admin user record:", error);
+          }
+        }
+      }
+      
+      // Final database check - important for cases where metadata doesn't have role
       const refreshedData = await fetchUserData(user.id);
       if (refreshedData && refreshedData.role === 'admin') {
         setIsAdmin(true);
         setUserData(refreshedData);
+        
+        // Also update status
+        setIsPending(refreshedData.status === 'pending');
+        setIsApproved(refreshedData.status === 'approved');
+        
         return true;
       }
       

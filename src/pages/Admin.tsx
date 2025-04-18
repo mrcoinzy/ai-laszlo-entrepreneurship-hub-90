@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -34,14 +35,29 @@ const Admin = () => {
             return;
           }
           
-          const isUserAdmin = await adminCheck();
+          // Check if user is admin, with retries
+          let retries = 0;
+          let isUserAdmin = false;
+          
+          while (retries < 3 && !isUserAdmin) {
+            isUserAdmin = await adminCheck();
+            
+            if (!isUserAdmin) {
+              console.log(`Admin check failed, retry ${retries + 1}/3`);
+              // Short delay between retries
+              await new Promise(resolve => setTimeout(resolve, 500));
+              retries++;
+            }
+          }
           
           if (!isUserAdmin) {
+            console.log("User is not an admin after retries, redirecting");
             navigate("/dashboard");
             toast.error("Unauthorized: Admin access required");
             return;
           }
           
+          console.log("Admin access verified successfully");
           setIsAuthChecking(false);
         }
       } catch (error) {

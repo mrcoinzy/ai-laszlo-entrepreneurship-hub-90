@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -19,6 +20,7 @@ import Footer from "@/components/Footer";
 import { supabase, testConnection } from "@/lib/supabase";
 import { Loader2, Shield, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   fullName: z.string().min(2, {
@@ -39,6 +41,7 @@ const AdminRegister = () => {
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [registrationTimeout, setRegistrationTimeout] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
+  const { adminCheck } = useAuth();
   
   useEffect(() => {
     const checkConnection = async () => {
@@ -82,6 +85,7 @@ const AdminRegister = () => {
     try {
       console.log("Starting admin registration with:", values.email);
       
+      // Sign up the admin user with the role metadata
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -101,11 +105,28 @@ const AdminRegister = () => {
       
       console.log("Admin user created:", authData.user.id);
       
+      // Ensure admin record exists in the users table
+      const { error: userError } = await supabase
+        .from('users')
+        .upsert({
+          id: authData.user.id,
+          email: values.email,
+          full_name: values.fullName,
+          role: 'admin',
+          status: 'approved'
+        }, { onConflict: 'id' });
+      
+      if (userError) {
+        console.warn("Warning: Error ensuring admin record:", userError);
+        // Continue despite this error - we'll rely on the trigger
+      }
+      
       clearTimeout(timeout);
       setRegistrationTimeout(null);
       
       toast.success("Admin registration successful! Signing in...");
       
+      // Sign in with the newly created admin account
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
@@ -113,9 +134,17 @@ const AdminRegister = () => {
 
       if (signInError) throw signInError;
       
-      console.log("Admin registration complete, redirecting to admin dashboard");
+      console.log("Admin registration complete, verifying admin status");
       
-      navigate("/admin");
+      // Verify admin status before redirecting
+      const isAdmin = await adminCheck();
+      
+      console.log("Admin check result:", isAdmin);
+      
+      // Force a delay to allow the database trigger to execute
+      setTimeout(() => {
+        navigate("/admin");
+      }, 500);
       
     } catch (error: any) {
       console.error("Registration error:", error);
