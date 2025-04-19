@@ -13,6 +13,7 @@ import LeadMagnetSection from "@/components/LeadMagnetSection";
 import FinalCTASection from "@/components/FinalCTASection";
 import Footer from "@/components/Footer";
 import ScrollIndicator from "@/components/ScrollIndicator";
+import BlogPostList from "@/components/BlogPostList";
 
 const Index = () => {
   return (
@@ -33,6 +34,10 @@ const Index = () => {
       </div>
       <TestimonialsSection />
       <EmailLeadMagnetSection />
+      <div className="container mx-auto px-4 py-16">
+        <h2 className="text-3xl font-bold mb-8">Latest Blog Posts</h2>
+        <BlogPostList />
+      </div>
       <div id="blog">
         <LeadMagnetSection />
       </div>

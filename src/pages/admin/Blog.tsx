@@ -1,35 +1,22 @@
-
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardSidebar from "@/components/admin/DashboardSidebar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { 
-  Plus, 
-  Pencil, 
-  Trash, 
-  Image, 
-  Eye,
-  Book,
-  FileText,
-  Clock
-} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Plus, Pencil, Trash, Image, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { formatDistanceToNow } from "date-fns";
 
 const Blog = () => {
   const { isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [tab, setTab] = useState<"posts" | "create">("posts");
 
-  // Blog post states
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -37,31 +24,56 @@ const Blog = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Mock data - in a real app, this would come from the database
-  const [blogPosts] = useState([
-    {
-      id: "1",
-      title: "Getting Started with Web Development",
-      excerpt: "Learn the basics of web development and how to get started.",
-      createdAt: new Date().toISOString(),
-      published: true
-    },
-    {
-      id: "2",
-      title: "The Power of SEO",
-      excerpt: "Understanding how SEO can boost your website visibility.",
-      createdAt: new Date(Date.now() - 86400000).toISOString(),
-      published: false
-    }
-  ]);
+  const queryClient = useQueryClient();
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
+  const { data: posts, isLoading: isLoadingPosts } = useQuery({
+    queryKey: ['admin-blog-posts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const createPostMutation = useMutation({
+    mutationFn: async (values: { title: string; content: string; excerpt: string }) => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error("Not authenticated");
+
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .insert([
+          {
+            title: values.title,
+            content: values.content,
+            excerpt: values.excerpt,
+            author_id: userData.user.id,
+            published: true
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-blog-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+      toast.success("Blog post created successfully");
+      setTitle("");
+      setContent("");
+      setExcerpt("");
+      setTab("posts");
+    },
+    onError: (error) => {
+      toast.error("Failed to create blog post: " + error.message);
+    }
+  });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -69,7 +81,6 @@ const Blog = () => {
     
     setSelectedImage(file);
     
-    // Create preview URL
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreviewUrl(reader.result as string);
@@ -77,21 +88,9 @@ const Blog = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleCreatePost = (e: React.FormEvent) => {
+  const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      toast.success("Blog post created successfully");
-      setTitle("");
-      setContent("");
-      setExcerpt("");
-      setSelectedImage(null);
-      setPreviewUrl(null);
-      setIsSubmitting(false);
-      setTab("posts");
-    }, 1000);
+    createPostMutation.mutate({ title, content, excerpt });
   };
 
   const formatDate = (dateString: string) => {
@@ -102,6 +101,14 @@ const Blog = () => {
       day: 'numeric'
     }).format(date);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-background">
@@ -141,9 +148,9 @@ const Blog = () => {
             </TabsList>
             
             <TabsContent value="posts">
-              {blogPosts.length > 0 ? (
+              {posts.length > 0 ? (
                 <div className="grid gap-4">
-                  {blogPosts.map(post => (
+                  {posts.map(post => (
                     <Card key={post.id} className="bg-accent/5">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-start">
