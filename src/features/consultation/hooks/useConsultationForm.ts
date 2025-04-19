@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { consultationFormSchema, type ConsultationFormValues } from "../schema";
 
 export const useConsultationForm = () => {
@@ -34,40 +34,29 @@ export const useConsultationForm = () => {
       setSubmitting(true);
       console.log("Starting form submission with values:", values);
       
-      // Simplify data transformation to minimize potential issues
       const supabaseData = {
         name: values.name,
         email: values.email,
         website: values.website || null,
         business_type: values.businessType,
         business_details: values.businessDetails || null,
+        main_goal: values.mainGoal,
         online_presence: values.onlinePresence,
-        goal: values.mainGoal,
-        main_challenge: values.biggestChallenge,
-        services_interested: values.interestedServices,
-        budget: values.budgetRange[0]
+        biggest_challenge: values.biggestChallenge,
+        interested_services: values.interestedServices,
+        budget_range: values.budgetRange[0]
       };
       
       console.log("Transformed data for Supabase:", supabaseData);
       
-      // Log client authentication status
-      const { data: authData } = await supabase.auth.getSession();
-      console.log("Current session:", authData);
-      
-      // Attempt insertion with explicit public schema reference
       const { data, error } = await supabase
         .from('consultations')
         .insert(supabaseData)
-        .select();
+        .select()
+        .single();
       
       if (error) {
         console.error("Error inserting data into Supabase:", error);
-        
-        // Check specifically for permission errors
-        if (error.code === '42501') {
-          console.error("Permission denied. This is likely an RLS policy issue.");
-        }
-        
         toast.error("Hiba történt a küldés során. Kérjük próbálja újra!");
         return;
       }
