@@ -9,72 +9,16 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      consultations: {
-        Row: {
-          budget: number | null
-          business_type: string | null
-          created_at: string | null
-          email: string
-          goal: string | null
-          id: string
-          main_challenge: string | null
-          name: string
-          online_presence: string | null
-          phone: string | null
-          services_interested: string[] | null
-          website: string | null
-        }
-        Insert: {
-          budget?: number | null
-          business_type?: string | null
-          created_at?: string | null
-          email: string
-          goal?: string | null
-          id?: string
-          main_challenge?: string | null
-          name: string
-          online_presence?: string | null
-          phone?: string | null
-          services_interested?: string[] | null
-          website?: string | null
-        }
-        Update: {
-          budget?: number | null
-          business_type?: string | null
-          created_at?: string | null
-          email?: string
-          goal?: string | null
-          id?: string
-          main_challenge?: string | null
-          name?: string
-          online_presence?: string | null
-          phone?: string | null
-          services_interested?: string[] | null
-          website?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      is_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
-      setup_demo_data: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      update_user_to_admin: {
-        Args: { user_email: string }
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
-      user_role: "admin" | "client"
-      user_status: "pending" | "approved" | "rejected"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -189,9 +133,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      user_role: ["admin", "client"],
-      user_status: ["pending", "approved", "rejected"],
-    },
+    Enums: {},
   },
 } as const
