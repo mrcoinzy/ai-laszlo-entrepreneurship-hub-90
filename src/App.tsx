@@ -1,4 +1,3 @@
-
 import React from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
@@ -15,8 +14,8 @@ import AdminLogin from "@/components/AdminLogin"
 import AdminProfile from "@/pages/admin/Profile"
 import AdminBlog from "@/pages/admin/Blog"
 import AdminsManagement from "@/pages/admin/AdminsManagement"
+import BlogPost from "@/pages/BlogPost"
 
-// Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAdmin, isLoading } = useAuth();
   
@@ -38,12 +37,9 @@ function App() {
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <TooltipProvider>
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/consultation" element={<Consultation />} />
           <Route path="/consultation-thankyou" element={<ConsultationThankYou />} />
-          
-          {/* Admin Routes */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/register" element={<AdminRegistration />} />
@@ -79,8 +75,7 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          
-          {/* 404 */}
+          <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 
