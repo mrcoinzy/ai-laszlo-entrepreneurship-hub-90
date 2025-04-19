@@ -59,6 +59,10 @@ const AdminLogin: React.FC = () => {
     }
   };
 
+  const handleGoToDashboard = () => {
+    navigate('/admin/dashboard');
+  };
+
   // If already logged in, show logout option
   if (user) {
     return (
@@ -75,7 +79,7 @@ const AdminLogin: React.FC = () => {
             <p className="mb-4">Logged in as: {user.email}</p>
             <div className="space-y-2">
               <Button 
-                onClick={() => navigate('/admin/dashboard')}
+                onClick={handleGoToDashboard}
                 className="w-full"
               >
                 Go to Dashboard

@@ -32,7 +32,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Redirect component for admin root
 const AdminRoot = () => {
-  const { isAdmin, isLoading } = useAuth();
+  const { isAdmin, isLoading, user } = useAuth();
   
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">
@@ -40,7 +40,7 @@ const AdminRoot = () => {
     </div>;
   }
   
-  if (isAdmin) {
+  if (isAdmin && user) {
     return <Navigate to="/admin/dashboard" replace />;
   }
   
