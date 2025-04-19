@@ -25,11 +25,50 @@
     --ring: 272 67% 53%;
     --radius: 0.5rem;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
+  }
+  
+  html, body, #root {
+    @apply h-auto min-h-screen w-full overflow-x-hidden;
+  }
+  
+  body {
+    @apply bg-gradient-to-b from-black via-black to-zinc-900/90 min-h-screen;
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .section-base {
+    @apply bg-transparent py-16 sm:py-20 px-4 sm:px-6 relative overflow-visible;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent;
+  }
+
+  .animated-gradient {
+    background: linear-gradient(
+      -45deg,
+      rgba(139, 92, 246, 0.1),  /* Purple */
+      rgba(59, 130, 246, 0.1),  /* Blue */
+      rgba(139, 92, 246, 0.1)   /* Purple */
+    );
+    background-size: 200% 200%;
+    animation: gradient 15s ease infinite;
+  }
+}
+
+@layer utilities {
+  .section-base {
+    @apply bg-black py-16 sm:py-20 px-4 sm:px-6 relative overflow-visible;
+  }
+
+  /* Ensure no unexpected margins or paddings cause cut-offs */
+  * {
+    @apply box-border;
   }
   
   html, body, #root {
@@ -61,6 +100,14 @@
   
   .purple-gradient-text {
     @apply bg-gradient-to-r from-[#8A2BE2] to-[#9370DB] bg-clip-text text-transparent;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-lg bg-white/5 border border-white/10;
+  }
+
+  .hover-card {
+    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)];
   }
 }
 
@@ -361,6 +408,9 @@
   }
   50% {
     filter: blur(15px) brightness(1.2);
+  }
+  100% {
+    filter: blur(10px) brightness(1);
   }
 }
 
