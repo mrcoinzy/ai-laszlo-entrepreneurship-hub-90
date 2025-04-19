@@ -75,22 +75,8 @@ export const ensureImagesBucketExists = async () => {
         return false;
       }
       
-      // Set up public access policy
-      const { error: policyError } = await supabaseAdmin
-        .storage
-        .from('images')
-        .createPolicy('Public Access', {
-          name: 'Public Access',
-          definition: {
-            action: 'SELECT',
-            condition: 'TRUE'
-          }
-        });
-        
-      if (policyError) {
-        console.error('Error setting up images bucket policy:', policyError);
-      }
-      
+      // Note: We cannot create policies directly with the client
+      // Policies need to be managed through SQL migrations
       console.log('Created images bucket successfully');
     } else {
       console.log('Images bucket already exists');

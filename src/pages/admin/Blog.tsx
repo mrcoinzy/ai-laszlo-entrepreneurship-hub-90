@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { supabaseAdmin } from "@/lib/supabase";
 import { Plus, Pencil, Trash, Image, Eye, Book, FileText, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
@@ -29,10 +28,10 @@ const Blog = () => {
 
   const queryClient = useQueryClient();
 
-  // Check if images bucket exists
   useEffect(() => {
     const checkImagesBucket = async () => {
       try {
+        console.log("Checking if images bucket exists...");
         const exists = await ensureImagesBucketExists();
         setBucketChecked(true);
         if (exists) {
@@ -70,12 +69,17 @@ const Blog = () => {
     const filePath = `blog/${fileName}`;
 
     try {
-      // Make sure bucket exists before attempting upload
       if (!bucketChecked) {
-        await ensureImagesBucketExists();
+        const bucketExists = await ensureImagesBucketExists();
         setBucketChecked(true);
+        
+        if (!bucketExists) {
+          console.error("Images bucket doesn't exist and couldn't be created");
+          throw new Error("Storage bucket not available");
+        }
       }
 
+      console.log("Attempting to upload image to path:", filePath);
       const { error: uploadError, data } = await supabase.storage
         .from('images')
         .upload(filePath, file);
@@ -89,6 +93,7 @@ const Blog = () => {
         .from('images')
         .getPublicUrl(filePath);
 
+      console.log("Upload successful, public URL:", publicUrl);
       return publicUrl;
     } catch (error) {
       console.error("Error in uploadImage:", error);
@@ -105,12 +110,15 @@ const Blog = () => {
     }) => {
       try {
         setIsSubmitting(true);
+        console.log("Starting blog post creation...");
+        
         const { data: userData } = await supabase.auth.getUser();
         if (!userData.user) throw new Error("Not authenticated");
 
         let featuredImageUrl = null;
         if (values.imageFile) {
           try {
+            console.log("Uploading featured image...");
             featuredImageUrl = await uploadImage(values.imageFile);
           } catch (uploadError) {
             console.error("Upload error:", uploadError);
@@ -119,6 +127,7 @@ const Blog = () => {
           }
         }
 
+        console.log("Creating blog post in database...");
         const { data, error } = await supabase
           .from('blog_posts')
           .insert([
@@ -134,7 +143,12 @@ const Blog = () => {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error("Database error:", error);
+          throw error;
+        }
+        
+        console.log("Blog post created successfully:", data);
         return data;
       } finally {
         setIsSubmitting(false);
