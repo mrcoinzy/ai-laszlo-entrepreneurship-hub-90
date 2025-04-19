@@ -31,7 +31,7 @@ const BlogListing = () => {
             tagline="All Articles"
             heading="Our Blog"
             description="Explore our complete collection of insights, tutorials, and updates."
-            gridClassName="grid-cols-1 md:grid-cols-3 lg:grid-cols-5"
+            gridClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto px-4"
           />
         )}
       </div>

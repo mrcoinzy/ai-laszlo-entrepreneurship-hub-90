@@ -42,16 +42,16 @@ const Blog7 = ({
   gridClassName = "grid gap-8 md:grid-cols-2 lg:gap-10"
 }: Blog7Props) => {
   return (
-    <section className="py-32">
-      <div className="container mx-auto flex flex-col items-center gap-16 lg:px-8">
-        <div className="text-center">
-          <Badge variant="secondary" className="mb-6">
+    <section className="py-16">
+      <div className="container mx-auto flex flex-col items-center gap-12">
+        <div className="text-center max-w-3xl mx-auto px-4">
+          <Badge variant="secondary" className="mb-4">
             {tagline}
           </Badge>
-          <h2 className="mb-3 text-pretty text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6 lg:max-w-3xl lg:text-5xl">
+          <h2 className="mb-3 text-pretty text-2xl font-semibold md:mb-4 md:text-3xl lg:text-4xl">
             {heading}
           </h2>
-          <p className="mb-8 text-muted-foreground md:text-base lg:max-w-2xl lg:text-lg">
+          <p className="mb-6 text-muted-foreground md:text-base">
             {description}
           </p>
           <Button variant="link" className="w-full sm:w-auto" asChild>
@@ -76,7 +76,7 @@ const Blog7 = ({
                   />
                 </Link>
               </div>
-              <div className="px-6 pt-4 space-y-2">
+              <div className="px-4 pt-4 space-y-2">
                 {post.keywords && (
                   <div className="flex flex-wrap gap-2">
                     {post.keywords.split(',').map((keyword, index) => (
@@ -87,8 +87,8 @@ const Blog7 = ({
                   </div>
                 )}
               </div>
-              <CardHeader>
-                <h3 className="text-xl font-semibold hover:underline">
+              <CardHeader className="px-4 py-2">
+                <h3 className="text-lg font-semibold hover:underline">
                   <Link to={`/blog/${post.id}`}>
                     {post.title}
                   </Link>
@@ -97,18 +97,18 @@ const Blog7 = ({
                   {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                 </p>
               </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground line-clamp-2">
+              <CardContent className="px-4 py-2">
+                <p className="text-sm text-muted-foreground line-clamp-2">
                   {post.excerpt || post.content.substring(0, 120)}...
                 </p>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="px-4 pt-0 pb-4">
                 <Link
                   to={`/blog/${post.id}`}
-                  className="flex items-center text-foreground hover:underline"
+                  className="flex items-center text-foreground hover:underline text-sm"
                 >
                   Read more
-                  <ArrowRight className="ml-2 size-4" />
+                  <ArrowRight className="ml-2 size-3" />
                 </Link>
               </CardFooter>
             </Card>
