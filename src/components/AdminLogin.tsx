@@ -1,17 +1,26 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect to dashboard if already logged in as admin
+  useEffect(() => {
+    if (user && isAdmin) {
+      navigate('/admin/dashboard');
+    }
+  }, [user, isAdmin, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +37,7 @@ const AdminLogin: React.FC = () => {
       }
       
       toast.success('Logged in successfully');
+      // Redirect happens in the useEffect when auth state changes
     } catch (error: any) {
       console.error('Error logging in:', error);
       toast.error(error.message || 'Failed to log in');
@@ -49,60 +59,88 @@ const AdminLogin: React.FC = () => {
     }
   };
 
+  // If already logged in, show logout option
+  if (user) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle>Admin Login</CardTitle>
+          <CardDescription>
+            You are logged in
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent>
+          <div className="text-center">
+            <p className="mb-4">Logged in as: {user.email}</p>
+            <div className="space-y-2">
+              <Button 
+                onClick={() => navigate('/admin/dashboard')}
+                className="w-full"
+              >
+                Go to Dashboard
+              </Button>
+              <Button 
+                onClick={handleLogout} 
+                disabled={isLoading}
+                variant="destructive"
+                className="w-full"
+              >
+                {isLoading ? 'Logging out...' : 'Logout'}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+        
+        <CardFooter className="text-xs text-muted-foreground">
+          <p>Use your admin credentials to login</p>
+        </CardFooter>
+      </Card>
+    );
+  }
+
+  // Login form
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle>Admin Login</CardTitle>
         <CardDescription>
-          {user ? 'You are logged in' : 'Login to access admin features'}
+          Login to access admin features
         </CardDescription>
       </CardHeader>
       
       <CardContent>
-        {user ? (
-          <div className="text-center">
-            <p className="mb-4">Logged in as: {user.email}</p>
+        <form onSubmit={handleLogin}>
+          <div className="space-y-4">
+            <div>
+              <Input
+                id="email"
+                placeholder="Email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Input
+                id="password"
+                placeholder="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
             <Button 
-              onClick={handleLogout} 
+              type="submit" 
+              className="w-full" 
               disabled={isLoading}
-              variant="destructive"
             >
-              {isLoading ? 'Logging out...' : 'Logout'}
+              {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </div>
-        ) : (
-          <form onSubmit={handleLogin}>
-            <div className="space-y-4">
-              <div>
-                <Input
-                  id="email"
-                  placeholder="Email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Input
-                  id="password"
-                  placeholder="Password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading}
-              >
-                {isLoading ? 'Logging in...' : 'Login'}
-              </Button>
-            </div>
-          </form>
-        )}
+        </form>
       </CardContent>
       
       <CardFooter className="text-xs text-muted-foreground">

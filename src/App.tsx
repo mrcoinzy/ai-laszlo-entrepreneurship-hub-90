@@ -30,6 +30,23 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// Redirect component for admin root
+const AdminRoot = () => {
+  const { isAdmin, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">
+      <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
+    </div>;
+  }
+  
+  if (isAdmin) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
+  
+  return <AdminLogin />;
+};
+
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -41,7 +58,7 @@ function App() {
           <Route path="/consultation-thankyou" element={<ConsultationThankYou />} />
           
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminRoot />} />
           <Route path="/admin/register" element={<AdminRegistration />} />
           <Route 
             path="/admin/dashboard/*" 
