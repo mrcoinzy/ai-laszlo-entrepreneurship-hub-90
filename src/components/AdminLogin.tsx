@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -37,7 +37,7 @@ const AdminLogin: React.FC = () => {
       }
       
       toast.success('Logged in successfully');
-      // Redirect happens in the useEffect when auth state changes
+      navigate('/admin/dashboard');
     } catch (error: any) {
       console.error('Error logging in:', error);
       toast.error(error.message || 'Failed to log in');
@@ -63,14 +63,19 @@ const AdminLogin: React.FC = () => {
     navigate('/admin/dashboard');
   };
 
-  // If already logged in, show logout option
-  if (user) {
+  // If already logged in, show logout option or redirect
+  if (user && isAdmin) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
+
+  // If logged in but not an admin, just show that info
+  if (user && !isAdmin) {
     return (
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
-          <CardTitle>Admin Login</CardTitle>
+          <CardTitle>Admin Access Denied</CardTitle>
           <CardDescription>
-            You are logged in
+            You are logged in but don't have admin privileges
           </CardDescription>
         </CardHeader>
         
@@ -78,12 +83,6 @@ const AdminLogin: React.FC = () => {
           <div className="text-center">
             <p className="mb-4">Logged in as: {user.email}</p>
             <div className="space-y-2">
-              <Button 
-                onClick={handleGoToDashboard}
-                className="w-full"
-              >
-                Go to Dashboard
-              </Button>
               <Button 
                 onClick={handleLogout} 
                 disabled={isLoading}
@@ -97,7 +96,7 @@ const AdminLogin: React.FC = () => {
         </CardContent>
         
         <CardFooter className="text-xs text-muted-foreground">
-          <p>Use your admin credentials to login</p>
+          <p>Contact an administrator if you need access</p>
         </CardFooter>
       </Card>
     );

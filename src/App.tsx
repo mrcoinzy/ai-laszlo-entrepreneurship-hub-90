@@ -12,6 +12,9 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import AdminDashboard from "@/pages/admin/Dashboard"
 import AdminRegistration from "@/pages/AdminRegistration"
 import AdminLogin from "@/components/AdminLogin"
+import AdminProfile from "@/pages/admin/Profile"
+import AdminBlog from "@/pages/admin/Blog"
+import AdminsManagement from "@/pages/admin/AdminsManagement"
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -24,27 +27,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
   
   if (!isAdmin) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
   
   return <>{children}</>;
-};
-
-// Redirect component for admin root
-const AdminRoot = () => {
-  const { isAdmin, isLoading, user } = useAuth();
-  
-  if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">
-      <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
-    </div>;
-  }
-  
-  if (isAdmin && user) {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
-  
-  return <AdminLogin />;
 };
 
 function App() {
@@ -58,13 +44,38 @@ function App() {
           <Route path="/consultation-thankyou" element={<ConsultationThankYou />} />
           
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminRoot />} />
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/register" element={<AdminRegistration />} />
           <Route 
             path="/admin/dashboard/*" 
             element={
               <ProtectedRoute>
                 <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/profile" 
+            element={
+              <ProtectedRoute>
+                <AdminProfile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/blog" 
+            element={
+              <ProtectedRoute>
+                <AdminBlog />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/admins" 
+            element={
+              <ProtectedRoute>
+                <AdminsManagement />
               </ProtectedRoute>
             } 
           />

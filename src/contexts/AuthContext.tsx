@@ -1,84 +1,66 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { ensureAvatarsBucketExists } from '@/lib/supabase-storage';
 
 interface AuthContextType {
   user: User | null;
   isAdmin: boolean;
-  isLoading: boolean; // Add loading state to prevent premature redirects
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isAdmin: false,
-  isLoading: true // Default to loading
+  isLoading: true
 });
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Start with loading true
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check current session
-    const initAuth = async () => {
-      try {
-        // First check for existing session
-        const { data: { session } } = await supabase.auth.getSession();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
         setUser(session?.user ?? null);
-
+        
         if (session?.user) {
-          await checkAdminStatus(session.user.id);
+          const { data: adminData } = await supabase
+            .rpc('is_admin');
+          setIsAdmin(!!adminData);
+        } else {
+          setIsAdmin(false);
         }
         
-        // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-          console.log('Auth state changed:', event, session?.user?.id);
-          setUser(session?.user ?? null);
-          
-          if (session?.user) {
-            await checkAdminStatus(session.user.id);
-          } else {
-            setIsAdmin(false);
-          }
-        });
-
-        return () => {
-          subscription.unsubscribe();
-        };
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-      } finally {
-        setIsLoading(false); // Set loading to false when done
+        setIsLoading(false);
       }
+    );
+
+    const initializeAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        const { data: adminData } = await supabase
+          .rpc('is_admin');
+        setIsAdmin(!!adminData);
+
+        ensureAvatarsBucketExists().catch(console.error);
+      } else {
+        setIsAdmin(false);
+      }
+      
+      setIsLoading(false);
     };
 
-    initAuth();
+    initializeAuth();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
-
-  const checkAdminStatus = async (userId: string) => {
-    try {
-      console.log('Checking admin status for user:', userId);
-      const { data, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error checking admin status:', error);
-        setIsAdmin(false);
-        return;
-      }
-
-      console.log('Admin check result:', data);
-      setIsAdmin(data?.role === 'admin');
-    } catch (error) {
-      console.error('Exception checking admin status:', error);
-      setIsAdmin(false);
-    }
-  };
 
   return (
     <AuthContext.Provider value={{ user, isAdmin, isLoading }}>
