@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardSidebar from "@/components/admin/DashboardSidebar";
@@ -36,31 +35,67 @@ const Blog = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data || [];
     }
   });
 
+  const uploadImage = async (file: File) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+    const filePath = `blog/${fileName}`;
+
+    const { error: uploadError, data } = await supabase.storage
+      .from('images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('images')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  };
+
   const createPostMutation = useMutation({
-    mutationFn: async (values: { title: string; content: string; excerpt: string }) => {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) throw new Error("Not authenticated");
+    mutationFn: async (values: { 
+      title: string; 
+      content: string; 
+      excerpt: string;
+      imageFile?: File | null;
+    }) => {
+      try {
+        setIsSubmitting(true);
+        const { data: userData } = await supabase.auth.getUser();
+        if (!userData.user) throw new Error("Not authenticated");
 
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .insert([
-          {
-            title: values.title,
-            content: values.content,
-            excerpt: values.excerpt,
-            author_id: userData.user.id,
-            published: true
-          }
-        ])
-        .select()
-        .single();
+        let featuredImageUrl = null;
+        if (values.imageFile) {
+          featuredImageUrl = await uploadImage(values.imageFile);
+        }
 
-      if (error) throw error;
-      return data;
+        const { data, error } = await supabase
+          .from('blog_posts')
+          .insert([
+            {
+              title: values.title,
+              content: values.content,
+              excerpt: values.excerpt,
+              author_id: userData.user.id,
+              published: true,
+              featured_image_url: featuredImageUrl
+            }
+          ])
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      } finally {
+        setIsSubmitting(false);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-blog-posts'] });
@@ -69,10 +104,13 @@ const Blog = () => {
       setTitle("");
       setContent("");
       setExcerpt("");
+      setSelectedImage(null);
+      setPreviewUrl(null);
       setTab("posts");
     },
-    onError: (error) => {
-      toast.error("Failed to create blog post: " + error.message);
+    onError: (error: any) => {
+      console.error("Blog post creation error:", error);
+      toast.error(`Failed to create blog post: ${error.message}`);
     }
   });
 
@@ -91,7 +129,12 @@ const Blog = () => {
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    createPostMutation.mutate({ title, content, excerpt });
+    createPostMutation.mutate({ 
+      title, 
+      content, 
+      excerpt,
+      imageFile: selectedImage
+    });
   };
 
   const formatDate = (dateString: string) => {
@@ -296,8 +339,21 @@ const Blog = () => {
                     </div>
                     
                     <div className="flex gap-2 pt-4">
-                      <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Creating..." : "Create Post"}
+                      <Button 
+                        type="submit" 
+                        disabled={isSubmitting}
+                        className="relative"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <span className="opacity-0">Create Post</span>
+                            <span className="absolute inset-0 flex items-center justify-center">
+                              <div className="animate-spin h-5 w-5 border-2 border-current border-t-transparent rounded-full"></div>
+                            </span>
+                          </>
+                        ) : (
+                          "Create Post"
+                        )}
                       </Button>
                       <Button
                         type="button"

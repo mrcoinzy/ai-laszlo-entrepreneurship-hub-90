@@ -1,4 +1,3 @@
-
 -- This schema is designed for Supabase and extends the built-in auth.users system
 
 -- Enable UUID extension
@@ -20,6 +19,21 @@ CREATE TABLE IF NOT EXISTS users (
 -- Create a secure RLS policy for the users table
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
+-- Create a function to check if a user is an admin (security definer to avoid recursion)
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.users 
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+END;
+$$;
+
 -- Basic policies without recursion
 CREATE POLICY "Users can view their own profile" ON users
   FOR SELECT USING (auth.uid() = id);
@@ -27,20 +41,35 @@ CREATE POLICY "Users can view their own profile" ON users
 CREATE POLICY "Users can update their own profile" ON users
   FOR UPDATE USING (auth.uid() = id);
 
--- Admin policy that doesn't cause recursion
+-- Admin policy using the security definer function
 CREATE POLICY "Admins can view all profiles" ON users
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  FOR SELECT USING (public.is_admin());
 
 CREATE POLICY "Admins can update all profiles" ON users
-  FOR UPDATE USING (
-    EXISTS (
-      SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  FOR UPDATE USING (public.is_admin());
+
+-- Blog posts table
+CREATE TABLE IF NOT EXISTS blog_posts (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  excerpt TEXT,
+  author_id UUID REFERENCES auth.users(id) NOT NULL,
+  published BOOLEAN DEFAULT true,
+  featured_image_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- Secure the blog_posts table
+ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for blog_posts using the security definer function
+CREATE POLICY "Anyone can view published blog posts" ON blog_posts
+  FOR SELECT USING (published = true);
+
+CREATE POLICY "Admins can manage all blog posts" ON blog_posts
+  FOR ALL USING (public.is_admin());
 
 -- Courses table
 CREATE TABLE IF NOT EXISTS courses (
