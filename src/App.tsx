@@ -26,12 +26,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   
   // Only redirect if we're done loading and user is not admin
   if (!isAdmin) {
-    console.log("User is not admin, redirecting to home");
-    return <Navigate to="/" replace />;
+    return <Navigate to="/admin" replace />;
   }
   
   // User is admin, render the protected content
-  console.log("User is admin, showing admin content");
   return <>{children}</>;
 };
 

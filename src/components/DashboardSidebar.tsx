@@ -1,12 +1,11 @@
 
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   FileText,
-  CreditCard,
-  BarChart3,
+  Users,
   Settings,
   MessageSquare,
   HelpCircle,
@@ -19,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ interface DashboardSidebarProps {
 const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   
   // Check if screen is mobile
@@ -44,41 +46,41 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
     };
   }, []);
 
-  const handleLogout = () => {
-    // Navigate to the login page
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("Logged out successfully");
+      navigate("/admin");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      toast.error("Failed to log out");
+    }
+  };
+
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
   const navItems = [
     {
       icon: LayoutDashboard,
       label: "Dashboard",
-      href: "/"
+      href: "/admin"
     },
     {
       icon: FileText,
-      label: "Projects",
-      href: "/"
+      label: "Consultations",
+      href: "/admin/consultations"
     },
     {
-      icon: CreditCard,
-      label: "Billing",
-      href: "/"
-    },
-    {
-      icon: BarChart3,
-      label: "Reports",
-      href: "/"
-    },
-    {
-      icon: MessageSquare,
-      label: "Messages",
-      href: "/"
+      icon: Users,
+      label: "Users",
+      href: "/admin/users"
     },
     {
       icon: Settings,
       label: "Settings",
-      href: "/"
+      href: "/admin/settings"
     }
   ];
 
@@ -86,12 +88,12 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
     <div className="flex flex-col h-full">
       <div className="p-4 flex items-center justify-between border-b border-white/10">
         {isOpen || isMobile ? (
-          <Link to="/" className="text-xl font-bold gradient-text">
-            Ai Laszlo
+          <Link to="/admin" className="text-xl font-bold gradient-text">
+            Admin Panel
           </Link>
         ) : (
           <div className="w-full flex justify-center">
-            <span className="text-xl font-bold gradient-text">AL</span>
+            <span className="text-xl font-bold gradient-text">AP</span>
           </div>
         )}
         {!isMobile && (
@@ -114,7 +116,10 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
                 <Link
                   to={item.href}
                   className={cn(
-                    "flex items-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
+                    "flex items-center px-3 py-2 rounded-md transition-colors",
+                    isActive(item.href) 
+                      ? "bg-primary text-white" 
+                      : "hover:bg-accent/50"
                   )}
                 >
                   <item.icon size={18} className="mr-3" />
@@ -126,7 +131,10 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
                     <Link
                       to={item.href}
                       className={cn(
-                        "flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
+                        "flex items-center justify-center px-3 py-2 rounded-md transition-colors",
+                        isActive(item.href) 
+                          ? "bg-primary text-white" 
+                          : "hover:bg-accent/50"
                       )}
                     >
                       <item.icon size={18} />
@@ -143,10 +151,10 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
       </nav>
       
       <div className="p-4 border-t border-white/10 space-y-2">
-        {(isOpen || isMobile) && (
+        {(isOpen || isMobile) && user && (
           <div className="px-3 py-2">
-            <div className="text-sm font-medium">Guest User</div>
-            <div className="text-xs text-white/60">guest@example.com</div>
+            <div className="text-sm font-medium">{user.email}</div>
+            <div className="text-xs text-white/60">Administrator</div>
           </div>
         )}
         
@@ -154,7 +162,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
           <li>
             {isOpen || isMobile ? (
               <Link
-                to="/"
+                to="/help"
                 className="flex items-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
               >
                 <HelpCircle size={18} className="mr-3" />
@@ -164,7 +172,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link
-                    to="/"
+                    to="/help"
                     className="flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-accent/50"
                   >
                     <HelpCircle size={18} />
