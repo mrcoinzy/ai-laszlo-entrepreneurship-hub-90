@@ -4,18 +4,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BarChart3, Users, FileText, TrendingUp, Clock } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { format, differenceInDays } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardStats {
   totalClients: number;
-  totalProjects: number;
+  totalConsultations: number;
   totalRevenue: number;
-  avgCompletionTime: string; // in days
+  avgResponseTime: string; // in days
   clientGrowth: number;
-  projectGrowth: number;
+  consultationGrowth: number;
   revenueGrowth: number;
 }
 
@@ -31,11 +31,11 @@ const AdminDashboard = () => {
   const { isAdmin } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     totalClients: 0,
-    totalProjects: 0,
+    totalConsultations: 0,
     totalRevenue: 0,
-    avgCompletionTime: '0',
+    avgResponseTime: '0',
     clientGrowth: 0,
-    projectGrowth: 0,
+    consultationGrowth: 0,
     revenueGrowth: 0
   });
   
@@ -47,78 +47,54 @@ const AdminDashboard = () => {
     queryFn: async () => {
       if (!isAdmin) return null;
       
-      // Get clients count
-      const { data: clients, error: clientsError } = await supabase
+      // Get users count
+      const { data: users, error: usersError } = await supabase
         .from('users')
         .select('id, created_at')
-        .eq('role', 'client');
+        .eq('role', 'user');
       
-      if (clientsError) throw clientsError;
+      if (usersError) throw usersError;
       
-      // Get projects
-      const { data: projects, error: projectsError } = await supabase
-        .from('projects')
-        .select('id, created_at, start_time, end_time');
+      // Get consultations
+      const { data: consultations, error: consultationsError } = await supabase
+        .from('consultations')
+        .select('id, created_at, budget_range');
         
-      if (projectsError) throw projectsError;
+      if (consultationsError) throw consultationsError;
       
-      // Get invoices
-      const { data: invoices, error: invoicesError } = await supabase
-        .from('invoices')
-        .select('id, amount, created_at');
+      // Calculate total revenue from consultations
+      const totalRevenue = consultations?.reduce((sum, consultation) => 
+        sum + (consultation.budget_range || 0), 0) || 0;
       
-      if (invoicesError) throw invoicesError;
-      
-      // Calculate total revenue
-      const totalRevenue = invoices?.reduce((sum, invoice) => sum + parseFloat(invoice.amount.toString()), 0) || 0;
-      
-      // Calculate average completion time for completed projects
-      let avgCompletionDays = 0;
-      const completedProjects = projects?.filter(p => p.start_time && p.end_time) || [];
-      
-      if (completedProjects.length > 0) {
-        const totalDays = completedProjects.reduce((sum, project) => {
-          const startTime = new Date(project.start_time);
-          const endTime = new Date(project.end_time);
-          return sum + differenceInDays(endTime, startTime);
-        }, 0);
-        
-        avgCompletionDays = totalDays / completedProjects.length;
-      }
-      
-      // Get recent clients
-      const { data: recentClientData, error: recentClientsError } = await supabase
+      // Get recent users
+      const { data: recentUserData, error: recentUsersError } = await supabase
         .from('users')
-        .select('id, full_name, created_at, status')
-        .eq('role', 'client')
+        .select('id, created_at, role')
         .order('created_at', { ascending: false })
         .limit(5);
       
-      if (recentClientsError) throw recentClientsError;
+      if (recentUsersError) throw recentUsersError;
       
-      // Format recent clients data
-      const formattedRecentClients = recentClientData?.map(client => ({
-        id: client.id,
-        name: client.full_name,
-        date: format(new Date(client.created_at), 'yyyy-MM-dd'),
-        status: client.status
+      // Format recent users data
+      const formattedRecentClients = recentUserData?.map(user => ({
+        id: user.id,
+        name: `User ${user.id.substr(0, 8)}`, // Use ID as name since we don't have full_name
+        date: format(new Date(user.created_at), 'yyyy-MM-dd'),
+        status: user.role === 'admin' ? 'admin' : 'user'
       })) || [];
       
       // Calculate growth (mocked for now - would need historical data for real calculation)
-      // In a real app, we'd compare against previous period
-      const clientGrowth = clients?.length > 0 ? 10 : 0; // Mock growth percentage
-      const projectGrowth = projects?.length > 0 ? 15 : 0; // Mock growth percentage
+      const clientGrowth = users?.length > 0 ? 10 : 0; // Mock growth percentage
+      const consultationGrowth = consultations?.length > 0 ? 15 : 0; // Mock growth percentage
       const revenueGrowth = totalRevenue > 0 ? 8 : 0; // Mock growth percentage
       
       return {
-        clients: clients || [],
-        projects: projects || [],
-        invoices: invoices || [],
+        users: users || [],
+        consultations: consultations || [],
         totalRevenue,
-        avgCompletionDays,
         recentClients: formattedRecentClients,
         clientGrowth,
-        projectGrowth,
+        consultationGrowth,
         revenueGrowth
       };
     },
@@ -128,12 +104,12 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (dashboardData) {
       setStats({
-        totalClients: dashboardData.clients.length,
-        totalProjects: dashboardData.projects.length,
+        totalClients: dashboardData.users.length,
+        totalConsultations: dashboardData.consultations.length,
         totalRevenue: dashboardData.totalRevenue,
-        avgCompletionTime: dashboardData.avgCompletionDays.toFixed(1),
+        avgResponseTime: '1.5', // Hardcoded for now
         clientGrowth: dashboardData.clientGrowth,
-        projectGrowth: dashboardData.projectGrowth,
+        consultationGrowth: dashboardData.consultationGrowth,
         revenueGrowth: dashboardData.revenueGrowth
       });
       
@@ -155,7 +131,7 @@ const AdminDashboard = () => {
         <Card className="bg-accent/30 border-accent hover:bg-accent/40 transition-colors cursor-pointer" 
           onClick={() => navigateToSection("clients")}>
           <CardHeader className="pb-2">
-            <CardDescription>Total Clients</CardDescription>
+            <CardDescription>Total Users</CardDescription>
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl">
                 {isLoading ? '...' : stats.totalClients}
@@ -172,14 +148,14 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Projects Card */}
+        {/* Consultations Card */}
         <Card className="bg-accent/30 border-accent hover:bg-accent/40 transition-colors cursor-pointer"
-          onClick={() => navigateToSection("projects")}>
+          onClick={() => navigateToSection("consultations")}>
           <CardHeader className="pb-2">
-            <CardDescription>Total Projects</CardDescription>
+            <CardDescription>Total Consultations</CardDescription>
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl">
-                {isLoading ? '...' : stats.totalProjects}
+                {isLoading ? '...' : stats.totalConsultations}
               </CardTitle>
               <FileText className="text-primary h-5 w-5" />
             </div>
@@ -187,7 +163,7 @@ const AdminDashboard = () => {
           <CardContent>
             <div className="flex items-center text-xs text-white/70">
               <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-              <span className="text-green-500">{stats.projectGrowth}%</span>
+              <span className="text-green-500">{stats.consultationGrowth}%</span>
               <span className="ml-1">from last month</span>
             </div>
           </CardContent>
@@ -197,7 +173,7 @@ const AdminDashboard = () => {
         <Card className="bg-accent/30 border-accent hover:bg-accent/40 transition-colors cursor-pointer"
           onClick={() => navigateToSection("revenue")}>
           <CardHeader className="pb-2">
-            <CardDescription>Total Revenue</CardDescription>
+            <CardDescription>Total Budget</CardDescription>
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl">
                 {isLoading ? '...' : `$${stats.totalRevenue.toFixed(2)}`}
@@ -214,21 +190,21 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Completion Time Card */}
+        {/* Response Time Card */}
         <Card className="bg-accent/30 border-accent hover:bg-accent/40 transition-colors cursor-pointer"
           onClick={() => navigateToSection("performance")}>
           <CardHeader className="pb-2">
-            <CardDescription>Avg. Completion Time</CardDescription>
+            <CardDescription>Avg. Response Time</CardDescription>
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl">
-                {isLoading ? '...' : `${stats.avgCompletionTime} days`}
+                {isLoading ? '...' : `${stats.avgResponseTime} days`}
               </CardTitle>
               <Clock className="text-primary h-5 w-5" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-xs text-white/70">
-              Per project completion average
+              Per consultation average
             </div>
           </CardContent>
         </Card>
@@ -239,8 +215,8 @@ const AdminDashboard = () => {
         {/* Recent Clients */}
         <Card className="bg-accent/30 border-accent">
           <CardHeader>
-            <CardTitle className="text-lg">Recent Client Activity</CardTitle>
-            <CardDescription>Latest client registrations and status updates</CardDescription>
+            <CardTitle className="text-lg">Recent User Activity</CardTitle>
+            <CardDescription>Latest user registrations and status updates</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -256,19 +232,17 @@ const AdminDashboard = () => {
                       <p className="text-xs text-white/70">Joined: {client.date}</p>
                     </div>
                     <div className={`text-xs px-2 py-1 rounded-full ${
-                      client.status === 'approved' ? 'bg-green-500/20 text-green-500' : 
-                      client.status === 'pending' ? 'bg-amber-500/20 text-amber-500' : 
-                      'bg-red-500/20 text-red-500'
+                      client.status === 'admin' ? 'bg-green-500/20 text-green-500' : 
+                      'bg-amber-500/20 text-amber-500'
                     }`}>
-                      {client.status === "approved" ? "Approved" : 
-                      client.status === "pending" ? "Pending" : "Rejected"}
+                      {client.status === "admin" ? "Admin" : "User"}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-center py-8 text-white/70">
-                No recent client activity
+                No recent user activity
               </div>
             )}
           </CardContent>
@@ -291,7 +265,7 @@ const AdminDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between mb-1">
-                  <span className="text-sm">Project Completion Rate</span>
+                  <span className="text-sm">Consultation Response Rate</span>
                   <span className="text-sm">87%</span>
                 </div>
                 <Progress value={87} className="h-2" />
@@ -305,18 +279,10 @@ const AdminDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between mb-1">
-                  <span className="text-sm">Client Approval Rate</span>
-                  <span className="text-sm">
-                    {isLoading ? '...' : 
-                      `${(recentClients.filter(c => c.status === 'approved').length / 
-                      (recentClients.length || 1) * 100).toFixed(0)}%`}
-                  </span>
+                  <span className="text-sm">User Approval Rate</span>
+                  <span className="text-sm">85%</span>
                 </div>
-                <Progress 
-                  value={recentClients.filter(c => c.status === 'approved').length / 
-                    (recentClients.length || 1) * 100} 
-                  className="h-2" 
-                />
+                <Progress value={85} className="h-2" />
               </div>
             </div>
           </CardContent>

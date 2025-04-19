@@ -20,7 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
 // Create a schema for form validation
@@ -77,18 +77,22 @@ const RegistrationForm = () => {
       
       if (authError) throw authError;
       
-      // Create a new project entry
-      const { error: projectError } = await supabase
-        .from('projects')
+      // Create a new consultation entry instead of project
+      const { error: consultationError } = await supabase
+        .from('consultations')
         .insert({
-          client_id: authData.user?.id,
-          title: values.projectDescription,
-          description: values.projectDetails,
-          status: 'not-started',
-          is_active: false
+          name: values.fullName,
+          email: values.email,
+          main_goal: values.projectDescription,
+          business_details: values.projectDetails,
+          business_type: "New Registration",
+          biggest_challenge: "To be determined",
+          online_presence: "To be determined",
+          interested_services: values.serviceOptions,
+          budget_range: 0
         });
       
-      if (projectError) throw projectError;
+      if (consultationError) throw consultationError;
       
       toast.success("Registration successful! We'll get back to you soon.");
       

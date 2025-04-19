@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { 
   Card, 
   CardContent, 
@@ -21,155 +21,65 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Types for our data
-interface Client {
+interface User {
   id: string;
-  email: string;
-  full_name: string;
-  profile_image_url: string | null;
-  bio: string | null;
+  email?: string;
   role: string;
-  status: string;
   created_at: string;
 }
-
-interface Project {
-  id: string;
-  client_id: string;
-  title: string;
-  description: string;
-  start_time: string | null;
-  end_time: string | null;
-  progress: number;
-  status: string;
-  time_spent: string;
-  is_active: boolean;
-  created_at: string;
-}
-
-// Helper function to format service options for display
-const formatServiceOptions = (options: string[]) => {
-  const serviceMap: Record<string, string> = {
-    "website": "Website Development",
-    "webapp": "Web Application",
-    "marketing": "Marketing & Sales",
-    "business": "Business Development",
-    "self-development": "Self Development"
-  };
-  
-  return options.map(opt => serviceMap[opt] || opt).join(", ");
-};
 
 const ClientsManagement = () => {
   const [expandedClient, setExpandedClient] = useState<string | null>(null);
   const queryClient = useQueryClient();
   
-  // Fetch all users with role 'client'
-  const { data: clients = [], isLoading: isLoadingClients } = useQuery({
-    queryKey: ['clients'],
+  // Fetch all users with role 'user'
+  const { data: allUsers = [], isLoading: isLoadingUsers } = useQuery({
+    queryKey: ['allUsers'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('users')
-        .select('*')
-        .eq('role', 'client');
+        .select('*');
       
       if (error) throw error;
-      return data as Client[];
+      return data as User[];
     }
   });
   
-  // Fetch all pending clients
-  const { data: pendingClients = [], isLoading: isLoadingPending } = useQuery({
-    queryKey: ['pendingClients'],
+  // Fetch all consultations
+  const { data: consultations = [], isLoading: isLoadingConsultations } = useQuery({
+    queryKey: ['allConsultations'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('role', 'client')
-        .eq('status', 'pending');
-      
-      if (error) throw error;
-      return data as Client[];
-    }
-  });
-  
-  // Fetch approved clients
-  const { data: approvedClients = [], isLoading: isLoadingApproved } = useQuery({
-    queryKey: ['approvedClients'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('role', 'client')
-        .eq('status', 'approved');
-      
-      if (error) throw error;
-      return data as Client[];
-    }
-  });
-  
-  // Fetch all projects for approved clients
-  const { data: projects = [], isLoading: isLoadingProjects } = useQuery({
-    queryKey: ['clientProjects'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('projects')
-        .select(`
-          *,
-          users:client_id (id, full_name, email, created_at)
-        `);
+        .from('consultations')
+        .select('*');
       
       if (error) throw error;
       return data;
     }
   });
   
-  // Mutation to approve a client
-  const approveMutation = useMutation({
-    mutationFn: async (clientId: string) => {
+  // Mutation to update user role
+  const updateRoleMutation = useMutation({
+    mutationFn: async ({ userId, newRole }: { userId: string; newRole: string }) => {
       const { error } = await supabase
         .from('users')
-        .update({ status: 'approved' })
-        .eq('id', clientId);
+        .update({ role: newRole })
+        .eq('id', userId);
       
       if (error) throw error;
-      return clientId;
+      return userId;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingClients'] });
-      queryClient.invalidateQueries({ queryKey: ['approvedClients'] });
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
-      toast.success("Client approved successfully! An email notification has been sent.");
+      queryClient.invalidateQueries({ queryKey: ['allUsers'] });
+      toast.success("User role updated successfully!");
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Failed to approve client. Please try again.");
-    }
-  });
-  
-  // Mutation to reject a client
-  const rejectMutation = useMutation({
-    mutationFn: async (clientId: string) => {
-      const { error } = await supabase
-        .from('users')
-        .update({ status: 'rejected' })
-        .eq('id', clientId);
-      
-      if (error) throw error;
-      return clientId;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingClients'] });
-      queryClient.invalidateQueries({ queryKey: ['approvedClients'] });
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
-      toast.info("Client request rejected. An automated email has been sent.");
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to reject client. Please try again.");
+      toast.error("Failed to update user role. Please try again.");
     }
   });
   
@@ -177,38 +87,30 @@ const ClientsManagement = () => {
     setExpandedClient(expandedClient === clientId ? null : clientId);
   };
   
-  // Handle client approval
-  const handleApproveClient = (clientId: string) => {
-    approveMutation.mutate(clientId);
+  // Handle approving user as admin
+  const handleApproveAsAdmin = (userId: string) => {
+    updateRoleMutation.mutate({ userId, newRole: 'admin' });
   };
   
-  // Handle client rejection
-  const handleRejectClient = (clientId: string) => {
-    rejectMutation.mutate(clientId);
+  // Handle rejecting admin status
+  const handleRemoveAdminRole = (userId: string) => {
+    updateRoleMutation.mutate({ userId, newRole: 'user' });
   };
   
-  // Format pending clients data
-  const formattedPendingClients = pendingClients.map(client => ({
-    id: client.id,
-    fullName: client.full_name,
-    email: client.email,
-    registrationDate: new Date(client.created_at).toISOString().split('T')[0],
-    status: "pending",
-  }));
-
-  // Format approved clients data
-  const formattedApprovedClients = approvedClients.map(client => {
-    // Find projects for this client
-    const clientProjects = projects.filter((p: any) => p.client_id === client.id);
+  // Format users data
+  const formattedUsers = allUsers.map(user => {
+    // Find consultations for this user by email
+    const userConsultations = consultations.filter(
+      (c: any) => c.email === user.email
+    );
     
     return {
-      id: client.id,
-      fullName: client.full_name,
-      email: client.email,
-      registrationDate: new Date(client.created_at).toISOString().split('T')[0],
-      projectCount: clientProjects.length,
-      projects: clientProjects,
-      status: "approved",
+      id: user.id,
+      role: user.role,
+      email: user.email || 'No email',
+      registrationDate: new Date(user.created_at).toISOString().split('T')[0],
+      consultationCount: userConsultations.length,
+      consultations: userConsultations,
     };
   });
 
@@ -216,67 +118,62 @@ const ClientsManagement = () => {
     <div className="space-y-6">
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="all">All Clients</TabsTrigger>
-          <TabsTrigger value="incoming">
-            Pending Approval
-            {formattedPendingClients.length > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {formattedPendingClients.length}
-              </Badge>
-            )}
+          <TabsTrigger value="all">All Users</TabsTrigger>
+          <TabsTrigger value="pending">
+            Manage Admins
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="all">
           <Card className="bg-accent/30 border-accent">
             <CardHeader>
-              <CardTitle>All Clients</CardTitle>
-              <CardDescription>Manage your existing clients</CardDescription>
+              <CardTitle>All Users</CardTitle>
+              <CardDescription>Manage your existing users</CardDescription>
             </CardHeader>
             <CardContent>
-              {isLoadingApproved ? (
-                <div className="text-center py-8">Loading clients...</div>
-              ) : formattedApprovedClients.length === 0 ? (
-                <div className="text-center py-8 text-white/70">No approved clients yet</div>
+              {isLoadingUsers ? (
+                <div className="text-center py-8">Loading users...</div>
+              ) : formattedUsers.length === 0 ? (
+                <div className="text-center py-8 text-white/70">No users found</div>
               ) : (
                 <div className="rounded-md border overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-[250px]">Name</TableHead>
+                        <TableHead className="w-[250px]">ID</TableHead>
                         <TableHead>Email</TableHead>
                         <TableHead className="hidden md:table-cell">Registration Date</TableHead>
-                        <TableHead className="text-right">Status</TableHead>
+                        <TableHead className="text-right">Role</TableHead>
                         <TableHead className="w-[50px]"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {formattedApprovedClients.map((client) => (
-                        <React.Fragment key={client.id}>
+                      {formattedUsers.map((user) => (
+                        <React.Fragment key={user.id}>
                           <TableRow className="hover:bg-accent/10">
-                            <TableCell className="font-medium">{client.fullName}</TableCell>
+                            <TableCell className="font-medium">{user.id.substring(0, 8)}...</TableCell>
                             <TableCell className="hidden sm:table-cell">
-                              {client.email}
+                              {user.email}
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
                               <div className="flex items-center">
                                 <Calendar className="mr-2 h-4 w-4 text-white/70" />
-                                {client.registrationDate}
+                                {user.registrationDate}
                               </div>
                             </TableCell>
                             <TableCell className="text-right">
-                              <Badge variant="default" className="bg-green-600">
-                                Approved
+                              <Badge variant="default" className={user.role === 'admin' ? 'bg-green-600' : 'bg-blue-600'}>
+                                {user.role}
                               </Badge>
                             </TableCell>
                             <TableCell>
                               <Button 
                                 variant="ghost" 
                                 size="sm" 
-                                onClick={() => toggleClientDetails(client.id)}
-                                aria-label="Toggle client details"
+                                onClick={() => toggleClientDetails(user.id)}
+                                aria-label="Toggle user details"
                               >
-                                {expandedClient === client.id ? 
+                                {expandedClient === user.id ? 
                                   <ChevronUp className="h-4 w-4" /> : 
                                   <ChevronDown className="h-4 w-4" />
                                 }
@@ -285,41 +182,41 @@ const ClientsManagement = () => {
                           </TableRow>
                           
                           {/* Expanded Details Row */}
-                          {expandedClient === client.id && (
+                          {expandedClient === user.id && (
                             <TableRow className="bg-accent/10">
                               <TableCell colSpan={5} className="p-4">
                                 <div className="space-y-3">
                                   <div>
-                                    <h4 className="text-sm font-medium mb-1">Contact Information</h4>
+                                    <h4 className="text-sm font-medium mb-1">User Information</h4>
                                     <div className="flex items-center text-sm">
                                       <Mail className="mr-2 h-4 w-4 text-white/70" />
-                                      {client.email}
+                                      {user.email}
                                     </div>
                                   </div>
                                   
                                   <div>
-                                    <h4 className="text-sm font-medium mb-1">Projects ({client.projectCount})</h4>
-                                    {client.projects.length > 0 ? (
+                                    <h4 className="text-sm font-medium mb-1">Consultations ({user.consultationCount})</h4>
+                                    {user.consultations.length > 0 ? (
                                       <div className="space-y-2">
-                                        {client.projects.map((project: any) => (
-                                          <div key={project.id} className="p-2 bg-accent/20 rounded-md">
-                                            <div className="font-medium">{project.title}</div>
-                                            <div className="text-sm text-white/70">{project.description}</div>
+                                        {user.consultations.map((consultation: any) => (
+                                          <div key={consultation.id} className="p-2 bg-accent/20 rounded-md">
+                                            <div className="font-medium">{consultation.main_goal}</div>
+                                            <div className="text-sm text-white/70">{consultation.business_type}</div>
                                             <div className="flex justify-between mt-1 text-xs text-white/60">
-                                              <div>Status: {project.status}</div>
-                                              <div>Progress: {project.progress}%</div>
+                                              <div>Budget: ${consultation.budget_range}</div>
+                                              <div>Date: {new Date(consultation.created_at).toLocaleDateString()}</div>
                                             </div>
                                           </div>
                                         ))}
                                       </div>
                                     ) : (
-                                      <p className="text-sm text-white/70">No projects yet</p>
+                                      <p className="text-sm text-white/70">No consultations yet</p>
                                     )}
                                   </div>
                                   
                                   <div className="flex gap-2 pt-2">
                                     <Button size="sm" variant="outline">
-                                      View Projects
+                                      View Details
                                     </Button>
                                     <Button size="sm" variant="outline">
                                       Send Message
@@ -339,31 +236,32 @@ const ClientsManagement = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="incoming">
+        <TabsContent value="pending">
           <Card className="bg-accent/30 border-accent">
             <CardHeader>
-              <CardTitle>Pending Client Requests</CardTitle>
-              <CardDescription>Review and approve new client registrations</CardDescription>
+              <CardTitle>Manage Admin Access</CardTitle>
+              <CardDescription>Grant or revoke admin privileges</CardDescription>
             </CardHeader>
             <CardContent>
-              {isLoadingPending ? (
-                <div className="text-center py-8">Loading requests...</div>
-              ) : formattedPendingClients.length === 0 ? (
+              {isLoadingUsers ? (
+                <div className="text-center py-8">Loading users...</div>
+              ) : formattedUsers.length === 0 ? (
                 <div className="text-center py-6 text-white/70">
-                  No pending client requests at this time
+                  No users available to modify
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {formattedPendingClients.map((client) => (
-                    <Card key={client.id} className="bg-accent/20 border-white/10">
+                  {formattedUsers.map((user) => (
+                    <Card key={user.id} className="bg-accent/20 border-white/10">
                       <CardHeader>
                         <div className="flex justify-between items-start">
                           <div>
-                            <CardTitle className="text-lg">{client.fullName}</CardTitle>
-                            <CardDescription>{client.email}</CardDescription>
+                            <CardTitle className="text-lg">User ID: {user.id.substring(0, 8)}...</CardTitle>
+                            <CardDescription>{user.email}</CardDescription>
                           </div>
-                          <Badge variant="outline" className="bg-amber-500/20 text-amber-500">
-                            Pending Approval
+                          <Badge variant="outline" className={user.role === 'admin' ? 
+                            'bg-green-500/20 text-green-500' : 'bg-blue-500/20 text-blue-500'}>
+                            {user.role === 'admin' ? 'Admin' : 'Regular User'}
                           </Badge>
                         </div>
                       </CardHeader>
@@ -372,29 +270,32 @@ const ClientsManagement = () => {
                           <h4 className="text-sm font-medium mb-1">Registration Date</h4>
                           <div className="flex items-center text-sm">
                             <Calendar className="mr-2 h-4 w-4 text-white/70" />
-                            {client.registrationDate}
+                            {user.registrationDate}
                           </div>
                         </div>
                       </CardContent>
                       <CardFooter className="flex justify-between border-t border-white/10 pt-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-red-400 border-red-400/30 hover:bg-red-400/10"
-                          onClick={() => handleRejectClient(client.id)}
-                        >
-                          <XCircle className="mr-2 h-4 w-4" />
-                          Reject
-                        </Button>
-                        <Button 
-                          variant="default"
-                          size="sm"
-                          className="bg-green-600 hover:bg-green-500"
-                          onClick={() => handleApproveClient(client.id)}
-                        >
-                          <CheckCircle className="mr-2 h-4 w-4" />
-                          Approve Access
-                        </Button>
+                        {user.role === 'admin' ? (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-red-400 border-red-400/30 hover:bg-red-400/10"
+                            onClick={() => handleRemoveAdminRole(user.id)}
+                          >
+                            <XCircle className="mr-2 h-4 w-4" />
+                            Remove Admin Status
+                          </Button>
+                        ) : (
+                          <Button 
+                            variant="default"
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-500"
+                            onClick={() => handleApproveAsAdmin(user.id)}
+                          >
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Grant Admin Access
+                          </Button>
+                        )}
                       </CardFooter>
                     </Card>
                   ))}
