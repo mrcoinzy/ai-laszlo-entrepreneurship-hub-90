@@ -37,7 +37,7 @@ const AdminRegistrationForm = () => {
           .from('users')
           .update({ 
             role: 'admin', 
-            status: 'approved' 
+            status: 'pending' 
           })
           .eq('id', authData.user.id);
 

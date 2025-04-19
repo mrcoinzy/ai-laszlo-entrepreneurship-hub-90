@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import AdminDashboard from "@/pages/admin/Dashboard"
 import AdminRegistration from "@/pages/AdminRegistration"
+import AdminLogin from "@/components/AdminLogin"
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -45,13 +46,18 @@ function App() {
           <Route path="/consultation-thankyou" element={<ConsultationThankYou />} />
           
           {/* Admin Routes */}
-          <Route 
-            path="/admin/*" 
-            element={<AdminDashboard />} 
-          />
+          <Route path="/admin" element={<AdminLogin />} />
           <Route 
             path="/admin/register" 
             element={<AdminRegistration />} 
+          />
+          <Route 
+            path="/admin/*" 
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
           />
           
           {/* 404 */}
