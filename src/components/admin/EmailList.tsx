@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 import { Card } from "@/components/ui/card";
 import { Loader2, Mail, Calendar } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,13 +17,22 @@ const EmailList = () => {
   const { data: subscribers, isLoading, error } = useQuery({
     queryKey: ['email-subscribers'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('email_subscribers')
-        .select('*')
+      // For now, we'll just display user emails as a placeholder
+      // since the email_subscribers table doesn't exist yet
+      const { data, error } = await supabaseAdmin
+        .from('users')
+        .select('id, email, created_at')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as EmailSubscriber[];
+      
+      // Transform to match the expected EmailSubscriber format
+      return data.map(user => ({
+        id: user.id,
+        created_at: user.created_at,
+        email: user.email,
+        source: 'User Registration'
+      })) as EmailSubscriber[];
     }
   });
 
@@ -38,7 +47,7 @@ const EmailList = () => {
   if (error) {
     return (
       <div className="text-red-500 p-4">
-        Hiba történt a feliratkozók betöltésekor.
+        Error loading subscribers.
       </div>
     );
   }
@@ -57,12 +66,12 @@ const EmailList = () => {
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                {new Date(subscriber.created_at).toLocaleDateString('hu-HU')}
+                {new Date(subscriber.created_at).toLocaleDateString()}
               </div>
             </div>
             {subscriber.source && (
               <div className="mt-2 text-sm text-muted-foreground">
-                Forrás: {subscriber.source}
+                Source: {subscriber.source}
               </div>
             )}
           </Card>

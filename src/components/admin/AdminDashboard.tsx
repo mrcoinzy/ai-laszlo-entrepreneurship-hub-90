@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, Users, FileText, TrendingUp, Clock } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseAdmin } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
@@ -47,7 +48,7 @@ const AdminDashboard = () => {
       if (!isAdmin) return null;
       
       // Get users count
-      const { data: users, error: usersError } = await supabase
+      const { data: users, error: usersError } = await supabaseAdmin
         .from('users')
         .select('id, created_at, role')
         .eq('role', 'user');
@@ -55,7 +56,7 @@ const AdminDashboard = () => {
       if (usersError) throw usersError;
       
       // Get consultations
-      const { data: consultations, error: consultationsError } = await supabase
+      const { data: consultations, error: consultationsError } = await supabaseAdmin
         .from('consultations')
         .select('*');
         
@@ -66,9 +67,9 @@ const AdminDashboard = () => {
         sum + (consultation.budget_range || 0), 0) || 0;
       
       // Get recent users with profiles
-      const { data: recentUserData, error: recentUsersError } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, created_at')
+      const { data: recentUserData, error: recentUsersError } = await supabaseAdmin
+        .from('users')
+        .select('id, email, created_at, role')
         .order('created_at', { ascending: false })
         .limit(5);
       
@@ -77,9 +78,9 @@ const AdminDashboard = () => {
       // Format recent users data
       const formattedRecentClients = recentUserData?.map(user => ({
         id: user.id,
-        name: user.full_name || user.email,
-        date: format(new Date(user.created_at), 'yyyy-MM-dd'),
-        status: 'user'
+        name: user.email,
+        date: format(new Date(user.created_at || new Date()), 'yyyy-MM-dd'),
+        status: user.role
       })) || [];
       
       return {

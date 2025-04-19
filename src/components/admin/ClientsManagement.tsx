@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseAdmin } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -13,9 +14,9 @@ const ClientsManagement = () => {
 
   const fetchClients = async () => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
+      const { data, error } = await supabaseAdmin
+        .from('users')
+        .select('id, email, created_at, role')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -29,9 +30,9 @@ const ClientsManagement = () => {
 
   const handleApproveClient = async (clientId: string) => {
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ status: 'approved' })
+      const { error } = await supabaseAdmin
+        .from('users')
+        .update({ role: 'user' })
         .eq('id', clientId);
 
       if (error) throw error;
@@ -45,9 +46,9 @@ const ClientsManagement = () => {
 
   const handleRejectClient = async (clientId: string) => {
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ status: 'rejected' })
+      const { error } = await supabaseAdmin
+        .from('users')
+        .update({ role: 'user' })
         .eq('id', clientId);
 
       if (error) throw error;
@@ -72,29 +73,22 @@ const ClientsManagement = () => {
           {clients.map((client) => (
             <Card key={client.id} className="bg-accent/30 border-accent">
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg">{client.full_name || 'Unnamed Client'}</CardTitle>
+                <CardTitle className="text-lg">{client.email || 'Unnamed Client'}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <p><span className="text-white/70">Email:</span> {client.email}</p>
-                  <p><span className="text-white/70">Status:</span> {client.status}</p>
+                  <p><span className="text-white/70">Role:</span> {client.role}</p>
                   <p><span className="text-white/70">Joined:</span> {new Date(client.created_at).toLocaleDateString()}</p>
                   
-                  {client.status === 'pending' && (
+                  {client.role === 'user' && (
                     <div className="flex gap-2 mt-4">
                       <Button 
                         size="sm" 
                         onClick={() => handleApproveClient(client.id)}
                         className="bg-green-600 hover:bg-green-700"
                       >
-                        Approve
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="destructive"
-                        onClick={() => handleRejectClient(client.id)}
-                      >
-                        Reject
+                        Make Admin
                       </Button>
                     </div>
                   )}

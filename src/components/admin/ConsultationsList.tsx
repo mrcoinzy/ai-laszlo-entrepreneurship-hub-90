@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 import { Card } from "@/components/ui/card";
 import { 
   Table,
@@ -24,7 +25,7 @@ interface Consultation {
   business_type: string;
   main_goal: string;
   online_presence: string;
-  challenge: string;
+  biggest_challenge: string;
   interested_services: string[];
   budget_range?: number;
 }
@@ -36,7 +37,7 @@ const ConsultationsList = () => {
   const { data: consultations, isLoading, error, refetch } = useQuery({
     queryKey: ['consultations'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('consultations')
         .select('*')
         .order('created_at', { ascending: false });
@@ -196,7 +197,7 @@ const ConsultationsList = () => {
             
             <div>
               <p className="text-sm text-muted-foreground mb-1">Biggest Challenge</p>
-              <p>{selectedConsultation.challenge}</p>
+              <p>{selectedConsultation.biggest_challenge}</p>
             </div>
             
             <div>

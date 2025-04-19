@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/lib/supabase';
 
 const AdminRegistrationForm = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ const AdminRegistrationForm = () => {
 
     try {
       // First create the user
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+      const { data: authData, error: signUpError } = await supabaseAdmin.auth.signUp({
         email,
         password,
         options: {
@@ -31,7 +31,7 @@ const AdminRegistrationForm = () => {
 
       if (authData.user) {
         // Update the role in the users table
-        const { error: updateError } = await supabase
+        const { error: updateError } = await supabaseAdmin
           .from('users')
           .update({ role: 'admin' })
           .eq('id', authData.user.id);
