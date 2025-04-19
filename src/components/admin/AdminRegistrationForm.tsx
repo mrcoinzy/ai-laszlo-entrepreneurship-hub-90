@@ -18,37 +18,26 @@ const AdminRegistrationForm = () => {
     setLoading(true);
 
     try {
-      // First create the user with admin role
+      // First create the user with admin role in metadata
       const { data: authData, error: signUpError } = await supabaseAdmin.auth.signUp({
         email,
         password,
         options: {
           data: {
-            role: 'admin'
+            role: 'admin',
+            full_name: email.split('@')[0] // Default name from email
           }
         }
       });
 
       if (signUpError) throw signUpError;
 
-      if (authData.user) {
-        // Update the user's role in the users table
-        const { error: updateError } = await supabaseAdmin
-          .from('users')
-          .update({ 
-            role: 'admin', 
-            status: 'pending' 
-          })
-          .eq('id', authData.user.id);
-
-        if (updateError) throw updateError;
-
-        // Sign out after registration and redirect to login
-        await supabaseAdmin.auth.signOut();
-        
-        toast.success('Admin account created successfully! Please log in.');
-        navigate('/admin');
+      if (!authData.user) {
+        throw new Error('No user data returned');
       }
+
+      toast.success('Admin account created successfully! Please log in.');
+      navigate('/admin');
     } catch (error: any) {
       console.error('Error creating admin:', error);
       toast.error(error.message || 'Failed to create admin account');
