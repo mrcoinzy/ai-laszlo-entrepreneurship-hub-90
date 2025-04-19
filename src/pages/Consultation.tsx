@@ -30,35 +30,37 @@ const Consultation = () => {
           
           <div className="bg-gradient-to-br from-white/8 to-white/2 backdrop-blur-sm border border-white/10 rounded-xl p-6 md:p-10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.3)]">
             <Form {...form}>
-              <MultiStepForm onSubmit={onSubmit} isSubmitting={submitting}>
-                <FormStep 
-                  title="Alapvető információk" 
-                  description="Ezek az adatok segítenek, hogy felvehessem Önnel a kapcsolatot."
-                >
-                  <BasicInfoStep form={form} />
-                </FormStep>
+              <form onSubmit={onSubmit}>
+                <MultiStepForm isSubmitting={submitting}>
+                  <FormStep 
+                    title="Alapvető információk" 
+                    description="Ezek az adatok segítenek, hogy felvehessem Önnel a kapcsolatot."
+                  >
+                    <BasicInfoStep form={form} />
+                  </FormStep>
 
-                <FormStep 
-                  title="Vállalkozásának adatai" 
-                  description="Segítsen jobban megérteni a vállalkozását."
-                >
-                  <BusinessInfoStep form={form} />
-                </FormStep>
+                  <FormStep 
+                    title="Vállalkozásának adatai" 
+                    description="Segítsen jobban megérteni a vállalkozását."
+                  >
+                    <BusinessInfoStep form={form} />
+                  </FormStep>
 
-                <FormStep 
-                  title="Célok és kihívások" 
-                  description="Segítsen megérteni, mire van szüksége."
-                >
-                  <GoalsStep form={form} />
-                </FormStep>
+                  <FormStep 
+                    title="Célok és kihívások" 
+                    description="Segítsen megérteni, mire van szüksége."
+                  >
+                    <GoalsStep form={form} />
+                  </FormStep>
 
-                <FormStep 
-                  title="További információk a hatékonyabb segítségnyújtáshoz" 
-                  description="Ezek az információk segítenek, hogy célzottabb tanácsokat adhassak."
-                >
-                  <ServicesStep form={form} />
-                </FormStep>
-              </MultiStepForm>
+                  <FormStep 
+                    title="További információk a hatékonyabb segítségnyújtáshoz" 
+                    description="Ezek az információk segítenek, hogy célzottabb tanácsokat adhassak."
+                  >
+                    <ServicesStep form={form} />
+                  </FormStep>
+                </MultiStepForm>
+              </form>
             </Form>
           </div>
         </div>

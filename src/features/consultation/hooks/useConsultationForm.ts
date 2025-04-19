@@ -34,6 +34,16 @@ export const useConsultationForm = () => {
       setSubmitting(true);
       console.log("Starting form submission with values:", values);
       
+      // Check if required fields are present
+      if (!values.name || !values.email || !values.businessType || 
+          !values.mainGoal || !values.onlinePresence || 
+          !values.biggestChallenge || values.interestedServices.length === 0) {
+        console.error("Missing required fields:", { values });
+        toast.error("Kérjük töltse ki az összes kötelező mezőt!");
+        setSubmitting(false);
+        return;
+      }
+      
       const supabaseData = {
         name: values.name,
         email: values.email,
@@ -49,19 +59,18 @@ export const useConsultationForm = () => {
       
       console.log("Transformed data for Supabase:", supabaseData);
       
+      // Use upsert method with better error handling
       const { data, error } = await supabase
         .from('consultations')
-        .insert(supabaseData)
-        .select()
-        .single();
+        .insert(supabaseData);
       
       if (error) {
         console.error("Error inserting data into Supabase:", error);
-        toast.error("Hiba történt a küldés során. Kérjük próbálja újra!");
+        toast.error(`Hiba történt a küldés során: ${error.message}`);
         return;
       }
       
-      console.log("Successfully submitted to Supabase:", data);
+      console.log("Successfully submitted to Supabase");
       toast.success("Köszönjük a kitöltést!");
       navigate("/consultation-thankyou");
     } catch (error) {
