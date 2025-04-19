@@ -1,5 +1,4 @@
-
-import { supabaseAdmin } from './supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Helper function to ensure the avatars storage bucket exists
@@ -7,7 +6,7 @@ import { supabaseAdmin } from './supabase';
 export const ensureAvatarsBucketExists = async () => {
   try {
     // Check if the bucket already exists
-    const { data: existingBuckets, error: getBucketError } = await supabaseAdmin
+    const { data: existingBuckets, error: getBucketError } = await supabase
       .storage
       .listBuckets();
     
@@ -21,7 +20,7 @@ export const ensureAvatarsBucketExists = async () => {
     
     if (!avatarsBucketExists) {
       // Create the avatars bucket
-      const { error: createBucketError } = await supabaseAdmin
+      const { error: createBucketError } = await supabase
         .storage
         .createBucket('avatars', {
           public: true, // Make the bucket public
@@ -52,28 +51,21 @@ export const ensureImagesBucketExists = async () => {
   try {
     console.log('Checking if images bucket exists');
     
-    // First try with listBuckets
-    const { data: buckets, error: listError } = await supabaseAdmin
+    // Try direct bucket access first as the most reliable method
+    const { data: listResult, error: listError } = await supabase
       .storage
-      .listBuckets();
+      .from('images')
+      .list('', { limit: 1 });
     
-    if (listError) {
-      console.error('Error listing buckets:', listError);
-      return false;
-    }
-    
-    // Check if bucket exists in the list
-    const bucketExists = buckets.some(bucket => bucket.id === 'images');
-    
-    if (bucketExists) {
-      console.log('Confirmed images bucket exists via bucket list');
+    if (!listError) {
+      console.log('Successfully verified images bucket via direct access');
       return true;
     }
     
-    // If not found in the list, try to create it
-    console.log('Images bucket not found in list, attempting to create');
+    console.log('Direct bucket access failed, trying to create bucket');
     
-    const { error: createError } = await supabaseAdmin
+    // If bucket doesn't exist, try to create it
+    const { error: createError } = await supabase
       .storage
       .createBucket('images', {
         public: true,
@@ -90,6 +82,17 @@ export const ensureImagesBucketExists = async () => {
         console.log('Bucket already exists (detected from error)');
         return true;
       }
+      
+      // For other errors, try one more verification
+      const { data: verifyData, error: verifyError } = await supabase
+        .storage
+        .getBucket('images');
+        
+      if (!verifyError && verifyData) {
+        console.log('Bucket exists despite creation error');
+        return true;
+      }
+      
       return false;
     }
     
@@ -110,7 +113,7 @@ export const verifyBucketAccess = async (bucketName: string) => {
     console.log(`Verifying access to ${bucketName} bucket`);
     
     // Try to list files in the bucket (with limit 1 for efficiency)
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .storage
       .from(bucketName)
       .list('', {
@@ -119,6 +122,17 @@ export const verifyBucketAccess = async (bucketName: string) => {
     
     if (error) {
       console.error(`Error verifying ${bucketName} bucket access:`, error);
+      
+      // Try an alternative method - check if bucket exists
+      const { data: bucketData, error: bucketError } = await supabase
+        .storage
+        .getBucket(bucketName);
+        
+      if (!bucketError && bucketData) {
+        console.log(`${bucketName} bucket exists but list operation failed`);
+        return true;
+      }
+      
       return false;
     }
     
@@ -127,5 +141,80 @@ export const verifyBucketAccess = async (bucketName: string) => {
   } catch (error) {
     console.error(`Unhandled error verifying ${bucketName} bucket:`, error);
     return false;
+  }
+};
+
+/**
+ * Creates the images bucket with proper policies if it doesn't exist
+ * This is a more comprehensive approach to ensure the bucket is properly set up
+ */
+export const setupImagesBucket = async () => {
+  try {
+    const bucketExists = await ensureImagesBucketExists();
+    
+    if (!bucketExists) {
+      console.error('Failed to create or verify images bucket');
+      return false;
+    }
+    
+    // Verify access to confirm bucket is properly configured
+    const hasAccess = await verifyBucketAccess('images');
+    
+    if (!hasAccess) {
+      console.error('Images bucket exists but lacks proper access');
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error in setupImagesBucket:', error);
+    return false;
+  }
+};
+
+/**
+ * Upload an image to the images bucket
+ * This function handles the complete flow - ensuring bucket exists and uploading
+ */
+export const uploadImageToBucket = async (file: File, folderPath: string = 'blog') => {
+  try {
+    // First ensure the bucket exists and is accessible
+    const bucketReady = await setupImagesBucket();
+    
+    if (!bucketReady) {
+      throw new Error('Storage bucket not properly configured');
+    }
+    
+    // Generate a unique filename
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2, 15)}-${Date.now()}.${fileExt}`;
+    const filePath = `${folderPath}/${fileName}`;
+    
+    console.log(`Uploading file to ${filePath}`);
+    
+    // Upload the file
+    const { data, error } = await supabase.storage
+      .from('images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+      
+    if (error) {
+      console.error('Error uploading file:', error);
+      throw error;
+    }
+    
+    // Get the public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('images')
+      .getPublicUrl(filePath);
+      
+    console.log('File uploaded successfully. Public URL:', publicUrl);
+    
+    return publicUrl;
+  } catch (error) {
+    console.error('Error in uploadImageToBucket:', error);
+    throw error;
   }
 };

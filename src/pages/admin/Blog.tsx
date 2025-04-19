@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash, Image, Eye, Book, FileText, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
-import { ensureImagesBucketExists, verifyBucketAccess } from "@/lib/supabase-storage";
+import { setupImagesBucket, uploadImageToBucket } from "@/lib/supabase-storage";
 
 const Blog = () => {
   const { isLoading } = useAuth();
@@ -35,21 +35,12 @@ const Blog = () => {
     const checkImagesBucket = async () => {
       try {
         console.log("Checking if images bucket exists...");
-        const exists = await ensureImagesBucketExists();
+        const exists = await setupImagesBucket();
         setBucketChecked(true);
         
         if (exists) {
-          console.log("Images bucket confirmed to exist");
-          
-          const accessible = await verifyBucketAccess('images');
-          
-          if (accessible) {
-            console.log("Images bucket confirmed to be accessible");
-            setBucketConfirmed(true);
-          } else {
-            console.error("Images bucket exists but is not accessible");
-            toast.error("Storage bucket exists but is not accessible");
-          }
+          console.log("Images bucket confirmed to be accessible");
+          setBucketConfirmed(true);
         } else {
           console.error("Failed to confirm images bucket");
           toast.error("Failed to confirm images bucket. Image uploads may not work.");
@@ -79,46 +70,12 @@ const Blog = () => {
   });
 
   const uploadImage = async (file: File) => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-    const filePath = `blog/${fileName}`;
-
     try {
-      if (!bucketConfirmed) {
-        console.log("Verifying images bucket before upload");
-        const bucketWorks = await verifyBucketAccess('images');
-        
-        if (!bucketWorks) {
-          console.error("Images bucket doesn't exist or can't be accessed");
-          throw new Error("Storage bucket not available");
-        }
-        
-        setBucketConfirmed(true);
-      }
-
-      console.log("Attempting to upload image to path:", filePath);
-      
       setUploadProgress(0);
       
-      const { error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
-
-      if (uploadError) {
-        console.error("Image upload error:", uploadError);
-        throw uploadError;
-      }
-
+      const publicUrl = await uploadImageToBucket(file);
+      
       setUploadProgress(100);
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('images')
-        .getPublicUrl(filePath);
-
-      console.log("Upload successful, public URL:", publicUrl);
       return publicUrl;
     } catch (error) {
       console.error("Error in uploadImage:", error);
