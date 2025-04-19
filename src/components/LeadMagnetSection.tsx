@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import CTAButton from "@/components/ui/cta-button";
@@ -12,9 +11,6 @@ const LeadMagnetSection = () => {
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-purple-600/10 filter blur-[120px] opacity-60"></div>
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-blue-600/10 filter blur-[120px] opacity-60"></div>
       </div>
-      
-      {/* Grid background overlay */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
       
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-5xl mx-auto">
