@@ -1,7 +1,5 @@
 
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import MiniIntroSection from "@/components/MiniIntroSection";
@@ -15,24 +13,8 @@ import LeadMagnetSection from "@/components/LeadMagnetSection";
 import FinalCTASection from "@/components/FinalCTASection";
 import Footer from "@/components/Footer";
 import ScrollIndicator from "@/components/ScrollIndicator";
-import { Blog7 } from "@/components/ui/blog7";
 
 const Index = () => {
-  const { data: posts } = useQuery({
-    queryKey: ['blog-posts'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('published', true)
-        .order('created_at', { ascending: false })
-        .limit(3);
-      
-      if (error) throw error;
-      return data;
-    }
-  });
-
   return (
     <div className="min-h-screen bg-black">
       <ScrollIndicator />
@@ -51,19 +33,7 @@ const Index = () => {
       </div>
       <TestimonialsSection />
       <EmailLeadMagnetSection />
-      {posts && posts.length > 0 && (
-        <Blog7 
-          posts={posts}
-          tagline="Latest Updates"
-          heading="From Our Blog"
-          description="Stay informed with our latest insights on web development, design trends, and digital transformation strategies."
-          buttonText="View All Articles"
-          buttonUrl="/blog"
-        />
-      )}
-      <div id="blog">
-        <LeadMagnetSection />
-      </div>
+      <LeadMagnetSection />
       <div id="contact">
         <FinalCTASection />
       </div>
