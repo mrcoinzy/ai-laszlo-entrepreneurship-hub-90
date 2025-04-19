@@ -1,3 +1,4 @@
+
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import AnimatedSection from "../ui/animated-section";
+import { motion } from "framer-motion";
 
 interface Post {
   id: string;
@@ -43,78 +45,108 @@ const Blog7 = ({
   gridClassName = "grid gap-8 md:grid-cols-2 lg:gap-10"
 }: Blog7Props) => {
   return (
-    <AnimatedSection className="py-12 sm:py-16">
+    <AnimatedSection className="py-24 relative">
+      {/* Background Effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-2/3 h-2/3 bg-purple-600/10 rounded-full filter blur-[120px] opacity-40"></div>
+        <div className="absolute bottom-0 left-0 w-2/3 h-2/3 bg-blue-600/10 rounded-full filter blur-[120px] opacity-40"></div>
+      </div>
+      
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
+
       <div className="container mx-auto flex flex-col items-center gap-8 sm:gap-12">
-        <div className="text-center max-w-3xl mx-auto px-4 relative z-10">
-          <Badge variant="secondary" className="mb-3 sm:mb-4">
+        <motion.div 
+          className="text-center max-w-3xl mx-auto px-4 relative z-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <Badge variant="secondary" className="mb-3 sm:mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30">
             {tagline}
           </Badge>
-          <h2 className="mb-3 text-pretty text-2xl font-semibold md:text-3xl lg:text-4xl bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
+          <h2 className="mb-3 text-pretty text-2xl font-semibold md:text-3xl lg:text-4xl bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">
             {heading}
           </h2>
-          <p className="mb-4 sm:mb-6 text-muted-foreground text-sm sm:text-base">
+          <p className="mb-4 sm:mb-6 text-white/70 text-sm sm:text-base">
             {description}
           </p>
-          <Button variant="link" className="w-full sm:w-auto" asChild>
+          <Button variant="outline" className="w-full sm:w-auto border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30" asChild>
             <Link to={buttonUrl}>
               {buttonText}
               <ArrowRight className="ml-2 size-4" />
             </Link>
           </Button>
-        </div>
-        <div className={gridClassName}>
-          {posts.map((post) => (
-            <Card key={post.id} className="grid grid-rows-[auto_auto_auto_auto] overflow-hidden h-full">
-              <div className="aspect-[16/9] w-full">
-                <Link
-                  to={`/blog/${post.id}`}
-                  className="transition-opacity duration-200 fade-in hover:opacity-70"
-                >
-                  <img
-                    src={post.featured_image_url || "/placeholder.svg"}
-                    alt={post.title}
-                    className="h-full w-full object-cover object-center"
-                  />
-                </Link>
-              </div>
-              <div className="px-4 pt-3 space-y-1">
-                {post.keywords && (
-                  <div className="flex flex-wrap gap-1">
-                    {post.keywords.split(',').slice(0, 3).map((keyword, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {keyword.trim()}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <CardHeader className="px-4 py-2">
-                <h3 className="text-base sm:text-lg font-semibold hover:underline line-clamp-2">
-                  <Link to={`/blog/${post.id}`}>
-                    {post.title}
+        </motion.div>
+
+        <motion.div 
+          className={gridClassName}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          {posts.map((post, index) => (
+            <motion.div
+              key={post.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className="grid grid-rows-[auto_auto_auto_auto] overflow-hidden h-full bg-white/5 backdrop-blur-sm border-white/10 hover:border-purple-500/30 transition-all duration-300">
+                <div className="aspect-[16/9] w-full overflow-hidden">
+                  <Link
+                    to={`/blog/${post.id}`}
+                    className="transition-opacity duration-200 fade-in hover:opacity-70 block"
+                  >
+                    <img
+                      src={post.featured_image_url || "/placeholder.svg"}
+                      alt={post.title}
+                      className="h-full w-full object-cover object-center hover:scale-105 transition-transform duration-500"
+                    />
                   </Link>
-                </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-                </p>
-              </CardHeader>
-              <CardContent className="px-4 py-1">
-                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
-                  {post.excerpt || post.content.substring(0, 120)}...
-                </p>
-              </CardContent>
-              <CardFooter className="px-4 pt-0 pb-4 mt-auto">
-                <Link
-                  to={`/blog/${post.id}`}
-                  className="flex items-center text-foreground hover:underline text-xs sm:text-sm"
-                >
-                  Read more
-                  <ArrowRight className="ml-2 size-3" />
-                </Link>
-              </CardFooter>
-            </Card>
+                </div>
+                <div className="px-4 pt-3 space-y-1">
+                  {post.keywords && (
+                    <div className="flex flex-wrap gap-1">
+                      {post.keywords.split(',').slice(0, 3).map((keyword, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs bg-purple-500/20 text-purple-300 border-purple-500/30">
+                          {keyword.trim()}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <CardHeader className="px-4 py-2">
+                  <h3 className="text-base sm:text-lg font-semibold hover:text-purple-300 transition-colors line-clamp-2">
+                    <Link to={`/blog/${post.id}`}>
+                      {post.title}
+                    </Link>
+                  </h3>
+                  <p className="text-xs sm:text-sm text-white/50">
+                    {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                  </p>
+                </CardHeader>
+                <CardContent className="px-4 py-1">
+                  <p className="text-xs sm:text-sm text-white/70 line-clamp-2">
+                    {post.excerpt || post.content.substring(0, 120)}...
+                  </p>
+                </CardContent>
+                <CardFooter className="px-4 pt-0 pb-4 mt-auto">
+                  <Link
+                    to={`/blog/${post.id}`}
+                    className="flex items-center text-purple-300 hover:text-purple-200 transition-colors text-xs sm:text-sm group"
+                  >
+                    Read more
+                    <ArrowRight className="ml-2 size-3 transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
+                </CardFooter>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </AnimatedSection>
   );
