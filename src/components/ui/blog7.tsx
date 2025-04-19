@@ -29,6 +29,7 @@ interface Blog7Props {
   buttonText?: string;
   buttonUrl?: string;
   posts: Post[];
+  gridClassName?: string;
 }
 
 const Blog7 = ({
@@ -38,6 +39,7 @@ const Blog7 = ({
   buttonText = "View all articles",
   buttonUrl = "/blog",
   posts = [],
+  gridClassName = "grid gap-8 md:grid-cols-2 lg:gap-10"
 }: Blog7Props) => {
   return (
     <section className="py-32">
@@ -59,7 +61,7 @@ const Blog7 = ({
             </Link>
           </Button>
         </div>
-        <div className="grid gap-8 md:grid-cols-2 lg:gap-10">
+        <div className={gridClassName}>
           {posts.map((post) => (
             <Card key={post.id} className="grid grid-rows-[auto_auto_auto_auto] overflow-hidden">
               <div className="aspect-[16/9] w-full">

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,7 +25,7 @@ const Index = () => {
         .select('*')
         .eq('published', true)
         .order('created_at', { ascending: false })
-        .limit(3);
+        .limit(2);
       
       if (error) throw error;
       return data;
@@ -73,4 +72,3 @@ const Index = () => {
 };
 
 export default Index;
-

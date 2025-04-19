@@ -15,6 +15,7 @@ import AdminProfile from "@/pages/admin/Profile"
 import AdminBlog from "@/pages/admin/Blog"
 import AdminsManagement from "@/pages/admin/AdminsManagement"
 import BlogPost from "@/pages/BlogPost"
+import BlogListing from "@/pages/BlogListing"
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAdmin, isLoading } = useAuth();
@@ -75,7 +76,7 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/blog" element={<BlogListing />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 
