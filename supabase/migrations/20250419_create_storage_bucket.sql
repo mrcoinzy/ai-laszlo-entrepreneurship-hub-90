@@ -16,3 +16,19 @@ CREATE POLICY "Authenticated users can upload" ON storage.objects
     bucket_id = 'images' AND
     auth.role() = 'authenticated'
   );
+
+-- Set up RLS policy to allow authenticated users to update their own images
+CREATE POLICY "Authenticated users can update own images" ON storage.objects
+  FOR UPDATE
+  USING (
+    bucket_id = 'images' AND
+    auth.uid() = owner
+  );
+
+-- Set up RLS policy to allow authenticated users to delete their own images
+CREATE POLICY "Authenticated users can delete own images" ON storage.objects
+  FOR DELETE
+  USING (
+    bucket_id = 'images' AND
+    auth.uid() = owner
+  );

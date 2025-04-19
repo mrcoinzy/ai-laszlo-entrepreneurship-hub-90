@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardSidebar from "@/components/admin/DashboardSidebar";
 import { Button } from "@/components/ui/button";
@@ -8,14 +8,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { supabaseAdmin } from "@/lib/supabase";
 import { Plus, Pencil, Trash, Image, Eye, Book, FileText, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
+import { ensureImagesBucketExists } from "@/lib/supabase-storage";
 
 const Blog = () => {
   const { isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [tab, setTab] = useState<"posts" | "create">("posts");
+  const [bucketChecked, setBucketChecked] = useState(false);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -25,6 +28,28 @@ const Blog = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
+
+  // Check if images bucket exists
+  useEffect(() => {
+    const checkImagesBucket = async () => {
+      try {
+        const exists = await ensureImagesBucketExists();
+        setBucketChecked(true);
+        if (exists) {
+          console.log("Images bucket confirmed to exist");
+        } else {
+          toast.error("Failed to confirm images bucket. Image uploads may not work.");
+        }
+      } catch (error) {
+        console.error("Error checking images bucket:", error);
+        toast.error("Error checking storage bucket");
+      }
+    };
+
+    if (!bucketChecked) {
+      checkImagesBucket();
+    }
+  }, [bucketChecked]);
 
   const { data: posts, isLoading: isLoadingPosts } = useQuery({
     queryKey: ['admin-blog-posts'],
@@ -44,19 +69,31 @@ const Blog = () => {
     const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
     const filePath = `blog/${fileName}`;
 
-    const { error: uploadError, data } = await supabase.storage
-      .from('images')
-      .upload(filePath, file);
+    try {
+      // Make sure bucket exists before attempting upload
+      if (!bucketChecked) {
+        await ensureImagesBucketExists();
+        setBucketChecked(true);
+      }
 
-    if (uploadError) {
-      throw uploadError;
+      const { error: uploadError, data } = await supabase.storage
+        .from('images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error("Image upload error:", uploadError);
+        throw uploadError;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error("Error in uploadImage:", error);
+      throw new Error(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('images')
-      .getPublicUrl(filePath);
-
-    return publicUrl;
   };
 
   const createPostMutation = useMutation({
@@ -73,7 +110,13 @@ const Blog = () => {
 
         let featuredImageUrl = null;
         if (values.imageFile) {
-          featuredImageUrl = await uploadImage(values.imageFile);
+          try {
+            featuredImageUrl = await uploadImage(values.imageFile);
+          } catch (uploadError) {
+            console.error("Upload error:", uploadError);
+            toast.error(`Image upload failed: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`);
+            // Continue without the image
+          }
         }
 
         const { data, error } = await supabase
@@ -110,7 +153,7 @@ const Blog = () => {
     },
     onError: (error: any) => {
       console.error("Blog post creation error:", error);
-      toast.error(`Failed to create blog post: ${error.message}`);
+      toast.error(`Failed to create blog post: ${error.message || 'Unknown error'}`);
     }
   });
 
