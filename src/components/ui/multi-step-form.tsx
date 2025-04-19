@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 interface MultiStepFormProps {
   children: React.ReactNode;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit?: (e: React.FormEvent) => void;
   className?: string;
   isSubmitting?: boolean;
 }
@@ -58,8 +58,9 @@ const MultiStepForm = ({ children, onSubmit, className, isSubmitting = false }: 
 
   const isLastStep = currentStep === steps.length - 1;
 
-  return (
-    <form onSubmit={onSubmit} className={cn("w-full", className)}>
+  // If onSubmit is provided, wrap in a form, otherwise just render the content
+  const content = (
+    <div className={cn("w-full", className)}>
       {/* Progress indicator */}
       <div className="w-full mb-8">
         <div className="flex justify-between items-center w-full">
@@ -141,8 +142,19 @@ const MultiStepForm = ({ children, onSubmit, className, isSubmitting = false }: 
           )}
         </div>
       </div>
-    </form>
+    </div>
   );
+
+  // Return content wrapped in a form if onSubmit is provided
+  if (onSubmit) {
+    return (
+      <form onSubmit={onSubmit} className={cn("w-full", className)}>
+        {content}
+      </form>
+    );
+  }
+
+  return content;
 };
 
 export { MultiStepForm, FormStep };
