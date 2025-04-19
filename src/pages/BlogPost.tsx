@@ -16,7 +16,12 @@ const BlogPost = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('*, users(full_name)')
+        .select(`
+          *,
+          author:author_id (
+            full_name
+          )
+        `)
         .eq('id', id)
         .single();
       
@@ -32,9 +37,7 @@ const BlogPost = () => {
         <main className="container mx-auto px-4 py-16">
           <Skeleton className="h-12 w-3/4 mb-4" />
           <Skeleton className="h-6 w-1/4 mb-8" />
-          {post?.featured_image_url && (
-            <Skeleton className="w-full aspect-video mb-8" />
-          )}
+          <Skeleton className="w-full aspect-video mb-8" />
           <div className="space-y-4">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-full" />
@@ -66,7 +69,7 @@ const BlogPost = () => {
           <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
           <div className="text-muted-foreground mb-8">
             Posted {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-            {post.users?.full_name && ` by ${post.users.full_name}`}
+            {post.author?.full_name && ` by ${post.author.full_name}`}
           </div>
           
           {post.featured_image_url && (
