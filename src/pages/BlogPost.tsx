@@ -14,19 +14,36 @@ const BlogPost = () => {
   const { data: post, isLoading } = useQuery({
     queryKey: ['blog-post', id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First fetch the blog post
+      const { data: blogPost, error: blogError } = await supabase
         .from('blog_posts')
-        .select(`
-          *,
-          author:author_id (
-            full_name
-          )
-        `)
+        .select('*')
         .eq('id', id)
         .single();
       
-      if (error) throw error;
-      return data;
+      if (blogError) throw blogError;
+      
+      // Then fetch the author details separately if we have an author_id
+      if (blogPost.author_id) {
+        const { data: authorData, error: authorError } = await supabase
+          .from('users')
+          .select('full_name')
+          .eq('id', blogPost.author_id)
+          .single();
+        
+        if (!authorError && authorData) {
+          return {
+            ...blogPost,
+            author: authorData
+          };
+        }
+      }
+      
+      // Return the blog post without author if we couldn't fetch author data
+      return {
+        ...blogPost,
+        author: null
+      };
     }
   });
 
