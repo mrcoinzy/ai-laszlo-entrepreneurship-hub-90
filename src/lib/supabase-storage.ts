@@ -46,63 +46,86 @@ export const ensureAvatarsBucketExists = async () => {
 
 /**
  * Helper function to ensure the images storage bucket exists
- * Note: This function only checks if the bucket exists and does not try to create policies
- * as we're handling policies via SQL migrations
+ * This updated function has improved error handling and verification
  */
 export const ensureImagesBucketExists = async () => {
   try {
     console.log('Checking if images bucket exists');
     
-    // Check if the bucket already exists
-    const { data: existingBuckets, error: getBucketError } = await supabaseAdmin
+    // First try with listBuckets
+    const { data: buckets, error: listError } = await supabaseAdmin
       .storage
       .listBuckets();
     
-    if (getBucketError) {
-      console.error('Error checking buckets:', getBucketError);
+    if (listError) {
+      console.error('Error listing buckets:', listError);
       return false;
     }
     
-    // Check if the images bucket already exists
-    const imagesBucketExists = existingBuckets?.some(bucket => bucket.name === 'images');
+    // Check if bucket exists in the list
+    const bucketExists = buckets.some(bucket => bucket.id === 'images');
     
-    if (imagesBucketExists) {
-      console.log('Images bucket confirmed to exist');
-      return true;
-    } else {
-      console.log('Images bucket does not exist, will attempt to create it');
-      
-      // Create the images bucket
-      const { error: createBucketError } = await supabaseAdmin
-        .storage
-        .createBucket('images', {
-          public: true, // Make the bucket public
-        });
-        
-      if (createBucketError) {
-        console.error('Error creating images bucket:', createBucketError);
-        
-        // If this is a policy error, it's possible the bucket was actually created
-        // Let's check again to be sure
-        const { data: checkBuckets } = await supabaseAdmin
-          .storage
-          .listBuckets();
-          
-        const bucketNowExists = checkBuckets?.some(bucket => bucket.name === 'images');
-        
-        if (bucketNowExists) {
-          console.log('Images bucket exists despite creation error (likely a policy error)');
-          return true;
-        }
-        
-        return false;
-      }
-      
-      console.log('Created images bucket successfully');
+    if (bucketExists) {
+      console.log('Confirmed images bucket exists via bucket list');
       return true;
     }
+    
+    // If not found in the list, try to create it
+    console.log('Images bucket not found in list, attempting to create');
+    
+    const { error: createError } = await supabaseAdmin
+      .storage
+      .createBucket('images', {
+        public: true,
+        fileSizeLimit: 5242880, // 5MB
+        allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
+      });
+    
+    // Check if creation was successful  
+    if (createError) {
+      console.error('Error creating images bucket:', createError);
+      
+      // Special handling for "Duplicate" errors which actually mean the bucket exists
+      if (createError.message && createError.message.includes('duplicate')) {
+        console.log('Bucket already exists (detected from error)');
+        return true;
+      }
+      return false;
+    }
+    
+    console.log('Successfully created images bucket');
+    return true;
   } catch (error) {
-    console.error('Error in ensureImagesBucketExists:', error);
+    console.error('Unhandled error in ensureImagesBucketExists:', error);
+    return false;
+  }
+};
+
+/**
+ * Verify that a bucket exists by trying to list files in it
+ * This is a more reliable way to check if a bucket is working correctly
+ */
+export const verifyBucketAccess = async (bucketName: string) => {
+  try {
+    console.log(`Verifying access to ${bucketName} bucket`);
+    
+    // Try to list files in the bucket (with limit 1 for efficiency)
+    const { data, error } = await supabaseAdmin
+      .storage
+      .from(bucketName)
+      .list('', {
+        limit: 1
+      });
+    
+    if (error) {
+      console.error(`Error verifying ${bucketName} bucket access:`, error);
+      return false;
+    }
+    
+    console.log(`Successfully verified ${bucketName} bucket access`);
+    return true;
+  } catch (error) {
+    console.error(`Unhandled error verifying ${bucketName} bucket:`, error);
     return false;
   }
 };

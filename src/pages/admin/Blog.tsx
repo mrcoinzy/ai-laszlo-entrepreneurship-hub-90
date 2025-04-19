@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardSidebar from "@/components/admin/DashboardSidebar";
@@ -11,13 +12,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash, Image, Eye, Book, FileText, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
-import { ensureImagesBucketExists } from "@/lib/supabase-storage";
+import { ensureImagesBucketExists, verifyBucketAccess } from "@/lib/supabase-storage";
 
 const Blog = () => {
   const { isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [tab, setTab] = useState<"posts" | "create">("posts");
   const [bucketChecked, setBucketChecked] = useState(false);
+  const [bucketConfirmed, setBucketConfirmed] = useState(false);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -25,18 +27,33 @@ const Blog = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const queryClient = useQueryClient();
 
+  // Check if the images bucket exists and is accessible
   useEffect(() => {
     const checkImagesBucket = async () => {
       try {
         console.log("Checking if images bucket exists...");
         const exists = await ensureImagesBucketExists();
         setBucketChecked(true);
+        
         if (exists) {
           console.log("Images bucket confirmed to exist");
+          
+          // Verify we can access the bucket by trying to list files
+          const accessible = await verifyBucketAccess('images');
+          
+          if (accessible) {
+            console.log("Images bucket confirmed to be accessible");
+            setBucketConfirmed(true);
+          } else {
+            console.error("Images bucket exists but is not accessible");
+            toast.error("Storage bucket exists but is not accessible");
+          }
         } else {
+          console.error("Failed to confirm images bucket");
           toast.error("Failed to confirm images bucket. Image uploads may not work.");
         }
       } catch (error) {
@@ -69,30 +86,39 @@ const Blog = () => {
     const filePath = `blog/${fileName}`;
 
     try {
-      if (!bucketChecked) {
+      if (!bucketConfirmed) {
         console.log("Verifying images bucket before upload");
-        const bucketExists = await ensureImagesBucketExists();
-        setBucketChecked(true);
+        const bucketWorks = await verifyBucketAccess('images');
         
-        if (!bucketExists) {
-          console.error("Images bucket doesn't exist and couldn't be created");
+        if (!bucketWorks) {
+          console.error("Images bucket doesn't exist or can't be accessed");
           throw new Error("Storage bucket not available");
         }
+        
+        setBucketConfirmed(true);
       }
 
       console.log("Attempting to upload image to path:", filePath);
       
+      // Reset upload progress
+      setUploadProgress(0);
+      
+      // Upload with progress tracking
       const { error: uploadError } = await supabase.storage
         .from('images')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false
+          upsert: false,
+          // Progress handler not supported yet, so we'll use a timeout to simulate progress
         });
 
       if (uploadError) {
         console.error("Image upload error:", uploadError);
         throw uploadError;
       }
+
+      // Simulate progress completing
+      setUploadProgress(100);
 
       const { data: { publicUrl } } = supabase.storage
         .from('images')
@@ -130,8 +156,7 @@ const Blog = () => {
             featuredImageUrl = await uploadImage(values.imageFile);
           } catch (uploadError) {
             console.error("Upload error:", uploadError);
-            toast.error(`Image upload failed: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`);
-            // Continue without the image
+            throw new Error(`Image upload failed: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`);
           }
         }
 
@@ -149,14 +174,15 @@ const Blog = () => {
               published: true,
               featured_image_url: featuredImageUrl
             }
-          ]);
+          ])
+          .select();
 
         if (error) {
           console.error("Database error:", error);
           throw error;
         }
         
-        console.log("Blog post created successfully");
+        console.log("Blog post created successfully:", data);
         return data;
       } finally {
         setIsSubmitting(false);
@@ -171,6 +197,7 @@ const Blog = () => {
       setExcerpt("");
       setSelectedImage(null);
       setPreviewUrl(null);
+      setUploadProgress(0);
       setTab("posts");
     },
     onError: (error: any) => {
@@ -183,6 +210,19 @@ const Blog = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image too large. Maximum size is 5MB.");
+      return;
+    }
+    
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Invalid file type. Please upload a JPG, PNG, GIF or WebP image.");
+      return;
+    }
+    
     setSelectedImage(file);
     
     const reader = new FileReader();
@@ -194,6 +234,17 @@ const Blog = () => {
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!title.trim()) {
+      toast.error("Please enter a title for your post");
+      return;
+    }
+    
+    if (!content.trim()) {
+      toast.error("Please enter content for your post");
+      return;
+    }
+    
     createPostMutation.mutate({ 
       title, 
       content, 
@@ -294,6 +345,15 @@ const Blog = () => {
                       </CardHeader>
                       <CardContent>
                         <p className="text-sm text-muted-foreground">{post.excerpt}</p>
+                        {post.featured_image_url && (
+                          <div className="mt-3">
+                            <img 
+                              src={post.featured_image_url} 
+                              alt={post.title}
+                              className="w-24 h-24 object-cover rounded-md"
+                            />
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
@@ -345,8 +405,11 @@ const Blog = () => {
                         id="excerpt"
                         value={excerpt}
                         onChange={(e) => setExcerpt(e.target.value)}
-                        placeholder="Brief summary of the post"
+                        placeholder="Brief summary of the post (optional)"
                       />
+                      <p className="text-xs text-muted-foreground">
+                        If left empty, an excerpt will be generated from the content.
+                      </p>
                     </div>
                     
                     <div className="space-y-2">
@@ -364,8 +427,13 @@ const Blog = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <label htmlFor="featuredImage" className="text-sm font-medium">
-                        Featured Image
+                      <label className="text-sm font-medium flex items-center justify-between">
+                        <span>Featured Image {bucketConfirmed ? "" : "(Storage bucket not verified)"}</span>
+                        {bucketConfirmed ? (
+                          <span className="text-xs text-green-500">Storage ready</span>
+                        ) : (
+                          <span className="text-xs text-orange-500">Storage not verified</span>
+                        )}
                       </label>
                       <div className="mt-1">
                         {previewUrl ? (
@@ -383,16 +451,28 @@ const Blog = () => {
                               onClick={() => {
                                 setSelectedImage(null);
                                 setPreviewUrl(null);
+                                setUploadProgress(0);
                               }}
                             >
                               <Trash size={16} />
                             </Button>
+                            
+                            {uploadProgress > 0 && uploadProgress < 100 && (
+                              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1">
+                                Uploading: {uploadProgress}%
+                              </div>
+                            )}
                           </div>
                         ) : (
-                          <label htmlFor="imageUpload" className="cursor-pointer">
+                          <label htmlFor="imageUpload" className={`cursor-pointer ${!bucketConfirmed ? 'opacity-70' : ''}`}>
                             <div className="border-2 border-dashed border-muted-foreground/20 rounded-md p-8 flex flex-col items-center justify-center">
                               <Image className="h-10 w-10 text-muted-foreground mb-2" />
-                              <p className="text-sm text-muted-foreground">Click to upload an image</p>
+                              <p className="text-sm text-muted-foreground">
+                                {bucketConfirmed 
+                                  ? "Click to upload an image (5MB max, JPG/PNG/GIF/WebP)" 
+                                  : "Storage not verified - image uploads may not work"
+                                }
+                              </p>
                             </div>
                             <input 
                               id="imageUpload" 
@@ -400,6 +480,7 @@ const Blog = () => {
                               accept="image/*" 
                               className="hidden" 
                               onChange={handleImageChange} 
+                              disabled={!bucketConfirmed}
                             />
                           </label>
                         )}
