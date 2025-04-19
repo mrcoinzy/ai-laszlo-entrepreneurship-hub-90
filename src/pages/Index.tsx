@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,7 +58,7 @@ const Index = () => {
             posts={posts}
             tagline="Friss Üzleti Tippek"
             heading="Legújabb Cikkeim Önnek"
-            description="Fedezze fel a legfrissebb ügyfélakvizíciós stratégiákat és sikertörténeteket"
+            description="Fedezze fel a legfrissebb ügyfélszerzési stratégiákat és sikertörténeteket"
             buttonText="Szeretném tudni, hogyan szerezhetek több ügyfelet"
             buttonUrl="/blog"
           />

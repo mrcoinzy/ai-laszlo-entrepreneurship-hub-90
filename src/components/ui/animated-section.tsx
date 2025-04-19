@@ -20,7 +20,10 @@ const AnimatedSection = ({
   id
 }: AnimatedSectionProps) => {
   return (
-    <section id={id} className={`w-full bg-black py-20 relative overflow-hidden ${className}`}>
+    <section 
+      id={id} 
+      className={`section-base ${className}`}
+    >
       {/* Background elements */}
       {withGradient && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -40,12 +43,12 @@ const AnimatedSection = ({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="container mx-auto px-4 sm:px-6 relative z-10"
+          className="container mx-auto relative z-10"
         >
           {children}
         </motion.div>
       ) : (
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="container mx-auto relative z-10">
           {children}
         </div>
       )}
