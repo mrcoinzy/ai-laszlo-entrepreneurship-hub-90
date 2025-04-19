@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import CTAButton from "@/components/ui/cta-button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+
 const BlogPost = () => {
   const {
     id
@@ -57,6 +58,7 @@ const BlogPost = () => {
       return data;
     }
   });
+
   if (isLoading) {
     return <div className="min-h-screen bg-background">
         <Navigation />
@@ -73,6 +75,7 @@ const BlogPost = () => {
         <Footer />
       </div>;
   }
+
   if (!post) {
     return <div className="min-h-screen bg-background">
         <Navigation />
@@ -82,32 +85,45 @@ const BlogPost = () => {
         <Footer />
       </div>;
   }
+
   return <div className="min-h-screen bg-background">
       <Navigation />
       <main className="container mx-auto px-4 py-[145px]">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content - Takes up 2/3 of the space on desktop */}
           <article className="prose prose-invert lg:col-span-2 mx-auto lg:mx-0 w-full">
+            {post.featured_image_url && (
+              <div className="mb-8 rounded-[30px] border border-border overflow-hidden">
+                <img 
+                  src={post.featured_image_url} 
+                  alt={post.title} 
+                  className="w-full object-cover aspect-video"
+                />
+              </div>
+            )}
+            
             <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
             <div className="text-muted-foreground mb-8">
               Posted {formatDistanceToNow(new Date(post.created_at), {
-              addSuffix: true
-            })}
+                addSuffix: true
+              })}
               {post.author?.full_name && ` by ${post.author.full_name}`}
             </div>
             
-            {post.featured_image_url && <img src={post.featured_image_url} alt={post.title} className="w-full rounded-lg mb-8" />}
-            
             <div className="whitespace-pre-wrap">{post.content}</div>
             
-            {post.keywords && <div className="mt-8 pt-8 border-t border-border">
+            {post.keywords && (
+              <div className="mt-8 pt-8 border-t border-border">
                 <h2 className="text-xl font-semibold mb-4">Related Topics</h2>
                 <div className="flex flex-wrap gap-2">
-                  {post.keywords.split(',').map(keyword => <span key={keyword} className="px-3 py-1 bg-accent/20 rounded-full text-sm">
+                  {post.keywords.split(',').map(keyword => (
+                    <span key={keyword} className="px-3 py-1 bg-accent/20 rounded-full text-sm">
                       {keyword.trim()}
-                    </span>)}
+                    </span>
+                  ))}
                 </div>
-              </div>}
+              </div>
+            )}
           </article>
 
           {/* Sidebar - Takes up 1/3 of the space on desktop */}
@@ -141,4 +157,5 @@ const BlogPost = () => {
       <Footer />
     </div>;
 };
+
 export default BlogPost;
