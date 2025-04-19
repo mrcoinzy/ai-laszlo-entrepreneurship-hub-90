@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Users, FileText, TrendingUp, Clock } from "lucide-react";
+import { BarChart3, Users, FileText, TrendingUp, Clock, Book } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 import { supabaseAdmin } from "@/lib/supabase";
