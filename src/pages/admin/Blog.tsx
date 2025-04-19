@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardSidebar from "@/components/admin/DashboardSidebar";
@@ -8,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash, Image, Eye } from "lucide-react";
+import { Plus, Pencil, Trash, Image, Eye, Book, FileText, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 
@@ -148,7 +149,7 @@ const Blog = () => {
             </TabsList>
             
             <TabsContent value="posts">
-              {posts.length > 0 ? (
+              {posts && posts.length > 0 ? (
                 <div className="grid gap-4">
                   {posts.map(post => (
                     <Card key={post.id} className="bg-accent/5">
@@ -159,7 +160,7 @@ const Blog = () => {
                             <CardDescription>
                               <div className="flex items-center gap-2 mt-1 text-xs">
                                 <Clock size={14} className="text-muted-foreground" />
-                                <span>{formatDate(post.createdAt)}</span>
+                                <span>{formatDate(post.created_at)}</span>
                                 <span className={`px-2 py-0.5 rounded-full text-xs ${post.published ? 'bg-green-500/10 text-green-500' : 'bg-orange-500/10 text-orange-500'}`}>
                                   {post.published ? 'Published' : 'Draft'}
                                 </span>
