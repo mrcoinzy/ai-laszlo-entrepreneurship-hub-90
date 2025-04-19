@@ -15,7 +15,7 @@ import AdminDashboard from "@/pages/admin/Dashboard"
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAdmin, isLoading } = useAuth();
   
-  // If still loading auth state, show nothing (or a loading spinner)
+  // If still loading auth state, show a loading spinner
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">
       <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -46,11 +46,7 @@ function App() {
           {/* Admin Routes */}
           <Route 
             path="/admin/*" 
-            element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } 
+            element={<AdminDashboard />} 
           />
           
           {/* 404 */}
