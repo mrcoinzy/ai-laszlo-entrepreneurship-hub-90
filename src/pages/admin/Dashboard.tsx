@@ -4,7 +4,6 @@ import { Routes, Route } from "react-router-dom";
 import ConsultationsList from "@/components/admin/ConsultationsList";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { useAuth } from "@/contexts/AuthContext";
-import AdminLogin from "@/components/AdminLogin";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 
 const Dashboard = () => {
@@ -20,16 +19,6 @@ const Dashboard = () => {
     );
   }
 
-  // If not logged in or not an admin, show the login form
-  if (!user || !isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <AdminLogin />
-      </div>
-    );
-  }
-
-  // If user is logged in and is an admin, show the dashboard
   return (
     <div className="min-h-screen flex bg-background">
       <DashboardSidebar 

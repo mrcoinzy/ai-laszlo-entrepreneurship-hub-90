@@ -17,19 +17,16 @@ import AdminLogin from "@/components/AdminLogin"
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAdmin, isLoading } = useAuth();
   
-  // If still loading auth state, show a loading spinner
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">
       <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
     </div>;
   }
   
-  // Only redirect if we're done loading and user is not admin
   if (!isAdmin) {
     return <Navigate to="/admin" replace />;
   }
   
-  // User is admin, render the protected content
   return <>{children}</>;
 };
 
@@ -45,12 +42,9 @@ function App() {
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/register" element={<AdminRegistration />} />
           <Route 
-            path="/admin/register" 
-            element={<AdminRegistration />} 
-          />
-          <Route 
-            path="/admin/*" 
+            path="/admin/dashboard/*" 
             element={
               <ProtectedRoute>
                 <AdminDashboard />

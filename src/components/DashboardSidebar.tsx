@@ -65,22 +65,22 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
     {
       icon: LayoutDashboard,
       label: "Dashboard",
-      href: "/admin"
+      href: "/admin/dashboard"
     },
     {
       icon: FileText,
       label: "Consultations",
-      href: "/admin/consultations"
+      href: "/admin/dashboard/consultations"
     },
     {
       icon: Users,
       label: "Users",
-      href: "/admin/users"
+      href: "/admin/dashboard/users"
     },
     {
       icon: Settings,
       label: "Settings",
-      href: "/admin/settings"
+      href: "/admin/dashboard/settings"
     }
   ];
 
@@ -88,7 +88,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
     <div className="flex flex-col h-full">
       <div className="p-4 flex items-center justify-between border-b border-white/10">
         {isOpen || isMobile ? (
-          <Link to="/admin" className="text-xl font-bold gradient-text">
+          <Link to="/admin/dashboard" className="text-xl font-bold gradient-text">
             Admin Panel
           </Link>
         ) : (

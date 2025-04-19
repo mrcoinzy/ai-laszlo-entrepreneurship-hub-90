@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { Loader2, Mail, Calendar, Download, MessageSquare, ExternalLink } from "lucide-react";
+import { Loader2, Mail, Calendar, Download, MessageSquare } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -34,7 +34,7 @@ const ConsultationsList = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [selectedConsultation, setSelectedConsultation] = useState<Consultation | null>(null);
 
-  const { data: consultations, isLoading, error, refetch } = useQuery({
+  const { data: consultations, isLoading, error } = useQuery({
     queryKey: ['consultations'],
     queryFn: async () => {
       const { data, error } = await supabaseAdmin
@@ -98,11 +98,8 @@ const ConsultationsList = () => {
 
   if (error) {
     return (
-      <div className="text-red-500 p-4 flex flex-col items-center">
-        <p className="mb-4">Error loading consultation requests</p>
-        <Button variant="outline" onClick={() => refetch()}>
-          Try Again
-        </Button>
+      <div className="text-red-500 p-4">
+        Error loading consultation requests
       </div>
     );
   }
@@ -159,15 +156,6 @@ const ConsultationsList = () => {
                   {selectedConsultation.email}
                 </a>
               </div>
-              
-              {selectedConsultation.website && (
-                <div className="flex items-center gap-2 mb-2">
-                  <ExternalLink className="h-4 w-4" />
-                  <a href={selectedConsultation.website} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
-                    {selectedConsultation.website}
-                  </a>
-                </div>
-              )}
               
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="h-4 w-4" />
