@@ -34,11 +34,13 @@ export const useConsultationForm = () => {
       setSubmitting(true);
       console.log("Starting form submission with values:", values);
       
+      // Simplify data transformation to minimize potential issues
       const supabaseData = {
         name: values.name,
         email: values.email,
         website: values.website || null,
         business_type: values.businessType,
+        business_details: values.businessDetails || null,
         online_presence: values.onlinePresence,
         goal: values.mainGoal,
         main_challenge: values.biggestChallenge,
@@ -48,12 +50,24 @@ export const useConsultationForm = () => {
       
       console.log("Transformed data for Supabase:", supabaseData);
       
+      // Log client authentication status
+      const { data: authData } = await supabase.auth.getSession();
+      console.log("Current session:", authData);
+      
+      // Attempt insertion with explicit public schema reference
       const { data, error } = await supabase
         .from('consultations')
-        .insert(supabaseData);
+        .insert(supabaseData)
+        .select();
       
       if (error) {
         console.error("Error inserting data into Supabase:", error);
+        
+        // Check specifically for permission errors
+        if (error.code === '42501') {
+          console.error("Permission denied. This is likely an RLS policy issue.");
+        }
+        
         toast.error("Hiba történt a küldés során. Kérjük próbálja újra!");
         return;
       }
