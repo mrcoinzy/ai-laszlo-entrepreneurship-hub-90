@@ -1,6 +1,8 @@
 
+import { supabaseAdmin } from "@/lib/supabase";
+
 /**
- * Track PDF download (stub function)
+ * Track PDF download
  * 
  * @param userEmail Email of the user downloading the PDF
  * @param fileName Name of the PDF file being downloaded
@@ -14,8 +16,22 @@ export const trackPdfDownload = async (userEmail: string, fileName: string) => {
     }
 
     console.log(`Tracking PDF download: ${fileName} by ${userEmail}`);
-    // In a real application, this would save the download info to a database
-    // For now, we just log it to the console
+    
+    // For now, we log to console
+    // When pdf_downloads table is created, we can uncomment this to track in the database:
+    /*
+    const { data, error } = await supabaseAdmin
+      .from('pdf_downloads')
+      .insert({
+        user_email: userEmail,
+        file_name: fileName,
+        download_date: new Date().toISOString()
+      });
+    
+    if (error) {
+      console.error("Failed to track PDF download in database:", error);
+    }
+    */
   } catch (err) {
     console.error("Failed to track PDF download:", err);
   }

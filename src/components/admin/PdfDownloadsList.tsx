@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 import { Card } from "@/components/ui/card";
 import { 
   Table,
@@ -24,19 +24,37 @@ interface PdfDownload {
   download_date: string;
 }
 
+// Mock data for PDF downloads until we create the actual table
+const mockPdfDownloads: PdfDownload[] = [
+  {
+    id: "1",
+    created_at: new Date().toISOString(),
+    user_email: "user1@example.com",
+    file_name: "marketing_guide.pdf",
+    download_date: new Date().toISOString()
+  },
+  {
+    id: "2",
+    created_at: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+    user_email: "user2@example.com",
+    file_name: "seo_checklist.pdf",
+    download_date: new Date(Date.now() - 86400000).toISOString()
+  }
+];
+
 const PdfDownloadsList = () => {
   const [isExporting, setIsExporting] = useState(false);
 
   const { data: pdfDownloads, isLoading, error, refetch } = useQuery({
     queryKey: ['pdf-downloads'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('pdf_downloads')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // Return mock data for now
+      // When pdf_downloads table is created, we can replace this with:
+      // const { data, error } = await supabaseAdmin.from('pdf_downloads').select('*').order('created_at', { ascending: false });
+      // if (error) throw error;
+      // return data as PdfDownload[];
       
-      if (error) throw error;
-      return data as PdfDownload[];
+      return mockPdfDownloads;
     }
   });
 
