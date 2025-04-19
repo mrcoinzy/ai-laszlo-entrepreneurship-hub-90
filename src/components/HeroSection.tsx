@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
@@ -80,7 +79,7 @@ const HeroSection = () => {
             </motion.div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
-              AI-alapú ügyfélszerzés <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egyedülálló</span> megközelítéssel
+              Több ügyfél, nagyobb hatás - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">mesterséges intelligenciával, emberi kapcsolattal</span>
             </h1>
             
             <motion.div 

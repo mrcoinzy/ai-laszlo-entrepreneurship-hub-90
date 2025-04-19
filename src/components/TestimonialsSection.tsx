@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Star } from "lucide-react";
 import CTAButton from "@/components/ui/cta-button";
@@ -11,15 +10,25 @@ const testimonials = [
     id: 1,
     name: "Kovács Péter",
     role: "Ügyvezető, TechSolution Kft.",
-    content: "AI László teljes mértékben átalakította a webhelyünket, és ezzel együtt az online jelenlétünket. Az eredmények messze felülmúlták az elvárásainkat, a látogatók száma 140%-kal nőtt három hónap alatt.",
-    rating: 5
+    content: "AI László teljes mértékben átalakította a webhelyünket, és ezzel együtt az online jelenlétünket. Az eredmények messze felülmúlták az elvárásainkat.",
+    rating: 5,
+    metric: {
+      value: "140%",
+      label: "Látogatószám növekedés",
+      period: "3 hónap alatt"
+    }
   },
   {
     id: 2,
     name: "Nagy Eszter",
     role: "Alapító, EcoBeauty",
-    content: "Korábban több mint 500.000 Ft-ot költöttünk marketingre látható eredmények nélkül. László nemcsak felépítette a webhelyünket, de stratégiai tanácsaival is segített, ami 45%-os konverziós arány növekedést hozott.",
-    rating: 5
+    content: "Korábban több mint 500.000 Ft-ot költöttünk marketingre látható eredmények nélkül. László stratégiai tanácsai valódi változást hoztak.",
+    rating: 5,
+    metric: {
+      value: "45%",
+      label: "Konverziós arány növekedés",
+      period: "6 hónap alatt"
+    }
   },
   {
     id: 3,
@@ -35,7 +44,6 @@ const TestimonialsSection = () => {
   
   return (
     <section className="py-16 sm:py-24 bg-black overflow-hidden relative">
-      {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-black to-transparent"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full filter blur-[100px]"></div>
@@ -52,7 +60,7 @@ const TestimonialsSection = () => {
         >
           <div className="inline-flex mb-4">
             <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              Ügyfelek véleménye
+              Ügyfeleink Sikerei
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
@@ -63,7 +71,6 @@ const TestimonialsSection = () => {
           </p>
         </motion.div>
 
-        {/* Desktop View */}
         <div className="hidden md:block">
           <motion.div
             initial={{ opacity: 0 }}
@@ -81,6 +88,20 @@ const TestimonialsSection = () => {
                 transition={{ delay: index * 0.2, duration: 0.6 }}
                 className="bg-gradient-to-br from-white/8 to-white/2 backdrop-blur-sm rounded-xl border border-white/10 p-6 transition-all duration-300 hover:border-purple-500/30 hover:shadow-[0_10px_40px_-15px_rgba(138,43,226,0.3)] hover:translate-y-[-8px] group"
               >
+                {testimonial.metric && (
+                  <div className="mb-6 p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                    <div className="text-3xl font-bold text-purple-400 mb-1">
+                      {testimonial.metric.value}
+                    </div>
+                    <div className="text-sm text-white/80">
+                      {testimonial.metric.label}
+                    </div>
+                    <div className="text-xs text-white/60">
+                      {testimonial.metric.period}
+                    </div>
+                  </div>
+                )}
+                
                 <div className="flex items-center justify-center mb-6 overflow-hidden">
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/20 flex items-center justify-center text-2xl font-bold text-white border border-white/20">
                     {testimonial.name.charAt(0)}
@@ -106,13 +127,26 @@ const TestimonialsSection = () => {
           </motion.div>
         </div>
 
-        {/* Mobile View - Carousel */}
         <div className="md:hidden mb-12">
           <Carousel className="w-full">
             <CarouselContent>
               {testimonials.map((testimonial) => (
                 <CarouselItem key={testimonial.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
                   <div className="bg-gradient-to-br from-white/8 to-white/2 backdrop-blur-sm rounded-xl border border-white/10 p-6 transition-all duration-300 hover:border-purple-500/30 hover:shadow-[0_10px_40px_-15px_rgba(138,43,226,0.3)] group">
+                    {testimonial.metric && (
+                      <div className="mb-6 p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                        <div className="text-3xl font-bold text-purple-400 mb-1">
+                          {testimonial.metric.value}
+                        </div>
+                        <div className="text-sm text-white/80">
+                          {testimonial.metric.label}
+                        </div>
+                        <div className="text-xs text-white/60">
+                          {testimonial.metric.period}
+                        </div>
+                      </div>
+                    )}
+                    
                     <div className="flex items-center justify-center mb-6 overflow-hidden">
                       <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/20 flex items-center justify-center text-2xl font-bold text-white border border-white/20">
                         {testimonial.name.charAt(0)}
@@ -151,7 +185,10 @@ const TestimonialsSection = () => {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="flex justify-center"
         >
-          <CTAButton text="Kérek egy konzultációt" to="/contact" />
+          <CTAButton 
+            text="Kérek egy személyre szabott ügyfélszerzési tervet" 
+            to="/contact" 
+          />
         </motion.div>
       </div>
     </section>

@@ -55,10 +55,10 @@ const Index = () => {
         <div id="blog">
           <Blog7 
             posts={posts}
-            tagline="Latest Updates"
-            heading="From Our Blog"
-            description="Stay informed with our latest insights on web development, design trends, and digital transformation strategies."
-            buttonText="View All Articles"
+            tagline="Friss Üzleti Tippek"
+            heading="Legújabb Cikkeim Önnek"
+            description="Fedezze fel a legfrissebb ügyfélakvizíciós stratégiákat és sikertörténeteket"
+            buttonText="Szeretném tudni, hogyan szerezhetek több ügyfelet"
             buttonUrl="/blog"
           />
         </div>
