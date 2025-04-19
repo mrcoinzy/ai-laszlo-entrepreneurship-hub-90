@@ -70,6 +70,7 @@ const Blog = () => {
 
     try {
       if (!bucketChecked) {
+        console.log("Verifying images bucket before upload");
         const bucketExists = await ensureImagesBucketExists();
         setBucketChecked(true);
         
@@ -80,9 +81,13 @@ const Blog = () => {
       }
 
       console.log("Attempting to upload image to path:", filePath);
-      const { error: uploadError, data } = await supabase.storage
+      
+      const { error: uploadError } = await supabase.storage
         .from('images')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
       if (uploadError) {
         console.error("Image upload error:", uploadError);
@@ -112,10 +117,13 @@ const Blog = () => {
         setIsSubmitting(true);
         console.log("Starting blog post creation...");
         
-        const { data: userData } = await supabase.auth.getUser();
-        if (!userData.user) throw new Error("Not authenticated");
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+          throw new Error(authError?.message || "Not authenticated");
+        }
 
         let featuredImageUrl = null;
+        
         if (values.imageFile) {
           try {
             console.log("Uploading featured image...");
@@ -128,27 +136,27 @@ const Blog = () => {
         }
 
         console.log("Creating blog post in database...");
+        console.log("Author ID:", user.id);
+        
         const { data, error } = await supabase
           .from('blog_posts')
           .insert([
             {
               title: values.title,
               content: values.content,
-              excerpt: values.excerpt,
-              author_id: userData.user.id,
+              excerpt: values.excerpt || values.content.substring(0, 150) + "...",
+              author_id: user.id,
               published: true,
               featured_image_url: featuredImageUrl
             }
-          ])
-          .select()
-          .single();
+          ]);
 
         if (error) {
           console.error("Database error:", error);
           throw error;
         }
         
-        console.log("Blog post created successfully:", data);
+        console.log("Blog post created successfully");
         return data;
       } finally {
         setIsSubmitting(false);
@@ -249,7 +257,11 @@ const Blog = () => {
             </TabsList>
             
             <TabsContent value="posts">
-              {posts && posts.length > 0 ? (
+              {isLoadingPosts ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                </div>
+              ) : posts && posts.length > 0 ? (
                 <div className="grid gap-4">
                   {posts.map(post => (
                     <Card key={post.id} className="bg-accent/5">
@@ -334,7 +346,6 @@ const Blog = () => {
                         value={excerpt}
                         onChange={(e) => setExcerpt(e.target.value)}
                         placeholder="Brief summary of the post"
-                        required
                       />
                     </div>
                     

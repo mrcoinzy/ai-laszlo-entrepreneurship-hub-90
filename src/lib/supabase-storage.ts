@@ -46,9 +46,13 @@ export const ensureAvatarsBucketExists = async () => {
 
 /**
  * Helper function to ensure the images storage bucket exists
+ * Note: This function only checks if the bucket exists and does not try to create policies
+ * as we're handling policies via SQL migrations
  */
 export const ensureImagesBucketExists = async () => {
   try {
+    console.log('Checking if images bucket exists');
+    
     // Check if the bucket already exists
     const { data: existingBuckets, error: getBucketError } = await supabaseAdmin
       .storage
@@ -60,9 +64,14 @@ export const ensureImagesBucketExists = async () => {
     }
     
     // Check if the images bucket already exists
-    const imagesBucketExists = existingBuckets.some(bucket => bucket.name === 'images');
+    const imagesBucketExists = existingBuckets?.some(bucket => bucket.name === 'images');
     
-    if (!imagesBucketExists) {
+    if (imagesBucketExists) {
+      console.log('Images bucket confirmed to exist');
+      return true;
+    } else {
+      console.log('Images bucket does not exist, will attempt to create it');
+      
       // Create the images bucket
       const { error: createBucketError } = await supabaseAdmin
         .storage
@@ -72,17 +81,26 @@ export const ensureImagesBucketExists = async () => {
         
       if (createBucketError) {
         console.error('Error creating images bucket:', createBucketError);
+        
+        // If this is a policy error, it's possible the bucket was actually created
+        // Let's check again to be sure
+        const { data: checkBuckets } = await supabaseAdmin
+          .storage
+          .listBuckets();
+          
+        const bucketNowExists = checkBuckets?.some(bucket => bucket.name === 'images');
+        
+        if (bucketNowExists) {
+          console.log('Images bucket exists despite creation error (likely a policy error)');
+          return true;
+        }
+        
         return false;
       }
       
-      // Note: We cannot create policies directly with the client
-      // Policies need to be managed through SQL migrations
       console.log('Created images bucket successfully');
-    } else {
-      console.log('Images bucket already exists');
+      return true;
     }
-    
-    return true;
   } catch (error) {
     console.error('Error in ensureImagesBucketExists:', error);
     return false;
