@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -39,3 +40,4 @@
     background-attachment: fixed;
   }
 }
+
