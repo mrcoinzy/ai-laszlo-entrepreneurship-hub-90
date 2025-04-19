@@ -1,4 +1,3 @@
-
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +9,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
+import AnimatedSection from "../ui/animated-section";
 
 interface Post {
   id: string;
@@ -43,13 +43,13 @@ const Blog7 = ({
   gridClassName = "grid gap-8 md:grid-cols-2 lg:gap-10"
 }: Blog7Props) => {
   return (
-    <section className="py-12 sm:py-16">
+    <AnimatedSection className="py-12 sm:py-16">
       <div className="container mx-auto flex flex-col items-center gap-8 sm:gap-12">
-        <div className="text-center max-w-3xl mx-auto px-4">
+        <div className="text-center max-w-3xl mx-auto px-4 relative z-10">
           <Badge variant="secondary" className="mb-3 sm:mb-4">
             {tagline}
           </Badge>
-          <h2 className="mb-3 text-pretty text-2xl font-semibold md:text-3xl lg:text-4xl">
+          <h2 className="mb-3 text-pretty text-2xl font-semibold md:text-3xl lg:text-4xl bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
             {heading}
           </h2>
           <p className="mb-4 sm:mb-6 text-muted-foreground text-sm sm:text-base">
@@ -116,7 +116,7 @@ const Blog7 = ({
           ))}
         </div>
       </div>
-    </section>
+    </AnimatedSection>
   );
 };
 
