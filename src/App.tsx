@@ -10,6 +10,7 @@ import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/ui/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import AdminDashboard from "@/pages/admin/Dashboard"
+import AdminRegistration from "@/pages/AdminRegistration"
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -47,6 +48,10 @@ function App() {
           <Route 
             path="/admin/*" 
             element={<AdminDashboard />} 
+          />
+          <Route 
+            path="/admin/register" 
+            element={<AdminRegistration />} 
           />
           
           {/* 404 */}

@@ -5,18 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from 'sonner';
 import { supabaseAdmin } from '@/lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 const AdminRegistrationForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // First create the user
+      // First create the user with admin role
       const { data: authData, error: signUpError } = await supabaseAdmin.auth.signUp({
         email,
         password,
@@ -30,15 +32,22 @@ const AdminRegistrationForm = () => {
       if (signUpError) throw signUpError;
 
       if (authData.user) {
-        // Update the role in the users table
+        // Update the user's role in the users table
         const { error: updateError } = await supabaseAdmin
           .from('users')
-          .update({ role: 'admin' })
+          .update({ 
+            role: 'admin', 
+            status: 'approved' 
+          })
           .eq('id', authData.user.id);
 
         if (updateError) throw updateError;
 
-        toast.success('Admin account created successfully! Please check your email to verify your account.');
+        // Sign out after registration and redirect to login
+        await supabaseAdmin.auth.signOut();
+        
+        toast.success('Admin account created successfully! Please log in.');
+        navigate('/admin');
       }
     } catch (error: any) {
       console.error('Error creating admin:', error);
