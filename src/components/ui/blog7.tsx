@@ -42,34 +42,34 @@ const Blog7 = ({
   buttonText = "View all articles",
   buttonUrl = "/blog",
   posts = [],
-  gridClassName = "grid gap-8 md:grid-cols-2 lg:gap-10"
+  gridClassName = "grid gap-4 sm:gap-6 lg:gap-8 md:grid-cols-2 lg:grid-cols-2"
 }: Blog7Props) => {
   return (
-    <AnimatedSection className="py-24 relative">
+    <AnimatedSection className="py-12 sm:py-16 lg:py-24 relative">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-2/3 h-2/3 bg-purple-600/10 rounded-full filter blur-[120px] opacity-40"></div>
-        <div className="absolute bottom-0 left-0 w-2/3 h-2/3 bg-blue-600/10 rounded-full filter blur-[120px] opacity-40"></div>
+        <div className="absolute top-0 right-0 w-2/3 h-2/3 bg-purple-600/10 rounded-full filter blur-[80px] sm:blur-[100px] lg:blur-[120px] opacity-40"></div>
+        <div className="absolute bottom-0 left-0 w-2/3 h-2/3 bg-blue-600/10 rounded-full filter blur-[80px] sm:blur-[100px] lg:blur-[120px] opacity-40"></div>
       </div>
       
       {/* Grid Background */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
 
-      <div className="container mx-auto flex flex-col items-center gap-8 sm:gap-12">
+      <div className="container mx-auto flex flex-col items-center gap-6 sm:gap-8 lg:gap-12 px-4 sm:px-6">
         <motion.div 
-          className="text-center max-w-3xl mx-auto px-4 relative z-10"
+          className="text-center max-w-[90%] sm:max-w-2xl lg:max-w-3xl mx-auto relative z-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <Badge variant="secondary" className="mb-3 sm:mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30">
+          <Badge variant="secondary" className="mb-3 sm:mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30 text-xs sm:text-sm">
             {tagline}
           </Badge>
-          <h2 className="mb-3 text-pretty text-2xl font-semibold md:text-3xl lg:text-4xl bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">
+          <h2 className="mb-3 text-xl sm:text-2xl lg:text-4xl font-semibold bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">
             {heading}
           </h2>
-          <p className="mb-4 sm:mb-6 text-white/70 text-sm sm:text-base">
+          <p className="mb-4 sm:mb-6 text-white/70 text-sm sm:text-base lg:text-lg">
             {description}
           </p>
           <Button variant="outline" className="w-full sm:w-auto border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30" asChild>
@@ -95,8 +95,8 @@ const Blog7 = ({
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="grid grid-rows-[auto_auto_auto_auto] overflow-hidden h-full bg-white/5 backdrop-blur-sm border-white/10 hover:border-purple-500/30 transition-all duration-300">
-                <div className="aspect-[16/9] w-full overflow-hidden">
+              <Card className="grid grid-rows-[auto_auto_auto_auto] h-full bg-white/5 backdrop-blur-sm border-white/10 hover:border-purple-500/30 transition-all duration-300">
+                <div className="aspect-video w-full overflow-hidden">
                   <Link
                     to={`/blog/${post.id}`}
                     className="transition-opacity duration-200 fade-in hover:opacity-70 block"
@@ -108,7 +108,7 @@ const Blog7 = ({
                     />
                   </Link>
                 </div>
-                <div className="px-4 pt-3 space-y-1">
+                <div className="px-3 sm:px-4 pt-3 space-y-1">
                   {post.keywords && (
                     <div className="flex flex-wrap gap-1">
                       {post.keywords.split(',').slice(0, 3).map((keyword, index) => (
@@ -119,8 +119,8 @@ const Blog7 = ({
                     </div>
                   )}
                 </div>
-                <CardHeader className="px-4 py-2">
-                  <h3 className="text-base sm:text-lg font-semibold hover:text-purple-300 transition-colors line-clamp-2">
+                <CardHeader className="px-3 sm:px-4 py-2">
+                  <h3 className="text-sm sm:text-base lg:text-lg font-semibold hover:text-purple-300 transition-colors line-clamp-2">
                     <Link to={`/blog/${post.id}`}>
                       {post.title}
                     </Link>
@@ -129,12 +129,12 @@ const Blog7 = ({
                     {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                   </p>
                 </CardHeader>
-                <CardContent className="px-4 py-1">
+                <CardContent className="px-3 sm:px-4 py-1">
                   <p className="text-xs sm:text-sm text-white/70 line-clamp-2">
                     {post.excerpt || post.content.substring(0, 120)}...
                   </p>
                 </CardContent>
-                <CardFooter className="px-4 pt-0 pb-4 mt-auto">
+                <CardFooter className="px-3 sm:px-4 pt-0 pb-4 mt-auto">
                   <Link
                     to={`/blog/${post.id}`}
                     className="flex items-center text-purple-300 hover:text-purple-200 transition-colors text-xs sm:text-sm group"
