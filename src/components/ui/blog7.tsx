@@ -1,4 +1,3 @@
-
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +19,7 @@ interface Post {
   featured_image_url?: string;
   excerpt?: string;
   published: boolean;
+  keywords?: string;
 }
 
 interface Blog7Props {
@@ -41,7 +41,7 @@ const Blog7 = ({
 }: Blog7Props) => {
   return (
     <section className="py-32">
-      <div className="container mx-auto flex flex-col items-center gap-16 lg:px-16">
+      <div className="container mx-auto flex flex-col items-center gap-16 lg:px-8">
         <div className="text-center">
           <Badge variant="secondary" className="mb-6">
             {tagline}
@@ -59,9 +59,9 @@ const Blog7 = ({
             </Link>
           </Button>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <div className="grid gap-8 md:grid-cols-2 lg:gap-10">
           {posts.map((post) => (
-            <Card key={post.id} className="grid grid-rows-[auto_auto_1fr_auto]">
+            <Card key={post.id} className="grid grid-rows-[auto_auto_auto_auto] overflow-hidden">
               <div className="aspect-[16/9] w-full">
                 <Link
                   to={`/blog/${post.id}`}
@@ -74,8 +74,19 @@ const Blog7 = ({
                   />
                 </Link>
               </div>
+              <div className="px-6 pt-4 space-y-2">
+                {post.keywords && (
+                  <div className="flex flex-wrap gap-2">
+                    {post.keywords.split(',').map((keyword, index) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        {keyword.trim()}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
               <CardHeader>
-                <h3 className="text-lg font-semibold hover:underline md:text-xl">
+                <h3 className="text-xl font-semibold hover:underline">
                   <Link to={`/blog/${post.id}`}>
                     {post.title}
                   </Link>
@@ -85,8 +96,8 @@ const Blog7 = ({
                 </p>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  {post.excerpt || post.content.substring(0, 150)}...
+                <p className="text-muted-foreground line-clamp-2">
+                  {post.excerpt || post.content.substring(0, 120)}...
                 </p>
               </CardContent>
               <CardFooter>
