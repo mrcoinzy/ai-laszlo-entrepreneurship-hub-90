@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface WorkItem {
   id: number;
@@ -25,6 +26,7 @@ const works: WorkItem[] = [
 
 const WorkShowcase = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const isMobile = useIsMobile();
   
   const nextWork = () => {
     setCurrentIndex((prevIndex) => 
@@ -39,9 +41,9 @@ const WorkShowcase = () => {
   };
   
   return (
-    <section className="py-20 bg-black">
+    <section className="py-16 sm:py-20 bg-black">
       <div className="container mx-auto px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 gradient-text">
             Transformative Work
           </h2>
@@ -55,7 +57,7 @@ const WorkShowcase = () => {
           <Card className="bg-accent/30 border-accent overflow-hidden">
             <CardContent className="p-0">
               <div className="grid md:grid-cols-2 gap-0">
-                <div className="relative aspect-square md:aspect-auto overflow-hidden bg-black">
+                <div className="relative aspect-video md:aspect-auto overflow-hidden bg-black">
                   <div 
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ 
@@ -68,7 +70,7 @@ const WorkShowcase = () => {
                   </div>
                 </div>
                 
-                <div className="p-8 md:p-12 flex flex-col justify-between">
+                <div className="p-6 sm:p-8 md:p-12 flex flex-col justify-between">
                   <div>
                     <span className="inline-block px-3 py-1 rounded-full bg-white/10 text-xs text-white/70 mb-6">
                       {works[currentIndex].category}
@@ -104,27 +106,38 @@ const WorkShowcase = () => {
                     <div className="flex space-x-4">
                       <button 
                         onClick={prevWork}
-                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                        className="p-2 w-12 h-12 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors"
                         aria-label="Previous work"
                       >
                         <ChevronLeft size={20} />
                       </button>
                       <button 
                         onClick={nextWork}
-                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                        className="p-2 w-12 h-12 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors"
                         aria-label="Next work"
                       >
                         <ChevronRight size={20} />
                       </button>
                     </div>
                     
-                    <Link to={`/works/${works[currentIndex].id}`}>
-                      <Button variant="ghost" className="group">
+                    {!isMobile && (
+                      <Link to={`/works/${works[currentIndex].id}`}>
+                        <Button variant="ghost" className="group">
+                          View Details
+                          <ChevronRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                  
+                  {isMobile && (
+                    <Link to={`/works/${works[currentIndex].id}`} className="mt-4">
+                      <Button variant="ghost" className="group w-full justify-center">
                         View Details
                         <ChevronRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
                       </Button>
                     </Link>
-                  </div>
+                  )}
                 </div>
               </div>
             </CardContent>

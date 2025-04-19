@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import AnimatedSection from "./ui/animated-section";
 import { Input } from "@/components/ui/input";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const EmailLeadMagnetSection = () => {
+  const isMobile = useIsMobile();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -20,10 +22,10 @@ const EmailLeadMagnetSection = () => {
   };
 
   return (
-    <AnimatedSection className="py-24">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl border border-white/10 p-8 md:p-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+    <AnimatedSection className="py-16 sm:py-24">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl border border-white/10 p-6 sm:p-8 md:p-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-center">
             {/* Content */}
             <div className="space-y-6">
               <motion.div
@@ -42,7 +44,7 @@ const EmailLeadMagnetSection = () => {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-2xl md:text-3xl font-bold"
+                className="text-xl sm:text-2xl md:text-3xl font-bold"
               >
                 <span className="text-white">3 ok, amiért nem jön ügyfél a weboldaladról</span>
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mt-2">
@@ -125,10 +127,10 @@ const EmailLeadMagnetSection = () => {
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 
-                    hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] py-6 rounded-xl text-base 
+                    hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] py-5 sm:py-6 rounded-xl text-base 
                     transition-all duration-300 hover:-translate-y-1 group"
                 >
-                  <span className="relative z-10 flex items-center">
+                  <span className="relative z-10 flex items-center justify-center">
                     Kérem az ingyenes útmutatót
                     <ArrowRight size={16} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
@@ -144,7 +146,7 @@ const EmailLeadMagnetSection = () => {
                   Ha úgy érzed, ez rólad szól, foglalj egy konzultációt:
                 </p>
                 <Button
-                  className="w-full bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/30 text-white py-5 rounded-xl text-base transition-all duration-300"
+                  className="w-full bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/30 text-white py-4 sm:py-5 rounded-xl text-base transition-all duration-300"
                   onClick={() => window.location.href = "#contact"}
                 >
                   Kérem az ingyenes 30 perces stratégiát
@@ -157,7 +159,7 @@ const EmailLeadMagnetSection = () => {
       
       {/* Thank you dialog */}
       <Dialog open={isSubmitted} onOpenChange={setIsSubmitted}>
-        <DialogContent className="bg-black border border-purple-500/30 text-white">
+        <DialogContent className="bg-black border border-purple-500/30 text-white max-w-md mx-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
               Köszönjük!

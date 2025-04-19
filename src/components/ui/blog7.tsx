@@ -1,3 +1,4 @@
+
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -42,16 +43,16 @@ const Blog7 = ({
   gridClassName = "grid gap-8 md:grid-cols-2 lg:gap-10"
 }: Blog7Props) => {
   return (
-    <section className="py-16">
-      <div className="container mx-auto flex flex-col items-center gap-12">
+    <section className="py-12 sm:py-16">
+      <div className="container mx-auto flex flex-col items-center gap-8 sm:gap-12">
         <div className="text-center max-w-3xl mx-auto px-4">
-          <Badge variant="secondary" className="mb-4">
+          <Badge variant="secondary" className="mb-3 sm:mb-4">
             {tagline}
           </Badge>
-          <h2 className="mb-3 text-pretty text-2xl font-semibold md:mb-4 md:text-3xl lg:text-4xl">
+          <h2 className="mb-3 text-pretty text-2xl font-semibold md:text-3xl lg:text-4xl">
             {heading}
           </h2>
-          <p className="mb-6 text-muted-foreground md:text-base">
+          <p className="mb-4 sm:mb-6 text-muted-foreground text-sm sm:text-base">
             {description}
           </p>
           <Button variant="link" className="w-full sm:w-auto" asChild>
@@ -63,7 +64,7 @@ const Blog7 = ({
         </div>
         <div className={gridClassName}>
           {posts.map((post) => (
-            <Card key={post.id} className="grid grid-rows-[auto_auto_auto_auto] overflow-hidden">
+            <Card key={post.id} className="grid grid-rows-[auto_auto_auto_auto] overflow-hidden h-full">
               <div className="aspect-[16/9] w-full">
                 <Link
                   to={`/blog/${post.id}`}
@@ -76,10 +77,10 @@ const Blog7 = ({
                   />
                 </Link>
               </div>
-              <div className="px-4 pt-4 space-y-2">
+              <div className="px-4 pt-3 space-y-1">
                 {post.keywords && (
-                  <div className="flex flex-wrap gap-2">
-                    {post.keywords.split(',').map((keyword, index) => (
+                  <div className="flex flex-wrap gap-1">
+                    {post.keywords.split(',').slice(0, 3).map((keyword, index) => (
                       <Badge key={index} variant="secondary" className="text-xs">
                         {keyword.trim()}
                       </Badge>
@@ -88,24 +89,24 @@ const Blog7 = ({
                 )}
               </div>
               <CardHeader className="px-4 py-2">
-                <h3 className="text-lg font-semibold hover:underline">
+                <h3 className="text-base sm:text-lg font-semibold hover:underline line-clamp-2">
                   <Link to={`/blog/${post.id}`}>
                     {post.title}
                   </Link>
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                 </p>
               </CardHeader>
-              <CardContent className="px-4 py-2">
-                <p className="text-sm text-muted-foreground line-clamp-2">
+              <CardContent className="px-4 py-1">
+                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                   {post.excerpt || post.content.substring(0, 120)}...
                 </p>
               </CardContent>
-              <CardFooter className="px-4 pt-0 pb-4">
+              <CardFooter className="px-4 pt-0 pb-4 mt-auto">
                 <Link
                   to={`/blog/${post.id}`}
-                  className="flex items-center text-foreground hover:underline text-sm"
+                  className="flex items-center text-foreground hover:underline text-xs sm:text-sm"
                 >
                   Read more
                   <ArrowRight className="ml-2 size-3" />

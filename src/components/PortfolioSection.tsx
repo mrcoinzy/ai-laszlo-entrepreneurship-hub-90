@@ -5,6 +5,7 @@ import { ArrowRight, BarChart2, Globe, Target } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const portfolioProjects = [
   {
@@ -31,6 +32,8 @@ const portfolioProjects = [
 ];
 
 const PortfolioSection = () => {
+  const isMobile = useIsMobile();
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -54,14 +57,14 @@ const PortfolioSection = () => {
   };
 
   return (
-    <section className="py-20 bg-black overflow-hidden">
+    <section className="py-16 sm:py-20 bg-black overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center mb-16"
+          className="max-w-3xl mx-auto text-center mb-12 sm:mb-16"
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
             Nézze meg, hogyan segítettem más <span className="gradient-text">vállalkozásoknak</span> is fejlődni.
@@ -104,7 +107,7 @@ const PortfolioSection = () => {
         </motion.div>
 
         {/* Mobile View - Carousel */}
-        <div className="md:hidden mb-16">
+        <div className="md:hidden mb-12">
           <Carousel className="w-full">
             <CarouselContent>
               {portfolioProjects.map((project) => (
@@ -128,9 +131,9 @@ const PortfolioSection = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex justify-center gap-2 mt-4">
-              <CarouselPrevious className="relative static bg-zinc-900/70 hover:bg-purple-500/20 border-zinc-800 hover:border-purple-500/50" />
-              <CarouselNext className="relative static bg-zinc-900/70 hover:bg-purple-500/20 border-zinc-800 hover:border-purple-500/50" />
+            <div className="flex justify-center gap-4 mt-6">
+              <CarouselPrevious className="relative static translate-y-0 left-0 top-0 h-12 w-12 rounded-full bg-zinc-900/70 hover:bg-purple-500/20 border-zinc-800 hover:border-purple-500/50" />
+              <CarouselNext className="relative static translate-y-0 right-0 top-0 h-12 w-12 rounded-full bg-zinc-900/70 hover:bg-purple-500/20 border-zinc-800 hover:border-purple-500/50" />
             </div>
           </Carousel>
         </div>

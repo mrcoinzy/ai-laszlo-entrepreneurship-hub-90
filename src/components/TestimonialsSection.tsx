@@ -4,6 +4,7 @@ import { Star } from "lucide-react";
 import CTAButton from "@/components/ui/cta-button";
 import { motion } from "framer-motion";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const testimonials = [
   {
@@ -30,8 +31,10 @@ const testimonials = [
 ];
 
 const TestimonialsSection = () => {
+  const isMobile = useIsMobile();
+  
   return (
-    <section className="py-24 bg-black overflow-hidden relative">
+    <section className="py-16 sm:py-24 bg-black overflow-hidden relative">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-black to-transparent"></div>
@@ -45,7 +48,7 @@ const TestimonialsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center mb-16"
+          className="max-w-3xl mx-auto text-center mb-12 sm:mb-16"
         >
           <div className="inline-flex mb-4">
             <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
@@ -104,7 +107,7 @@ const TestimonialsSection = () => {
         </div>
 
         {/* Mobile View - Carousel */}
-        <div className="md:hidden mb-16">
+        <div className="md:hidden mb-12">
           <Carousel className="w-full">
             <CarouselContent>
               {testimonials.map((testimonial) => (
@@ -134,9 +137,9 @@ const TestimonialsSection = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex justify-center gap-2 mt-4">
-              <CarouselPrevious className="relative static bg-white/5 hover:bg-purple-500/20 border-white/10 hover:border-purple-500/30" />
-              <CarouselNext className="relative static bg-white/5 hover:bg-purple-500/20 border-white/10 hover:border-purple-500/30" />
+            <div className="flex justify-center gap-4 mt-6">
+              <CarouselPrevious className="relative static translate-y-0 left-0 top-0 h-12 w-12 rounded-full bg-white/5 hover:bg-purple-500/20 border-white/10 hover:border-purple-500/30" />
+              <CarouselNext className="relative static translate-y-0 right-0 top-0 h-12 w-12 rounded-full bg-white/5 hover:bg-purple-500/20 border-white/10 hover:border-purple-500/30" />
             </div>
           </Carousel>
         </div>

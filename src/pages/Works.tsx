@@ -4,8 +4,13 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const Works = () => {
+  const isMobile = useIsMobile();
+  
   const works = [
     {
       id: 1,
@@ -27,8 +32,8 @@ const Works = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <div className="container mx-auto px-4 py-20">
-        <div className="max-w-3xl mx-auto text-center mb-16">
+      <div className="container mx-auto px-4 py-16 sm:py-20">
+        <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
           <h1 className="text-3xl sm:text-4xl font-bold mb-6 gradient-text">
             Featured Works
           </h1>
@@ -41,11 +46,11 @@ const Works = () => {
         {works.map((work) => (
           <Card 
             key={work.id}
-            className="mb-20 bg-accent/30 border-accent hover:border-white/30 transition-all duration-300 card-hover"
+            className="mb-16 sm:mb-20 bg-accent/30 border-accent hover:border-white/30 transition-all duration-300 card-hover"
           >
             <CardContent className="p-0">
               <div className="grid md:grid-cols-2 gap-0">
-                <div className="relative aspect-square md:aspect-auto overflow-hidden bg-black">
+                <div className="relative aspect-video md:aspect-auto overflow-hidden bg-black">
                   <div 
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ 
@@ -57,7 +62,7 @@ const Works = () => {
                   </div>
                 </div>
                 
-                <div className="p-8 md:p-12 flex flex-col justify-between">
+                <div className="p-6 sm:p-8 md:p-12 flex flex-col justify-between">
                   <div>
                     <span className="inline-block px-3 py-1 rounded-full bg-white/10 text-xs text-white/70 mb-6">
                       {work.category}
@@ -95,6 +100,27 @@ const Works = () => {
                       </p>
                     </div>
                   </div>
+                  
+                  {isMobile && (
+                    <div className="flex justify-center gap-4 mt-4">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-12 w-12 rounded-full bg-white/5 hover:bg-white/10 border-white/10"
+                      >
+                        <ChevronLeft className="h-6 w-6" />
+                        <span className="sr-only">Previous work</span>
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-12 w-12 rounded-full bg-white/5 hover:bg-white/10 border-white/10"
+                      >
+                        <ChevronRight className="h-6 w-6" />
+                        <span className="sr-only">Next work</span>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
