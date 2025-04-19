@@ -2,8 +2,11 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
+import { Link } from "react-router-dom";
+import { ExternalLink } from "lucide-react";
 
 const BlogPostList = () => {
   const { data: posts, isLoading } = useQuery({
@@ -52,6 +55,14 @@ const BlogPostList = () => {
           <CardContent>
             <p className="text-muted-foreground">{post.excerpt || post.content.substring(0, 150)}...</p>
           </CardContent>
+          <CardFooter>
+            <Link to={`/blog/${post.id}`}>
+              <Button variant="secondary" className="gap-2">
+                <ExternalLink size={16} />
+                Read More
+              </Button>
+            </Link>
+          </CardFooter>
         </Card>
       ))}
     </div>
