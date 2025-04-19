@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, Users, FileText, TrendingUp, Clock } from "lucide-react";
@@ -6,8 +5,9 @@ import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { format, differenceInDays } from "date-fns";
+import { format } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
+import AdminRegistrationForm from "./AdminRegistrationForm";
 
 interface DashboardStats {
   totalClients: number;
@@ -41,7 +41,6 @@ const AdminDashboard = () => {
   
   const [recentClients, setRecentClients] = useState<RecentClient[]>([]);
   
-  // Fetch dashboard statistics
   const { data: dashboardData, isLoading } = useQuery({
     queryKey: ['adminDashboardStats'],
     queryFn: async () => {
@@ -50,7 +49,7 @@ const AdminDashboard = () => {
       // Get users count
       const { data: users, error: usersError } = await supabase
         .from('users')
-        .select('id, created_at')
+        .select('id, created_at, role')
         .eq('role', 'user');
       
       if (usersError) throw usersError;
@@ -58,7 +57,7 @@ const AdminDashboard = () => {
       // Get consultations
       const { data: consultations, error: consultationsError } = await supabase
         .from('consultations')
-        .select('id, created_at, budget_range');
+        .select('*');
         
       if (consultationsError) throw consultationsError;
       
@@ -66,10 +65,10 @@ const AdminDashboard = () => {
       const totalRevenue = consultations?.reduce((sum, consultation) => 
         sum + (consultation.budget_range || 0), 0) || 0;
       
-      // Get recent users
+      // Get recent users with profiles
       const { data: recentUserData, error: recentUsersError } = await supabase
-        .from('users')
-        .select('id, created_at, role')
+        .from('profiles')
+        .select('id, full_name, email, created_at')
         .order('created_at', { ascending: false })
         .limit(5);
       
@@ -78,29 +77,24 @@ const AdminDashboard = () => {
       // Format recent users data
       const formattedRecentClients = recentUserData?.map(user => ({
         id: user.id,
-        name: `User ${user.id.substr(0, 8)}`, // Use ID as name since we don't have full_name
+        name: user.full_name || user.email,
         date: format(new Date(user.created_at), 'yyyy-MM-dd'),
-        status: user.role === 'admin' ? 'admin' : 'user'
+        status: 'user'
       })) || [];
-      
-      // Calculate growth (mocked for now - would need historical data for real calculation)
-      const clientGrowth = users?.length > 0 ? 10 : 0; // Mock growth percentage
-      const consultationGrowth = consultations?.length > 0 ? 15 : 0; // Mock growth percentage
-      const revenueGrowth = totalRevenue > 0 ? 8 : 0; // Mock growth percentage
       
       return {
         users: users || [],
         consultations: consultations || [],
         totalRevenue,
         recentClients: formattedRecentClients,
-        clientGrowth,
-        consultationGrowth,
-        revenueGrowth
+        clientGrowth: 10, // Mock growth percentage
+        consultationGrowth: 15,
+        revenueGrowth: 8
       };
     },
-    enabled: isAdmin // Only run query if user is admin
+    enabled: isAdmin
   });
-  
+
   useEffect(() => {
     if (dashboardData) {
       setStats({
@@ -117,7 +111,6 @@ const AdminDashboard = () => {
     }
   }, [dashboardData]);
 
-  // Navigate to specific sections when cards are clicked
   const navigateToSection = (section: string) => {
     navigate(`/admin?section=${section}`);
   };
@@ -126,8 +119,9 @@ const AdminDashboard = () => {
     <div className="space-y-6">
       <h2 className="text-xl md:text-2xl font-bold mb-4">Admin Overview</h2>
       
+      <AdminRegistrationForm />
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Clients Card */}
         <Card className="bg-accent/30 border-accent hover:bg-accent/40 transition-colors cursor-pointer" 
           onClick={() => navigateToSection("clients")}>
           <CardHeader className="pb-2">
@@ -148,7 +142,6 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Consultations Card */}
         <Card className="bg-accent/30 border-accent hover:bg-accent/40 transition-colors cursor-pointer"
           onClick={() => navigateToSection("consultations")}>
           <CardHeader className="pb-2">
@@ -169,7 +162,6 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Revenue Card */}
         <Card className="bg-accent/30 border-accent hover:bg-accent/40 transition-colors cursor-pointer"
           onClick={() => navigateToSection("revenue")}>
           <CardHeader className="pb-2">
@@ -190,7 +182,6 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Response Time Card */}
         <Card className="bg-accent/30 border-accent hover:bg-accent/40 transition-colors cursor-pointer"
           onClick={() => navigateToSection("performance")}>
           <CardHeader className="pb-2">
@@ -210,9 +201,7 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      {/* Recent Activity and Performance Indicators */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-        {/* Recent Clients */}
         <Card className="bg-accent/30 border-accent">
           <CardHeader>
             <CardTitle className="text-lg">Recent User Activity</CardTitle>
@@ -248,7 +237,6 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Performance Metrics */}
         <Card className="bg-accent/30 border-accent">
           <CardHeader>
             <CardTitle className="text-lg">Performance Metrics</CardTitle>
