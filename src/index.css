@@ -31,13 +31,18 @@
   * {
     @apply border-border;
   }
+  
+  html, body, #root {
+    @apply h-auto min-h-screen w-full overflow-x-hidden;
+  }
+  
   body {
     @apply bg-black text-white; /* Ensure consistent background */
   }
 
   /* Prevent potential cut-offs and ensure smooth section transitions */
   section {
-    @apply w-full overflow-hidden; /* Prevent horizontal scrolling */
+    @apply w-full overflow-visible; /* Allow content to flow properly */
   }
   
   /* Improved scrolling */
@@ -650,7 +655,7 @@
 
 @layer utilities {
   .section-base {
-    @apply bg-black py-16 sm:py-20 px-4 sm:px-6 relative;
+    @apply bg-black py-16 sm:py-20 px-4 sm:px-6 relative overflow-visible;
   }
 
   /* Ensure no unexpected margins or paddings cause cut-offs */

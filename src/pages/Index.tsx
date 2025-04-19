@@ -34,39 +34,41 @@ const Index = () => {
   });
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen w-full bg-black overflow-visible">
       <ScrollIndicator />
       <Navigation />
-      <HeroSection />
-      <MiniIntroSection />
-      <ProblemStatement />
-      <div id="services">
-        <ServicesSection />
-      </div>
-      <div id="about">
-        <TrustBuildingSection />
-      </div>
-      <div id="portfolio">
-        <PortfolioSection />
-      </div>
-      <TestimonialsSection />
-      <EmailLeadMagnetSection />
-      <LeadMagnetSection />
-      {posts && posts.length > 0 && (
-        <div id="blog">
-          <Blog7 
-            posts={posts}
-            tagline="Friss Üzleti Tippek"
-            heading="Legújabb Cikkeim Önnek"
-            description="Fedezze fel a legfrissebb ügyfélszerzési stratégiákat és sikertörténeteket"
-            buttonText="Szeretném tudni, hogyan szerezhetek több ügyfelet"
-            buttonUrl="/blog"
-          />
+      <main className="w-full overflow-visible">
+        <HeroSection />
+        <MiniIntroSection />
+        <ProblemStatement />
+        <div id="services">
+          <ServicesSection />
         </div>
-      )}
-      <div id="contact">
-        <FinalCTASection />
-      </div>
+        <div id="about">
+          <TrustBuildingSection />
+        </div>
+        <div id="portfolio">
+          <PortfolioSection />
+        </div>
+        <TestimonialsSection />
+        <EmailLeadMagnetSection />
+        <LeadMagnetSection />
+        {posts && posts.length > 0 && (
+          <div id="blog">
+            <Blog7 
+              posts={posts}
+              tagline="Friss Üzleti Tippek"
+              heading="Legújabb Cikkeim Önnek"
+              description="Fedezze fel a legfrissebb ügyfélszerzési stratégiákat és sikertörténeteket"
+              buttonText="Szeretném tudni, hogyan szerezhetek több ügyfelet"
+              buttonUrl="/blog"
+            />
+          </div>
+        )}
+        <div id="contact">
+          <FinalCTASection />
+        </div>
+      </main>
       <Footer />
     </div>
   );
