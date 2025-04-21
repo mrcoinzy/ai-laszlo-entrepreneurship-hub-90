@@ -13,7 +13,14 @@ const Navigation = () => {
     setIsOpen(false);
     const element = document.getElementById(elementId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const navHeight = 80; // Height of the fixed navbar
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     } else {
       console.warn(`Element with ID "${elementId}" not found.`);
     }
@@ -35,6 +42,15 @@ const Navigation = () => {
     };
 
     window.addEventListener('scroll', handleScrollEffect);
+    
+    // Handle hash in URL for direct section navigation
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      setTimeout(() => {
+        handleScroll(hash);
+      }, 100);
+    }
+
     return () => {
       window.removeEventListener('scroll', handleScrollEffect);
     };
