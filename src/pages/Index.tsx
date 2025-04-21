@@ -39,18 +39,24 @@ const Index = () => {
       <Navigation />
       <main className="w-full overflow-visible">
         <HeroSection />
-        <MiniIntroSection />
-        <ProblemStatement />
-        <div id="services">
+        <div id="bemutatkozas">
+          <MiniIntroSection />
+        </div>
+        <div id="garancia">
+          <ProblemStatement />
+        </div>
+        <div id="szolgaltatasok">
           <ServicesSection />
         </div>
-        <div id="about">
+        <div id="miert-engem">
           <TrustBuildingSection />
         </div>
-        <div id="portfolio">
+        <div id="eredmenyeim">
           <PortfolioSection />
         </div>
-        <TestimonialsSection />
+        <div id="ugyfeleim">
+          <TestimonialsSection />
+        </div>
         <EmailLeadMagnetSection />
         <LeadMagnetSection />
         {posts && posts.length > 0 && (

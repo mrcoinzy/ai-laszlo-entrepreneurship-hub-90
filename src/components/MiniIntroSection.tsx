@@ -8,7 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const MiniIntroSection = () => {
   return (
-    <AnimatedSection className="py-20">
+    <AnimatedSection className="py-20 pt-28">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
           {/* Image column */}
@@ -58,10 +58,24 @@ const MiniIntroSection = () => {
             </div>
             
             <div className="mt-6">
-              <a href="#services" className="inline-flex items-center text-purple-400 hover:text-white group transition-colors">
+              <button 
+                onClick={() => {
+                  const element = document.getElementById('szolgaltatasok');
+                  if (element) {
+                    const navHeight = 80;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.scrollY - navHeight;
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }} 
+                className="inline-flex items-center text-purple-400 hover:text-white group transition-colors"
+              >
                 <span>Nézze meg a módszert, amit használok</span>
                 <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
-              </a>
+              </button>
             </div>
           </motion.div>
         </div>
