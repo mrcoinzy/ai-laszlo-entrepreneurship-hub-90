@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Check, X, Clock, BadgePercent } from "lucide-react";
 import { motion } from "framer-motion";
@@ -46,7 +45,6 @@ const ProblemStatement = () => {
 
   return (
     <section className="relative w-full bg-black py-20 overflow-hidden">
-      {/* Enhanced background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-purple-900/10 to-transparent"></div>
         <div className="absolute -bottom-[20%] -right-[10%] w-1/2 h-1/2 bg-gradient-to-tl from-purple-600/10 to-transparent rounded-full blur-[100px]"></div>
@@ -71,8 +69,7 @@ const ProblemStatement = () => {
             <br/>webes megoldások, garantált eredménnyel
           </h2>
           
-          <div className="bg-zinc-900/30 backdrop-blur-xl rounded-2xl border border-zinc-800/50 p-8 mb-16 text-center shadow-[0_10px_50px_-12px_rgba(138,43,226,0.25)] relative overflow-hidden">
-            {/* Enhanced decorative elements */}
+          <div className="bg-zinc-900/30 backdrop-blur-xl rounded-2xl border border-zinc-800/50 p-8 mb-16 text-center shadow-[0_10px_25px_-15px_rgba(138,43,226,0.25)] relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px]"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-600/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-[80px]"></div>
             
@@ -129,21 +126,43 @@ const ProblemStatement = () => {
 
             <Link to="/contact">
               <Button 
-                className="bg-gradient-to-r from-[#9A4BF2] to-[#7B1FA2] text-white hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.4)] hover:-translate-y-1 px-8 py-6 rounded-xl text-base transition-all duration-300 group"
+                className="
+                  w-full 
+                  sm:w-auto
+                  bg-gradient-to-r from-[#9A4BF2] to-[#7B1FA2] 
+                  text-white 
+                  hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.4)] 
+                  hover:-translate-y-1 
+                  px-6 py-4 sm:px-8 sm:py-6 
+                  rounded-xl text-base sm:text-lg 
+                  transition-all duration-300 group
+                  focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 
+                "
               >
-                Érdekel, hogyan szerezhetek több ügyfelet
-                <Check className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+                <span className="flex items-center justify-center gap-1">
+                  Érdekel, hogyan szerezhetek több ügyfelet
+                  <Check className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+                </span>
               </Button>
             </Link>
           </motion.div>
         </motion.div>
       </div>
       
-      {/* Sticky CTA Button */}
-      <div className="fixed bottom-6 right-6 z-50 md:hidden">
-        <Link to="/contact">
+      <div className="fixed bottom-6 right-6 z-50 md:hidden w-[90vw] max-w-xs px-2">
+        <Link to="/contact" className="block">
           <Button 
-            className="bg-gradient-to-r from-[#9A4BF2] to-[#7B1FA2] text-white shadow-lg hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.4)] px-6 py-4 rounded-full text-sm transition-all duration-300"
+            className="
+              w-full 
+              bg-gradient-to-r from-[#9A4BF2] to-[#7B1FA2] 
+              text-white shadow-lg 
+              hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.4)] 
+              px-4 py-3 
+              rounded-full text-base 
+              sm:text-sm
+              transition-all duration-300
+              focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+            "
           >
             Kérek egy díjmentes konzultációt
           </Button>
