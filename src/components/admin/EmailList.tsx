@@ -10,29 +10,20 @@ interface EmailSubscriber {
   id: string;
   created_at: string;
   email: string;
-  source: string;
+  source?: string;
 }
 
 const EmailList = () => {
   const { data: subscribers, isLoading, error } = useQuery({
     queryKey: ['email-subscribers'],
     queryFn: async () => {
-      // For now, we'll just display user emails as a placeholder
-      // since the email_subscribers table doesn't exist yet
       const { data, error } = await supabaseAdmin
-        .from('users')
-        .select('id, email, created_at')
+        .from('email_subscribers')
+        .select('id, email, created_at, source')
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
-      
-      // Transform to match the expected EmailSubscriber format
-      return data.map(user => ({
-        id: user.id,
-        created_at: user.created_at,
-        email: user.email,
-        source: 'User Registration'
-      })) as EmailSubscriber[];
+      return data as EmailSubscriber[];
     }
   });
 
@@ -66,12 +57,13 @@ const EmailList = () => {
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                {new Date(subscriber.created_at).toLocaleDateString()}
+                {subscriber.created_at &&
+                  new Date(subscriber.created_at).toLocaleDateString()}
               </div>
             </div>
             {subscriber.source && (
               <div className="mt-2 text-sm text-muted-foreground">
-                Source: {subscriber.source}
+                Forrás: {subscriber.source}
               </div>
             )}
           </Card>
