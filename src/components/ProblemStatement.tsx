@@ -8,15 +8,15 @@ const ProblemStatement = () => {
   const problems = [
     {
       icon: <X className="h-6 w-6 text-purple-500" />,
-      text: "Weboldala nem hoz új ügyfeleket – csupán 'létezik' az interneten."
+      text: "A jelenlegi weboldala nem termel vevőt – csak porosodik a neten."
     },
     {
       icon: <BadgePercent className="h-6 w-6 text-purple-500" />,
-      text: "Hirdetései nem hoznak konverziót, és nincs egyértelmű stratégiája."
+      text: "A hirdetései csak pénzt égetnek – vevőt nem hoznak."
     },
     {
       icon: <Clock className="h-6 w-6 text-purple-500" />,
-      text: "Nincs ideje külön fejlesztőt, marketingest és szövegírót keresni."
+      text: "Elege van abból, hogy minden részfeladatra mást kell keresnie?"
     }
   ];
 
@@ -62,11 +62,11 @@ const ProblemStatement = () => {
           <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-white">
             <span className="relative">
               <span className="relative z-10">
-                <span className="text-[#8A2BE2]">Magyar KKV-k</span> számára fejlesztett
+                <span className="text-[#8A2BE2]">Magyar KKV-knak</span> készített weboldalak
               </span>
               <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#8A2BE2]/70 to-transparent"></span>
             </span>
-            <br/>webes megoldások, garantált eredménnyel
+            <br/> és marketingrendszerek garantált eredménnyel
           </h2>
           
           <div className="bg-zinc-900/30 backdrop-blur-xl rounded-2xl border border-zinc-800/50 p-8 mb-16 text-center shadow-[0_10px_25px_-15px_rgba(138,43,226,0.25)] relative overflow-hidden">
@@ -77,7 +77,7 @@ const ProblemStatement = () => {
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#9A4BF2] to-[#B066FF]">14 napon belül több ajánlatkérés</span>,<br/>vagy visszafizetjük a díjat
             </h3>
             <p className="text-white/80 relative z-10">
-              Ez nem marketingszöveg – így dolgozom. Ha nem látja az eredményeket,<br/>egy forintot sem kell fizetnie.
+            Ez nem marketing duma – így dolgozom. Ha nem jön az eredmény, <br/>egy forintot sem kell fizetni.
             </p>
           </div>
           
@@ -124,7 +124,7 @@ const ProblemStatement = () => {
               </div>
             </div>
 
-            <Link to="/contact">
+            <Link to="/consultation">
               <Button 
                 className="
                   w-full 
@@ -140,7 +140,7 @@ const ProblemStatement = () => {
                 "
               >
                 <span className="flex items-center justify-center gap-1">
-                  Érdekel, hogyan szerezhetek több ügyfelet
+                  Igen, szeretnék több ajánlatkérést!
                   <Check className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
                 </span>
               </Button>
@@ -150,7 +150,7 @@ const ProblemStatement = () => {
       </div>
       
       <div className="fixed bottom-6 right-6 z-50 md:hidden w-[90vw] max-w-xs px-2">
-        <Link to="/contact" className="block">
+        <Link to="/consultation" className="block">
           <Button 
             className="
               w-full 

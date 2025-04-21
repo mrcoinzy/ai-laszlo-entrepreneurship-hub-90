@@ -22,7 +22,7 @@ const testimonials = [
     id: 2,
     name: "Nagy Eszter",
     role: "Alapító, EcoBeauty",
-    content: "Korábban több mint 500.000 Ft-ot költöttünk marketingre látható eredmények nélkül. László stratégiai tanácsai valódi változást hoztak.",
+    content: "Korábban több mint 500.000 Ft-ot költöttünk marketingre látható eredmények nélkül. László stratégiái végre valódi változást hoztak – már 6 hete folyamatosan jönnek az új megrendelők.",
     rating: 5,
     metric: {
       value: "45%",
@@ -35,7 +35,12 @@ const testimonials = [
     name: "Szabó János",
     role: "Coach, MindfulSuccess",
     content: "László munkája túlmutat a technikai szakértelmen. Valódi üzleti tanácsadó, aki megértette a coaching vállalkozásom céljait, és olyan digitális jelenlétet teremtett, amely 3× annyi foglalást eredményez havi szinten.",
-    rating: 5
+    rating: 5,
+    metric: {
+      value: "45%",
+      label: "Konverziós arány növekedés",
+      period: "6 hónap alatt"
+    }
   }
 ];
 
@@ -60,14 +65,14 @@ const TestimonialsSection = () => {
         >
           <div className="inline-flex mb-4">
             <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              Ügyfeleink Sikerei
+              Ügyfeleim Sikerei
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
-            Ők már megtapasztalták, milyen, ha valaki tényleg <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">törődik</span> az online sikerükkel.
+          Ők már megtapasztalták, milyen, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">amikor</span> valaki végre komolyan veszi a vállalkozásukat.
           </h2>
           <p className="text-lg text-white/70">
-            Az alábbi visszajelzések valódi ügyfelektől származnak, akik AI Lászlóval dolgoztak együtt egyedi, konverzió-orientált megoldásokon.
+          Valódi visszajelzések olyan ügyfelektől, akik már megtapasztalták, mit jelent AI Lászlóval együttműködni: fókusz, eredmény és emberi támogatás.
           </p>
         </motion.div>
 
@@ -186,8 +191,9 @@ const TestimonialsSection = () => {
           className="flex justify-center"
         >
           <CTAButton 
-            text="Kérek egy személyre szabott ügyfélszerzési tervet" 
-            to="/contact" 
+            text="Szeretném, hogy rólam is ilyen sikersztori szülessen" 
+            to="/consultation" 
+            className="whitespace-normal px-4 py-8 text-sm md:text-base md:px-6 md:py-3"
           />
         </motion.div>
       </div>

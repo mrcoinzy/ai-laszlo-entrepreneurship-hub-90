@@ -42,7 +42,8 @@ const LeadMagnetSection = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="text-lg text-white/70 max-w-3xl mx-auto mb-10"
             >
-              Ez nem marketing szöveg – így dolgozom.
+              Ez nem egy marketingfogás. Ez az alapelve annak, ahogyan dolgozom.
+              Csak akkor kérek díjat, ha Ön valóban elégedett az eredményekkel.
             </motion.p>
             
             <motion.div
@@ -52,7 +53,11 @@ const LeadMagnetSection = () => {
               transition={{ delay: 0.6, duration: 0.5 }}
               className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
             >
-              <CTAButton text="Kérek egy konzultációt" to="/contact" />
+              <CTAButton 
+            text="Induljon el a 0% kockázat – 100% eredmény felé" 
+            to="/consultation" 
+            className="whitespace-normal px-4 py-8 text-sm md:text-base md:px-6 md:py-3"
+          />
             </motion.div>
           </motion.div>
           
@@ -65,9 +70,9 @@ const LeadMagnetSection = () => {
             className="mt-16 text-center"
           >
             <h3 className="text-2xl md:text-3xl font-bold mb-6 text-white">
-              Készen áll egy olyan webes jelenlétre, amely valóban az <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Ön céljaira</span> van szabva?
+            Most Ön jön – elindítjuk <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">az ügyfélszerző</span> rendszerét?
             </h3>
-            <CTAButton text="Nézze meg, hogyan dolgozom" to="/courses" variant="outline" />
+            <CTAButton text="Igen, szeretném kipróbálni – garanciával" to="/courses" variant="outline" />
           </motion.div>
         </div>
       </div>

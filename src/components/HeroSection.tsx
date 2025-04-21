@@ -76,7 +76,7 @@ const HeroSection = () => {
             </motion.div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
-              Több ügyfél, nagyobb hatás - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">mesterséges intelligenciával, emberi kapcsolattal</span>
+            Weboldalak és marketing - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">ami végre ügyfelet is hoz – nem csak nézőt.</span>
             </h1>
             
             <motion.div 
@@ -86,7 +86,7 @@ const HeroSection = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
             >
               <p className="text-lg md:text-xl mb-4 font-medium text-white/90">
-                🧠 Egyedi rendszert építek vállalkozásod köré:
+                🧠 Egyedi rendszert építek, ami vevőket hoz, nem csak látogatókat:
               </p>
               
               {/* Improved styling for the boxes - Modified to use 2 columns and 2 rows */}
@@ -121,7 +121,7 @@ const HeroSection = () => {
               </div>
               
               <p className="text-white/90 font-medium">
-                mindezt úgy, hogy valóban ügyfeleid legyenek, ne csak nézőid.
+                Mindezt úgy, hogy valóban ügyfelei legyenek, ne csak látogatói.
               </p>
             </motion.div>
             
@@ -143,7 +143,7 @@ const HeroSection = () => {
               </Link>
               <Link to="/courses">
                 <Button variant="outline" className="px-8 py-6 rounded-xl text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
-                  Nézze meg, hogyan dolgozom
+                  Nézze meg az ügyfeleim eredményeit
                 </Button>
               </Link>
             </motion.div>

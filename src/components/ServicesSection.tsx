@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Code, Target, LineChart, ChevronRight } from "lucide-react";
 import CTAButton from "@/components/ui/cta-button";
@@ -9,17 +8,17 @@ const ServicesSection = () => {
     {
       icon: <Code className="h-12 w-12 text-purple-400 mb-4 transition-all duration-300 group-hover:scale-110" />,
       title: "Weboldal Fejlesztés",
-      description: "Modern, reszponzív üzleti weboldalak, amelyek SEO-ra, sebességre és konverziókra vannak optimalizálva. Kóddal vagy modern no-code eszközökkel készítve."
+      description: "Modern üzleti weboldalak, amelyek gyorsak, mobilbarátok és eladnak. Kóddal vagy no-code technológiával – attól függően, hogy mi hozza a leggyorsabb eredményt Önnek."
     },
     {
       icon: <Target className="h-12 w-12 text-purple-400 mb-4 transition-all duration-300 group-hover:scale-110" />,
       title: "Online Marketing Stratégia",
-      description: "Testre szabott SEO, PPC, tartalom és e-mail marketing tervek, amelyek összhangban vannak az Ön céljaival és erőforrásaival."
+      description: "Célzott marketingterv – SEO, PPC, tartalom, e-mail – nem sablon alapján. Minden az Ön vállalkozásához, költségkeretéhez és céljához illesztve."
     },
     {
       icon: <LineChart className="h-12 w-12 text-purple-400 mb-4 transition-all duration-300 group-hover:scale-110" />,
       title: "Konverzió Optimalizálás",
-      description: "A/B tesztelés, UX fejlesztések, CTA hangolás és elemzés – hogy több látogató váljon valódi ügyféllé."
+      description: "Több vásárló, kevesebb lemorzsolódás. UX fejlesztés, CTA-k finomhangolása, és adat alapú döntések."
     }
   ];
 
@@ -81,7 +80,7 @@ const ServicesSection = () => {
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
-            Szolgáltatásaim, amelyek eredményeket hoznak
+            Szolgáltatások, amiktől a weboldala nem csak szép lesz – hanem vevőt is hoz.
           </h2>
           <p className="text-lg text-white/70">
             Minden, amire szüksége van egy magas konverziós online jelenléthez – egy helyről, AI támogatással.
@@ -119,8 +118,9 @@ const ServicesSection = () => {
           transition={{ delay: 0.6, duration: 0.5 }}
         >
           <CTAButton 
-            text="Nem biztos benne, mire van szüksége? Beszéljünk – foglaljon ingyenes konzultációt" 
-            to="/contact" 
+            text="Indítsuk el a növekedést – kérjen konzultációt!" 
+            to="/consultation"
+            className="whitespace-normal px-4 py-2 text-sm md:text-base md:px-6 md:py-3"
           />
         </motion.div>
       </div>

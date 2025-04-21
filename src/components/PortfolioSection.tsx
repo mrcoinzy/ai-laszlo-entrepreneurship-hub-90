@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart2, Globe, Target } from "lucide-react";
@@ -11,21 +10,21 @@ const portfolioProjects = [
   {
     id: 1,
     name: "SportCraft Webáruház",
-    description: "Teljes e-commerce platform újratervezése és SEO optimalizálása",
+    description: "Teljes újratervezés és SEO – a vásárlók végre meg is találták a termékeket.",
     result: "237% bevételnövekedés 3 hónap alatt",
     icon: <Globe className="h-10 w-10 text-purple-500" />
   },
   {
     id: 2,
     name: "VitalCoach Tanácsadás",
-    description: "Konverzióorientált landing page és automatizált email rendszer",
+    description: "AI-alapú CTA-stratégia és automatizált kapcsolatfelvétel.",
     result: "2× több bejelentkezés 1 hónap alatt",
     icon: <Target className="h-10 w-10 text-purple-500" />
   },
   {
     id: 3,
     name: "ArtisanBrew Kávézó",
-    description: "Teljes online jelenlét kialakítása és Google Térkép optimalizálás",
+    description: "Online jelenlét nélkül működtek eddig – most megtalálják őket.",
     result: "45% növekedés a helyi forgalomban",
     icon: <BarChart2 className="h-10 w-10 text-purple-500" />
   }
@@ -67,10 +66,10 @@ const PortfolioSection = () => {
           className="max-w-3xl mx-auto text-center mb-12 sm:mb-16"
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
-            Nézze meg, hogyan segítettem más <span className="gradient-text">vállalkozásoknak</span> is fejlődni.
+          Eredmények, amiket nem lehet figyelmen kívül hagyni <span className="gradient-text">ezek a számok</span> nem hazudnak.
           </h2>
           <p className="text-lg text-white/70">
-            Minden projekt mögött egy megoldott probléma áll. Tekintsen meg néhány példát, hogyan alakítottam át ügyfeleim online jelenlétét kézzelfogható eredményekkel.
+          Minden projekt mögött egy konkrét probléma állt. Nézze meg, hogyan váltottam érdeklődőből vevőt – és stagnáló üzletből növekedést.
           </p>
         </motion.div>
 
@@ -148,12 +147,12 @@ const PortfolioSection = () => {
           <h3 className="text-2xl font-bold mb-6 text-white">
             Ön is hasonló eredményeket szeretne elérni?
           </h3>
-          <Link to="/contact">
+          <Link to="/consultation">
             <Button
               className="bg-white text-black hover:bg-[#8A2BE2] hover:text-white hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.3)] hover:-translate-y-1 px-8 py-6 rounded-xl text-base transition-all duration-300 group overflow-hidden relative"
             >
-              <span className="relative z-10 flex items-center">
-                Kérek egy konzultációt
+              <span className="relative z-10 flex items-center whitespace-normal text-sm md:text-base">
+                Nézzük meg, mit lehet kihozni az Ön vállalkozásából
                 <ArrowRight className="ml-2 transition-all duration-300 group-hover:translate-x-1" size={18} />
               </span>
               <span className="absolute inset-0 bg-[#8A2BE2] origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></span>

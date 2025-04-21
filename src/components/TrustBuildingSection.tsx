@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ShieldCheck, UserCheck, Zap, Target, Award } from "lucide-react";
 import { motion } from "framer-motion";
@@ -8,23 +7,23 @@ const TrustBuildingSection = () => {
   const valuePropositions = [
     {
       icon: <ShieldCheck className="h-10 w-10 text-purple-400 transition-all duration-300 group-hover:scale-110" />,
-      title: "100% Egyedi",
-      description: "Nem használok sablonokat. Minden megoldás az Ön vállalkozására van szabva."
+      title: "Sablonok nélkül, csak Önre szabva.",
+      description: "Nincs két egyforma cég – ezért minden rendszer is egyedi."
     },
     {
       icon: <Zap className="h-10 w-10 text-purple-400 transition-all duration-300 group-hover:scale-110" />,
-      title: "AI-alapú munkafolyamat",
-      description: "Mesterséges intelligencia eszközöket használok a munkafolyamat gyorsítására és fejlesztésére."
+      title: "AI-val gyorsítva – de emberi minőségben.",
+      description: "Modern technológia, emberi figyelemmel párosítva."
     },
     {
       icon: <UserCheck className="h-10 w-10 text-purple-400 transition-all duration-300 group-hover:scale-110" />,
-      title: "Osztatlan figyelem",
-      description: "Egyszerre csak 1–2 ügyféllel dolgozom. Ön sosem lesz háttérbe szorítva."
+      title: "Nem lesz egy a sok közül.",
+      description: "Nálam nincs \"futószalag\" – csak valódi odafigyelés."
     },
     {
       icon: <Target className="h-10 w-10 text-purple-400 transition-all duration-300 group-hover:scale-110" />,
-      title: "Eredményfókusz",
-      description: "A célom nem csupán lenyűgözni – hanem több ügyfelet hozni Önnek."
+      title: "Nem látvány, hanem eredmény.",
+      description: "A cél mindig: több ajánlatkérés, több vevő."
     },
     {
       icon: <Award className="h-10 w-10 text-purple-400 transition-all duration-300 group-hover:scale-110" />,
@@ -81,10 +80,11 @@ const TrustBuildingSection = () => {
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
-              Ön nem csupán egy újabb projekt – <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Ön a prioritás</span>.
+              Ön nem csupán egy ügyfél – <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400"> nálam az eredménye válik a prioritássá.</span>
             </h2>
             <p className="text-lg text-white/70 max-w-3xl mx-auto">
-              Ellentétben egy ügynökséggel, én közvetlenül Önnel dolgozom – az alapoktól építem fel az online sikerét, teljes fókuszal és felelősséggel.
+            Nem dolgozom egyszerre tucatnyi céggel – csak 1-2 vállalkozással, hogy Ön valódi figyelmet kapjon.
+            Teljes fókusz, személyre szabott rendszer, mérhető eredményekkel.
             </p>
           </div>
           
@@ -120,7 +120,7 @@ const TrustBuildingSection = () => {
             transition={{ delay: 0.4, duration: 0.5 }}
           >
             <h3 className="text-2xl font-bold mb-3 text-white">
-              Nem fizet, amíg Ön nem mondja: <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">„Igen – ez működik."</span>
+              Fizetés csak, ha elégedett. <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">"Az Ön sikere az én garanciám."</span>
             </h3>
             <p className="text-white/70">
               Ez nem marketing szöveg – így dolgozom.
@@ -137,7 +137,11 @@ const TrustBuildingSection = () => {
             <h3 className="text-2xl font-medium mb-6 text-white">
               Készen áll egy olyan webes jelenlétre, amely valóban az Ön céljaira van szabva?
             </h3>
-            <CTAButton text="Kérek egy konzultációt" to="/contact" />
+            <CTAButton 
+              text="Igen erre van szükségem – kérek egy konzultációt" 
+              to="/consultation" 
+              className="whitespace-normal px-4 py-2 text-sm md:text-base md:px-6 md:py-3"
+            />
           </motion.div>
         </motion.div>
       </div>

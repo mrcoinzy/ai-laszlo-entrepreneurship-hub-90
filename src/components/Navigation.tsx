@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,8 @@ const Navigation = () => {
     const element = document.getElementById(elementId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      console.warn(`Element with ID "${elementId}" not found.`);
     }
   };
 
@@ -58,13 +59,13 @@ const Navigation = () => {
           </Link>
           
           <div className="hidden md:flex items-center space-x-10">
-            {["services", "portfolio", "about", "blog"].map((item) => (
+            {["bemutatkozas", "garancia", "szolgaltatasok", "miert-engem", "eredmenyeim", "ugyfeleim", "blog"].map((item) => (
               <button 
                 key={item}
                 onClick={() => handleScroll(item)} 
                 className="text-sm text-white/80 hover:text-white transition-colors relative overflow-hidden group"
               >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
+                {item.charAt(0).toUpperCase() + item.slice(1).replace(/-/g, ' ')}
                 <span className="absolute left-0 bottom-0 w-0 h-[1px] bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
@@ -106,7 +107,7 @@ const Navigation = () => {
           transition={{ duration: 0.3 }}
         >
           <div className="flex flex-col p-8 space-y-6">
-            {["services", "portfolio", "about", "blog"].map((item, index) => (
+            {["bemutatkozas", "garancia", "szolgaltatasok", "miert-engem", "eredmenyeim", "ugyfeleim", "blog"].map((item, index) => (
               <motion.button 
                 key={item}
                 onClick={() => handleScroll(item)} 
@@ -115,7 +116,7 @@ const Navigation = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 + 0.1, duration: 0.3 }}
               >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
+                {item.charAt(0).toUpperCase() + item.slice(1).replace(/-/g, ' ')}
               </motion.button>
             ))}
             

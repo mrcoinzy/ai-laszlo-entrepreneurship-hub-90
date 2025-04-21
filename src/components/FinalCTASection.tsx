@@ -29,36 +29,14 @@ const FinalCTASection = () => {
           </div>
           
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
-            Kérek egy konzultációt
+            Egy lépésre van attól, hogy a weboldala ügyfeleket hozzon – nem csak látogatókat.
           </h2>
           
           <p className="text-lg text-white/70 max-w-3xl mx-auto mb-12">
-            48 órán belül személyesen felveszem Önnel a kapcsolatot.
+          Töltse ki az űrlapot vagy foglaljon időpontot, és 48 órán belül én magam fogom keresni Önt – nem egy asszisztens, nem egy robot.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="bg-gradient-to-br from-white/8 to-white/2 backdrop-blur-sm rounded-xl border border-white/10 p-8 text-center transition-all duration-300 hover:border-purple-500/30 hover:shadow-[0_10px_40px_-15px_rgba(138,43,226,0.3)]"
-            >
-              <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/20 flex items-center justify-center border border-white/20">
-                  <MessageCircle className="h-8 w-8 text-white" />
-                </div>
-              </div>
-              
-              <h3 className="text-xl font-bold mb-4 text-white">Üzenet küldése</h3>
-              
-              <p className="text-white/70 mb-6">
-                Küldjön üzenetet, és részletezze projektjét, én pedig 48 órán belül válaszolok.
-              </p>
-              
-              <CTAButton text="Üzenet küldése" to="/contact" variant="secondary" />
-            </motion.div>
-            
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -72,13 +50,13 @@ const FinalCTASection = () => {
                 </div>
               </div>
               
-              <h3 className="text-xl font-bold mb-4 text-white">Konzultáció foglalása</h3>
+              <h3 className="text-xl font-bold mb-4 text-white">Időpontfoglalás</h3>
               
               <p className="text-white/70 mb-6">
-                Foglaljon egy 30 perces ingyenes konzultációt, hogy megbeszéljük az Ön projektjét és céljait.
+              Foglaljon egy 30 perces konzultációt, ahol átbeszéljük, hogyan lehet az Ön webes jelenlétéből ügyfélszerző gépezet.
               </p>
               
-              <CTAButton text="Időpont foglalása" to="/contact" variant="primary" />
+              <CTAButton text="Kérek egy 30 perces konzultációt" to="/consultation" variant="primary" />
             </motion.div>
           </div>
         </motion.div>
