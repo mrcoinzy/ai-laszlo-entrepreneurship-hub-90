@@ -120,7 +120,7 @@ const TrustBuildingSection = () => {
             transition={{ delay: 0.4, duration: 0.5 }}
           >
             <h3 className="text-2xl font-bold mb-3 text-white">
-              Fizetés csak, ha elégedett. <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">"Az Ön sikere az én garanciám."</span>
+              Csak akkor fizet, ha elégedett. <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">"Az Ön sikere az én garanciám."</span>
             </h3>
             <p className="text-white/70">
               Ez nem marketing szöveg – így dolgozom.
