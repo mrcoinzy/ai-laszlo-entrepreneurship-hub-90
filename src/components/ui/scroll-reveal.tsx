@@ -28,7 +28,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   return (
     <motion.div
       ref={ref}
-      className={className}
+      className={`${className} mx-auto`}
       style={{ width, overflow: "hidden", position: "relative" }}
       variants={{
         hidden: { opacity: 0, filter: "blur(8px)" },
@@ -63,7 +63,7 @@ export const ScrollRevealY: React.FC<ScrollRevealProps & { distance?: number }> 
   return (
     <motion.div
       ref={ref}
-      className={className}
+      className={`${className} mx-auto`}
       style={{ width, overflow: "hidden", position: "relative" }}
       variants={{
         hidden: { opacity: 0, y: distance, filter: "blur(8px)" },

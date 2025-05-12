@@ -36,7 +36,7 @@ const Index = () => {
 
   // Apply scroll reveal wrapper to sections
   const withScrollReveal = (component) => (
-    <ScrollRevealY className="w-full" width="100%" distance={30}>
+    <ScrollRevealY className="w-full mx-auto" width="100%" distance={30}>
       {component}
     </ScrollRevealY>
   );
@@ -47,28 +47,32 @@ const Index = () => {
       <Navigation />
       <main className="w-full overflow-visible">
         <HeroSection />
-        <div id="bemutatkozas">
+        <div id="bemutatkozas" className="w-full">
           {withScrollReveal(<MiniIntroSection />)}
         </div>
-        <div id="garancia">
+        <div id="garancia" className="w-full">
           <ProblemStatement />
         </div>
-        <div id="szolgaltatasok">
+        <div id="szolgaltatasok" className="w-full">
           {withScrollReveal(<ServicesSection />)}
         </div>
-        <div id="miert-engem">
+        <div id="miert-engem" className="w-full">
           {withScrollReveal(<TrustBuildingSection />)}
         </div>
-        <div id="eredmenyeim">
+        <div id="eredmenyeim" className="w-full">
           {withScrollReveal(<PortfolioSection />)}
         </div>
-        <div id="ugyfeleim">
+        <div id="ugyfeleim" className="w-full">
           {withScrollReveal(<TestimonialsSection />)}
         </div>
-        {withScrollReveal(<EmailLeadMagnetSection />)}
-        {withScrollReveal(<LeadMagnetSection />)}
+        <div className="w-full">
+          {withScrollReveal(<EmailLeadMagnetSection />)}
+        </div>
+        <div className="w-full">
+          {withScrollReveal(<LeadMagnetSection />)}
+        </div>
         {posts && posts.length > 0 && (
-          <div id="blog">
+          <div id="blog" className="w-full">
             {withScrollReveal(
               <Blog7 
                 posts={posts}
@@ -81,7 +85,7 @@ const Index = () => {
             )}
           </div>
         )}
-        <div id="contact">
+        <div id="contact" className="w-full">
           {withScrollReveal(<FinalCTASection />)}
         </div>
       </main>

@@ -28,7 +28,7 @@ const BlogListing = () => {
   return (
     <div className="min-h-screen bg-black">
       <Navigation />
-      <div className="pt-16 sm:pt-24">
+      <div className="pt-16 sm:pt-24 w-full">
         {posts && posts.length > 0 && (
           <ScrollRevealY className="w-full">
             <Blog7 
@@ -36,7 +36,7 @@ const BlogListing = () => {
               tagline="Összes blog"
               heading="Személyes blogjaim"
               description="Fedezd fel az összes informatív blogjaimat, amelyeket napra készen írok meg."
-              gridClassName={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto px-4 ${
+              gridClassName={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto px-4 sm:px-6 ${
                 isMobile ? 'pb-16' : ''
               }`}
             />

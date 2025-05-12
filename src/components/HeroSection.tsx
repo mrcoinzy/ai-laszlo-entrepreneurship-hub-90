@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
@@ -64,7 +63,7 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="max-w-3xl relative">
+          <div className="max-w-3xl mx-auto relative">
             {/* Small badge/ribbon */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -77,7 +76,7 @@ const HeroSection = () => {
               </span>
             </motion.div>
             
-            <ScrollRevealY className="w-full">
+            <ScrollRevealY className="w-full mx-auto">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
               Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből, AI-val felgyorsítva</span>
               </h1>
@@ -127,7 +126,7 @@ const HeroSection = () => {
               </p>
             </ScrollRevealY>
             
-            <ScrollReveal delay={0.5} className="w-full">
+            <ScrollReveal delay={0.5} className="w-full mx-auto">
               <div className="flex flex-col sm:flex-row gap-5 justify-center">
                 <Link to="/contact">
                   <Button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] 
@@ -147,7 +146,7 @@ const HeroSection = () => {
               </div>
             </ScrollReveal>
             
-            <ScrollReveal delay={0.6} className="w-full">
+            <ScrollReveal delay={0.6} className="w-full mx-auto">
               <div className="text-center mt-10">
                 <p className="text-white/60 text-sm mb-6 flex flex-wrap justify-center gap-x-6 gap-y-1">
                   <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> 5+ év tapasztalat</span> 
@@ -160,7 +159,7 @@ const HeroSection = () => {
               </div>
             </ScrollReveal>
             
-            <ScrollReveal delay={0.7} className="w-full">
+            <ScrollReveal delay={0.7} className="w-full mx-auto">
               <div className="mt-16">
                 <div className="grid grid-cols-3 gap-8 md:gap-12 lg:gap-20 items-center max-w-3xl mx-auto">
                   {/* No logos section */}

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import CTAButton from "@/components/ui/cta-button";
@@ -54,10 +55,10 @@ const LeadMagnetSection = () => {
               className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
             >
               <CTAButton 
-            text="Induljon el a 0% kockázat – 100% eredmény felé" 
-            to="/consultation" 
-            className="whitespace-normal px-4 py-8 text-sm md:text-base md:px-6 md:py-3"
-          />
+                text="Induljon el a 0% kockázat – 100% eredmény felé" 
+                to="/consultation" 
+                className="whitespace-normal px-4 py-8 text-sm md:text-base md:px-6 md:py-3"
+              />
             </motion.div>
           </motion.div>
           
@@ -70,7 +71,7 @@ const LeadMagnetSection = () => {
             className="mt-16 text-center"
           >
             <h3 className="text-2xl md:text-3xl font-bold mb-6 text-white">
-            Most Ön jön – elindítjuk <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">az ügyfélszerző</span> rendszerét?
+              Most Ön jön – elindítjuk <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">az ügyfélszerző</span> rendszerét?
             </h3>
             <CTAButton text="Igen, szeretném kipróbálni – garanciával" to="/courses" variant="outline" />
           </motion.div>

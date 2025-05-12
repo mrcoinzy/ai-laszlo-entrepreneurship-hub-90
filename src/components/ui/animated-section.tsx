@@ -17,13 +17,13 @@ const AnimatedSection = ({
   children,
   withAnimation = true,
   withGradient = true,
-  withGrid = false, // Changed default to false
+  withGrid = false,
   id
 }: AnimatedSectionProps) => {
   return (
     <section 
       id={id} 
-      className={`section-base ${className}`}
+      className={`section-base w-full ${className}`}
     >
       {/* Background elements */}
       {withGradient && (
@@ -34,11 +34,11 @@ const AnimatedSection = ({
       )}
       
       {withAnimation ? (
-        <ScrollRevealY className="container mx-auto relative z-10 w-full" distance={20}>
+        <ScrollRevealY className="container mx-auto px-4 sm:px-6 relative z-10 w-full" distance={20}>
           {children}
         </ScrollRevealY>
       ) : (
-        <div className="container mx-auto relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           {children}
         </div>
       )}
