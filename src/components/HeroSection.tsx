@@ -4,12 +4,12 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown, Check, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useMediaQuery } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeroSection = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const { scrollYProgress } = useScroll();
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
   
   // Transform for parallax effect
   const y = useTransform(scrollYProgress, [0, 1], [0, -150]);
