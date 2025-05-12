@@ -62,11 +62,11 @@ const ProblemStatement = () => {
           <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-white">
             <span className="relative">
               <span className="relative z-10">
-                <span className="text-[#8A2BE2]">Magyar KKV-knak</span> készített weboldalak
+                <span className="text-[#8A2BE2]">Fizettél már ki weboldalért</span> vagy hirdetésért,
               </span>
               <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#8A2BE2]/70 to-transparent"></span>
             </span>
-            <br/> és marketingrendszerek garantált eredménnyel
+            <br/>ami végül nem hozott semmit?
           </h2>
           
           <div className="bg-zinc-900/30 backdrop-blur-xl rounded-2xl border border-zinc-800/50 p-8 mb-16 text-center shadow-[0_10px_25px_-15px_rgba(138,43,226,0.25)] relative overflow-hidden">
@@ -74,7 +74,7 @@ const ProblemStatement = () => {
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-600/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-[80px]"></div>
             
             <h3 className="text-2xl font-bold mb-4 text-white relative z-10">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#9A4BF2] to-[#B066FF]">14 napon belül több ajánlatkérés</span>,<br/>vagy visszafizetjük a díjat
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#9A4BF2] to-[#B066FF]">Nálam ez nem történhet meg</span>,<br/>ha 1 hónapon belül nem jön több ajánlatkérés, visszafizetem a pénzed.
             </h3>
             <p className="text-white/80 relative z-10">
             Ez nem marketing duma – így dolgozom. Ha nem jön az eredmény, <br/>egy forintot sem kell fizetni.
