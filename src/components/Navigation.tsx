@@ -104,7 +104,7 @@ const Navigation = () => {
             </motion.span>
           </Link>
           
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden xl:flex items-center space-x-10">
             {sections.map((section) => (
               <button 
                 key={section.id}
@@ -124,7 +124,7 @@ const Navigation = () => {
             </Link>
           </div>
           
-          <div className="hidden md:block">
+          <div className="hidden xl:block">
             <Button 
               className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 hover:shadow-[0_8px_15px_-5px_rgba(138,43,226,0.5)] rounded-full px-6 py-2 transition-all duration-300 hover:-translate-y-1"
               onClick={handleConsultation}
@@ -134,7 +134,7 @@ const Navigation = () => {
           </div>
           
           <motion.button 
-            className="md:hidden text-white"
+            className="xl:hidden text-white"
             onClick={() => setIsOpen(!isOpen)}
             whileTap={{ scale: 0.9 }}
           >
@@ -146,7 +146,7 @@ const Navigation = () => {
       {/* Mobile menu with improved animation */}
       {isOpen && (
         <motion.div 
-          className="md:hidden h-screen w-full bg-black/90 backdrop-blur-lg"
+          className="xl:hidden h-screen w-full bg-black/90 backdrop-blur-lg"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
