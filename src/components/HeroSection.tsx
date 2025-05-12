@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import CTAButton from "./ui/cta-button";
+import { ScrollReveal, ScrollRevealY } from "@/components/ui/scroll-reveal";
 
 const HeroSection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -75,15 +77,15 @@ const HeroSection = () => {
               </span>
             </motion.div>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
-            Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből, AI-val felgyorsítva</span>
-            </h1>
+            <ScrollRevealY className="w-full">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
+              Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből, AI-val felgyorsítva</span>
+              </h1>
+            </ScrollRevealY>
             
-            <motion.div 
-              className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
+            <ScrollRevealY 
+              className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto w-full"
+              delay={0.3}
             >
               <p className="text-lg md:text-xl mb-4 font-medium text-white/90">
                 🧠 Egyedi rendszert építek, ami vevőket hoz, nem csak látogatókat:
@@ -123,57 +125,48 @@ const HeroSection = () => {
               <p className="text-white/90 font-medium">
                 Mindezt úgy, hogy valóban ügyfelei legyenek, ne csak látogatói.
               </p>
-            </motion.div>
+            </ScrollRevealY>
             
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-5 justify-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.5 }}
-            >
-              <Link to="/contact">
-                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] 
-                  hover:-translate-y-1 px-8 py-6 rounded-xl text-base 
-                  transition-all duration-300 group border-0">
-                  <span className="relative z-10 flex items-center">
-                    Kérek egy díjmentes konzultációt
-                    <ChevronRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-                  </span>
-                </Button>
-              </Link>
-              <Link to="/courses">
-                <Button variant="outline" className="px-8 py-6 rounded-xl text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
-                  Nézze meg az ügyfeleim eredményeit
-                </Button>
-              </Link>
-            </motion.div>
-            
-            <motion.div 
-              className="text-center mt-10"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 0.5 }}
-            >
-              <p className="text-white/60 text-sm mb-6 flex flex-wrap justify-center gap-x-6 gap-y-1">
-                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> 5+ év tapasztalat</span> 
-                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 50+ projekt</span> 
-                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 100% magyar nyelven</span>
-              </p>
-              <p className="text-white/60 text-sm">
-                <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> Garantált figyelem, nem sablonmunka</span>
-              </p>
-            </motion.div>
-            
-            <motion.div 
-              className="mt-16"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2, duration: 0.5 }}
-            >
-              <div className="grid grid-cols-3 gap-8 md:gap-12 lg:gap-20 items-center max-w-3xl mx-auto">
-                {/* No logos section */}
+            <ScrollReveal delay={0.5} className="w-full">
+              <div className="flex flex-col sm:flex-row gap-5 justify-center">
+                <Link to="/contact">
+                  <Button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] 
+                    hover:-translate-y-1 px-8 py-6 rounded-xl text-base 
+                    transition-all duration-300 group border-0">
+                    <span className="relative z-10 flex items-center">
+                      Kérek egy díjmentes konzultációt
+                      <ChevronRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                    </span>
+                  </Button>
+                </Link>
+                <Link to="/courses">
+                  <Button variant="outline" className="px-8 py-6 rounded-xl text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
+                    Nézze meg az ügyfeleim eredményeit
+                  </Button>
+                </Link>
               </div>
-            </motion.div>
+            </ScrollReveal>
+            
+            <ScrollReveal delay={0.6} className="w-full">
+              <div className="text-center mt-10">
+                <p className="text-white/60 text-sm mb-6 flex flex-wrap justify-center gap-x-6 gap-y-1">
+                  <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> 5+ év tapasztalat</span> 
+                  <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 50+ projekt</span> 
+                  <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 100% magyar nyelven</span>
+                </p>
+                <p className="text-white/60 text-sm">
+                  <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> Garantált figyelem, nem sablonmunka</span>
+                </p>
+              </div>
+            </ScrollReveal>
+            
+            <ScrollReveal delay={0.7} className="w-full">
+              <div className="mt-16">
+                <div className="grid grid-cols-3 gap-8 md:gap-12 lg:gap-20 items-center max-w-3xl mx-auto">
+                  {/* No logos section */}
+                </div>
+              </div>
+            </ScrollReveal>
           </div>
         </motion.div>
       </div>

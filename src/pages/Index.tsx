@@ -16,6 +16,7 @@ import FinalCTASection from "@/components/FinalCTASection";
 import Footer from "@/components/Footer";
 import ScrollIndicator from "@/components/ScrollIndicator";
 import { Blog7 } from "@/components/ui/blog7";
+import { ScrollReveal, ScrollRevealY } from "@/components/ui/scroll-reveal";
 
 const Index = () => {
   const { data: posts } = useQuery({
@@ -33,6 +34,13 @@ const Index = () => {
     }
   });
 
+  // Apply scroll reveal wrapper to sections
+  const withScrollReveal = (component) => (
+    <ScrollRevealY className="w-full" width="100%" distance={30}>
+      {component}
+    </ScrollRevealY>
+  );
+
   return (
     <div className="min-h-screen w-full bg-black overflow-visible">
       <ScrollIndicator />
@@ -40,39 +48,41 @@ const Index = () => {
       <main className="w-full overflow-visible">
         <HeroSection />
         <div id="bemutatkozas">
-          <MiniIntroSection />
+          {withScrollReveal(<MiniIntroSection />)}
         </div>
         <div id="garancia">
           <ProblemStatement />
         </div>
         <div id="szolgaltatasok">
-          <ServicesSection />
+          {withScrollReveal(<ServicesSection />)}
         </div>
         <div id="miert-engem">
-          <TrustBuildingSection />
+          {withScrollReveal(<TrustBuildingSection />)}
         </div>
         <div id="eredmenyeim">
-          <PortfolioSection />
+          {withScrollReveal(<PortfolioSection />)}
         </div>
         <div id="ugyfeleim">
-          <TestimonialsSection />
+          {withScrollReveal(<TestimonialsSection />)}
         </div>
-        <EmailLeadMagnetSection />
-        <LeadMagnetSection />
+        {withScrollReveal(<EmailLeadMagnetSection />)}
+        {withScrollReveal(<LeadMagnetSection />)}
         {posts && posts.length > 0 && (
           <div id="blog">
-            <Blog7 
-              posts={posts}
-              tagline="Friss Üzleti Tippek"
-              heading="Legújabb Cikkeim Önnek"
-              description="Fedezze fel a legfrissebb ügyfélszerzési stratégiákat és sikertörténeteket"
-              buttonText="Szeretném tudni, hogyan szerezhetek több ügyfelet"
-              buttonUrl="/blog"
-            />
+            {withScrollReveal(
+              <Blog7 
+                posts={posts}
+                tagline="Friss Üzleti Tippek"
+                heading="Legújabb Cikkeim Önnek"
+                description="Fedezze fel a legfrissebb ügyfélszerzési stratégiákat és sikertörténeteket"
+                buttonText="Szeretném tudni, hogyan szerezhetek több ügyfelet"
+                buttonUrl="/blog"
+              />
+            )}
           </div>
         )}
         <div id="contact">
-          <FinalCTASection />
+          {withScrollReveal(<FinalCTASection />)}
         </div>
       </main>
       <Footer />

@@ -1,6 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { ScrollRevealY } from "@/components/ui/scroll-reveal";
 
 interface AnimatedSectionProps {
   className?: string;
@@ -33,15 +34,9 @@ const AnimatedSection = ({
       )}
       
       {withAnimation ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="container mx-auto relative z-10"
-        >
+        <ScrollRevealY className="container mx-auto relative z-10 w-full" distance={20}>
           {children}
-        </motion.div>
+        </ScrollRevealY>
       ) : (
         <div className="container mx-auto relative z-10">
           {children}

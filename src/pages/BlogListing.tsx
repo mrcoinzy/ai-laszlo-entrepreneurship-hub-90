@@ -6,6 +6,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Blog7 } from "@/components/ui/blog7";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollRevealY } from "@/components/ui/scroll-reveal";
 
 const BlogListing = () => {
   const isMobile = useIsMobile();
@@ -29,15 +30,17 @@ const BlogListing = () => {
       <Navigation />
       <div className="pt-16 sm:pt-24">
         {posts && posts.length > 0 && (
-          <Blog7 
-            posts={posts}
-            tagline="Összes blog"
-            heading="Személyes blogjaim"
-            description="Fedezd fel az összes informatív blogjaimat, amelyeket napra készen írok meg."
-            gridClassName={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto px-4 ${
-              isMobile ? 'pb-16' : ''
-            }`}
-          />
+          <ScrollRevealY className="w-full">
+            <Blog7 
+              posts={posts}
+              tagline="Összes blog"
+              heading="Személyes blogjaim"
+              description="Fedezd fel az összes informatív blogjaimat, amelyeket napra készen írok meg."
+              gridClassName={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto px-4 ${
+                isMobile ? 'pb-16' : ''
+              }`}
+            />
+          </ScrollRevealY>
         )}
       </div>
       <Footer />
