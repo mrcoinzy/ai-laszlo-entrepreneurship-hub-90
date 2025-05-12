@@ -1,6 +1,7 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Linkedin, Mail, Twitter, MapPin, Phone } from "lucide-react";
+import { Linkedin, Mail, Instagram, TikTok } from "lucide-react";
 import CTAButton from "@/components/ui/cta-button";
 
 const Footer = () => {
@@ -27,34 +28,7 @@ const Footer = () => {
             
             <div className="flex space-x-4">
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-purple-500/20 flex items-center justify-center border border-white/10 hover:border-purple-500/30 transition-colors">
-                <Facebook className="h-5 w-5 text-white/70 hover:text-white" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-purple-500/20 flex items-center justify-center border border-white/10 hover:border-purple-500/30 transition-colors">
-                <Twitter className="h-5 w-5 text-white/70 hover:text-white" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-purple-500/20 flex items-center justify-center border border-white/10 hover:border-purple-500/30 transition-colors">
-                <Instagram className="h-5 w-5 text-white/70 hover:text-white" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-purple-500/20 flex items-center justify-center border border-white/10 hover:border-purple-500/30 transition-colors">
                 <Linkedin className="h-5 w-5 text-white/70 hover:text-white" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-purple-500/20 flex items-center justify-center border border-white/10 hover:border-purple-500/30 transition-colors">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-white/70 hover:text-white"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M9 22V12C9 7 15 7 15 12V22" />
-                  <path d="M8 10C8 5 15 5 15 10" />
-                  <path d="M15 5C15 3.5 16.5 2 18 2M18 4C16.5 4 15 3 15 2" />
-                </svg>
               </a>
             </div>
           </div>
@@ -65,16 +39,28 @@ const Footer = () => {
             
             <ul className="space-y-3">
               <li>
-                <Link to="/" className="text-white/70 hover:text-white transition-colors">Főoldal</Link>
+                <Link to="/" className="text-white/70 hover:text-white transition-colors">Bemutatkozás</Link>
               </li>
               <li>
-                <Link to="/about" className="text-white/70 hover:text-white transition-colors">Munkáim</Link>
+                <Link to="#garancia" className="text-white/70 hover:text-white transition-colors">Garancia</Link>
               </li>
               <li>
-                <Link to="/services" className="text-white/70 hover:text-white transition-colors">Kurzusok</Link>
+                <Link to="#szolgaltatasok" className="text-white/70 hover:text-white transition-colors">Szolgáltatások</Link>
               </li>
               <li>
-                <Link to="/portfolio" className="text-white/70 hover:text-white transition-colors">Rólam</Link>
+                <Link to="#miert-engem" className="text-white/70 hover:text-white transition-colors">Miért Engem</Link>
+              </li>
+              <li>
+                <Link to="#eredmenyeim" className="text-white/70 hover:text-white transition-colors">Eredményeim</Link>
+              </li>
+              <li>
+                <Link to="#ugyfeleim" className="text-white/70 hover:text-white transition-colors">Ügyfeleim</Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-white/70 hover:text-white transition-colors">Blog</Link>
+              </li>
+              <li>
+                <Link to="/consultation" className="text-white/70 hover:text-white transition-colors">Konzultáció</Link>
               </li>
             </ul>
           </div>
@@ -91,15 +77,15 @@ const Footer = () => {
                 </a>
               </li>
               <li className="flex items-start">
-                <Twitter className="h-5 w-5 text-purple-400 mr-3 mt-1" />
-                <a href="https://twitter.com/ailaszlo" className="text-white/70 hover:text-white transition-colors">
-                  Twitter
+                <Instagram className="h-5 w-5 text-purple-400 mr-3 mt-1" />
+                <a href="https://instagram.com/ailaszlo" className="text-white/70 hover:text-white transition-colors">
+                  Instagram
                 </a>
               </li>
               <li className="flex items-start">
-                <Linkedin className="h-5 w-5 text-purple-400 mr-3 mt-1" />
-                <a href="https://www.linkedin.com/in/ailaszlo" className="text-white/70 hover:text-white transition-colors">
-                  LinkedIn
+                <TikTok className="h-5 w-5 text-purple-400 mr-3 mt-1" />
+                <a href="https://tiktok.com/@ailaszlo" className="text-white/70 hover:text-white transition-colors">
+                  TikTok
                 </a>
               </li>
             </ul>
@@ -126,3 +112,4 @@ const Footer = () => {
 };
 
 export default Footer;
+
