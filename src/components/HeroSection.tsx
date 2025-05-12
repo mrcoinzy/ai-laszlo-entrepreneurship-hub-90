@@ -76,7 +76,7 @@ const HeroSection = () => {
             </motion.div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
-            Weboldalak és marketing - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">ami végre ügyfelet is hoz – nem csak nézőt.</span>
+            Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből, AI-val felgyorsítva</span>
             </h1>
             
             <motion.div 

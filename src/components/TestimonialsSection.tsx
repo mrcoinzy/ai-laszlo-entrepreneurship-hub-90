@@ -37,7 +37,7 @@ const testimonials = [
     content: "László munkája túlmutat a technikai szakértelmen. Valódi üzleti tanácsadó, aki megértette a coaching vállalkozásom céljait, és olyan digitális jelenlétet teremtett, amely 3× annyi foglalást eredményez havi szinten.",
     rating: 5,
     metric: {
-      value: "45%",
+      value: "94%",
       label: "Konverziós arány növekedés",
       period: "6 hónap alatt"
     }
