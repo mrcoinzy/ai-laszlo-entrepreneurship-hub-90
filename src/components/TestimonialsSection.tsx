@@ -69,7 +69,7 @@ const TestimonialsSection = () => {
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent">
-          Ők már megtapasztalták, milyen, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">amikor</span> valaki végre komolyan veszi a vállalkozásukat.
+          Ők már megtapasztalták, milyen amikor valaki végre <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">komolyan veszi a vállalkozásukat.</span>
           </h2>
           <p className="text-lg text-white/70">
           Valódi visszajelzések olyan ügyfelektől, akik már megtapasztalták, mit jelent AI Lászlóval együttműködni: fókusz, eredmény és emberi támogatás.
