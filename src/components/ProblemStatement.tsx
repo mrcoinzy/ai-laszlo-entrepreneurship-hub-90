@@ -62,7 +62,7 @@ const ProblemStatement = () => {
           <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-white">
             <span className="relative">
               <span className="relative z-10">
-                <span className="text-[#8A2BE2]">Fizettél már ki weboldalért</span> vagy hirdetésért,
+                <span className="text-[#8A2BE2]">Fizettél már ki weboldalt</span> vagy kampányt,
               </span>
               <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#8A2BE2]/70 to-transparent"></span>
             </span>
