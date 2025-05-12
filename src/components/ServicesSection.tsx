@@ -118,7 +118,7 @@ const ServicesSection = () => {
           transition={{ delay: 0.6, duration: 0.5 }}
         >
           <CTAButton 
-            text="Indítsuk el a növekedést – kérjen konzultációt!" 
+            text="Indítsuk el a növekedést – kérjen díjmentes konzultációt most!" 
             to="/consultation"
             className="whitespace-normal px-4 py-2 text-sm md:text-base md:px-6 md:py-3"
           />
