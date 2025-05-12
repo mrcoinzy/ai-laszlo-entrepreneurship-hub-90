@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Linkedin, Mail, Instagram, TikTok } from "lucide-react";
+import { Linkedin, Mail, Instagram } from "lucide-react";
 import CTAButton from "@/components/ui/cta-button";
 
 const Footer = () => {
@@ -28,7 +28,7 @@ const Footer = () => {
             
             <div className="flex space-x-4">
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-purple-500/20 flex items-center justify-center border border-white/10 hover:border-purple-500/30 transition-colors">
-                <Linkedin className="h-5 w-5 text-white/70 hover:text-white" />
+                <Instagram className="h-5 w-5 text-white/70 hover:text-white" />
               </a>
             </div>
           </div>
@@ -39,22 +39,13 @@ const Footer = () => {
             
             <ul className="space-y-3">
               <li>
-                <Link to="/" className="text-white/70 hover:text-white transition-colors">Bemutatkozás</Link>
+                <Link to="/" className="text-white/70 hover:text-white transition-colors">Főoldal</Link>
               </li>
               <li>
-                <Link to="#garancia" className="text-white/70 hover:text-white transition-colors">Garancia</Link>
+                <Link to="/about" className="text-white/70 hover:text-white transition-colors">Rólam</Link>
               </li>
               <li>
-                <Link to="#szolgaltatasok" className="text-white/70 hover:text-white transition-colors">Szolgáltatások</Link>
-              </li>
-              <li>
-                <Link to="#miert-engem" className="text-white/70 hover:text-white transition-colors">Miért Engem</Link>
-              </li>
-              <li>
-                <Link to="#eredmenyeim" className="text-white/70 hover:text-white transition-colors">Eredményeim</Link>
-              </li>
-              <li>
-                <Link to="#ugyfeleim" className="text-white/70 hover:text-white transition-colors">Ügyfeleim</Link>
+                <Link to="/works" className="text-white/70 hover:text-white transition-colors">Projektek</Link>
               </li>
               <li>
                 <Link to="/blog" className="text-white/70 hover:text-white transition-colors">Blog</Link>
@@ -83,7 +74,22 @@ const Footer = () => {
                 </a>
               </li>
               <li className="flex items-start">
-                <TikTok className="h-5 w-5 text-purple-400 mr-3 mt-1" />
+                {/* Custom TikTok icon since it's not available in lucide-react */}
+                <svg 
+                  className="h-5 w-5 text-purple-400 mr-3 mt-1" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="M9 12a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path>
+                  <path d="M15 8h.01"></path>
+                  <path d="M15 12h.01"></path>
+                  <path d="M15 16h.01"></path>
+                  <path d="M9 4h10v16H9a6 6 0 0 1 0-12"></path>
+                </svg>
                 <a href="https://tiktok.com/@ailaszlo" className="text-white/70 hover:text-white transition-colors">
                   TikTok
                 </a>
@@ -112,4 +118,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
