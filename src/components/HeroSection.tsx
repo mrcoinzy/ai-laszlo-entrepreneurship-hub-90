@@ -1,122 +1,175 @@
-
 import React, { useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronDown, Check, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { ChevronRight, CheckCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import CTAButton from "./ui/cta-button";
+import { ScrollReveal, ScrollRevealY } from "@/components/ui/scroll-reveal";
 
 const HeroSection = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const { scrollYProgress } = useScroll();
-  const isMobile = useIsMobile();
-  
-  // Transform for parallax effect
-  const y = useTransform(scrollYProgress, [0, 1], [0, -150]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
-    setIsLoaded(true);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden bg-black">
+    <section className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden">
+      {/* Subtle gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 to-black/60 z-0"></div>
+      
       {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Background gradient blobs */}
-        <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-b from-purple-900/20 to-transparent"></div>
-        <div 
-          className="absolute top-[10%] -left-[10%] w-[40%] h-[40%] bg-gradient-to-tr from-purple-700/10 to-transparent rounded-full blur-[80px] animate-pulse-slow"
-        ></div>
-        <div 
-          className="absolute bottom-[10%] -right-[5%] w-[30%] h-[30%] bg-gradient-to-tl from-purple-800/10 to-transparent rounded-full blur-[70px] animate-pulse-slow animation-delay-1000"
-        ></div>
-        <div 
-          className="absolute top-[40%] -right-[5%] w-[25%] h-[25%] bg-gradient-to-bl from-indigo-600/10 to-transparent rounded-full blur-[70px] animate-pulse-slow animation-delay-2000"
-        ></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Animated gradient blobs */}
+        <div className="absolute top-1/4 -left-32 w-64 h-64 bg-purple-600/20 rounded-full filter blur-[120px] animate-pulse-slow"></div>
+        <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-blue-600/20 rounded-full filter blur-[120px] animate-pulse-slow animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-600/10 rounded-full filter blur-[80px] animate-pulse-slow animation-delay-1000"></div>
         
-        {/* Star field effect */}
-        <div className="absolute inset-0 stars"></div>
+        {/* Small floating particles */}
+        <div className="absolute w-full h-full opacity-30">
+          {[...Array(20)].map((_, i) => (
+            <div 
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                opacity: Math.random() * 0.5 + 0.3,
+                animation: `float ${Math.random() * 10 + 10}s linear infinite`,
+                animationDelay: `${Math.random() * 10}s`
+              }}
+            />
+          ))}
+        </div>
       </div>
       
-      {/* Hero content */}
-      <motion.div 
-        style={{ y, opacity }} 
-        className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 z-10 pt-16 md:pt-0"
-      >
-        <div className="container max-w-6xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }} 
-            transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
-            className="text-center mb-8 md:mb-12"
-          >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
-              <span className="golden-text-gradient font-extrabold">Egy kézből Ai-val felgyorsítvát</span> -
-            </h1>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#9A4BF2] to-[#B066FF]">
-                Vevőszerző rendszer
+      {/* Decorative elements */}
+      <div className="absolute bottom-10 left-10 w-32 h-32 bg-purple-600/20 rounded-full filter blur-3xl"></div>
+      <div className="absolute top-20 right-10 w-32 h-32 bg-blue-600/20 rounded-full filter blur-3xl"></div>
+      
+      <div className="container mx-auto px-4 sm:px-6 pt-32 pb-20 relative z-10">
+        <motion.div 
+          className="flex flex-col items-center text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <div className="max-w-3xl mx-auto relative">
+            {/* Small badge/ribbon */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="mb-6 inline-block"
+            >
+              <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                Új szolgáltatások érhetők el!
               </span>
-            </h2>
-            <p className="max-w-2xl mx-auto text-lg sm:text-xl leading-relaxed text-white/80">
-              Adjon 30 napot – és én egy teljes vevőszerző rendszert építek Önnek, 
-              amely folyamatosan új ajánlatkéréseket hoz. Ha nem lesz elégedett, visszaadom a pénzét.
-            </p>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }} 
-            animate={{ opacity: isLoaded ? 1 : 0, scale: isLoaded ? 1 : 0.95 }} 
-            transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
-            className="flex flex-col items-center space-y-5"
-          >
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
-              <Link to="/consultation" className="w-full sm:w-auto">
-                <Button 
-                  className="
-                    w-full
-                    bg-gradient-to-r from-[#9A4BF2] to-[#7B1FA2] 
-                    text-white hover:shadow-[0_10px_25px_-5px_rgba(138,43,226,0.4)] 
-                    hover:-translate-y-1 
-                    px-6 py-4 sm:px-8 sm:py-6 
-                    rounded-xl text-base sm:text-lg 
-                    transition-all duration-300 group
-                  "
-                >
-                  <span className="flex items-center justify-center gap-1">
-                    Kérek egy díjmentes konzultációt 
-                    <ArrowRight className="ml-1 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Button>
-              </Link>
-              <a href="#miert-engem" className="w-full sm:w-auto">
-                <Button 
-                  variant="outline" 
-                  className="
-                    w-full
-                    border-purple-500/40 hover:border-purple-500 
-                    text-white hover:bg-zinc-900/90 
-                    hover:-translate-y-1 
-                    px-6 py-4 sm:px-8 sm:py-6 
-                    rounded-xl text-base sm:text-lg 
-                    transition-all duration-300
-                    focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
-                  "
-                >
-                  Miért bízzon bennem?
-                </Button>
-              </a>
-            </div>
+            </motion.div>
             
-            <div className="mt-10 sm:mt-14 flex flex-col items-center">
-              <div className="text-white/50 mb-2 text-center">Görgessen lejjebb és fedezze fel, hogyan segíthetek</div>
-              <ChevronDown className="h-6 w-6 text-white/50 animate-bounce" />
-            </div>
-          </motion.div>
-        </div>
-      </motion.div>
-    </div>
+            <ScrollRevealY className="w-full mx-auto">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
+              Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből, AI-val felgyorsítva</span>
+              </h1>
+            </ScrollRevealY>
+            
+            <ScrollRevealY 
+              className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto w-full"
+              delay={0.3}
+            >
+              <p className="text-lg md:text-xl mb-4 font-medium text-white/90">
+                🧠 Egyedi rendszert építek, ami vevőket hoz, nem csak látogatókat:
+              </p>
+              
+              {/* Improved styling for the boxes - Modified to use 2 columns and 2 rows */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                  <div className="flex items-center">
+                    <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base">marketingstratégia</span>
+                  </div>
+                </div>
+                
+                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                  <div className="flex items-center">
+                    <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base">weboldal</span>
+                  </div>
+                </div>
+                
+                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                  <div className="flex items-center">
+                    <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base">hirdetések</span>
+                  </div>
+                </div>
+                
+                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
+                  <div className="flex items-center">
+                    <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
+                    <span className="text-white/80 text-sm sm:text-base">videós tartalom</span>
+                  </div>
+                </div>
+              </div>
+              
+              <p className="text-white/90 font-medium">
+                Mindezt úgy, hogy valóban ügyfelei legyenek, ne csak látogatói.
+              </p>
+            </ScrollRevealY>
+            
+            <ScrollReveal delay={0.5} className="w-full mx-auto">
+              <div className="flex flex-col sm:flex-row gap-5 justify-center">
+                <Link to="/contact">
+                  <Button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] 
+                    hover:-translate-y-1 px-8 py-6 rounded-xl text-base 
+                    transition-all duration-300 group border-0">
+                    <span className="relative z-10 flex items-center">
+                      Kérek egy díjmentes konzultációt
+                      <ChevronRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                    </span>
+                  </Button>
+                </Link>
+                <Link to="/courses">
+                  <Button variant="outline" className="px-8 py-6 rounded-xl text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
+                    Nézze meg az ügyfeleim eredményeit
+                  </Button>
+                </Link>
+              </div>
+            </ScrollReveal>
+            
+            <ScrollReveal delay={0.6} className="w-full mx-auto">
+              <div className="text-center mt-10">
+                <p className="text-white/60 text-sm mb-6 flex flex-wrap justify-center gap-x-6 gap-y-1">
+                  <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> 5+ év tapasztalat</span> 
+                  <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 50+ projekt</span> 
+                  <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 100% magyar nyelven</span>
+                </p>
+                <p className="text-white/60 text-sm">
+                  <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> Garantált figyelem, nem sablonmunka</span>
+                </p>
+              </div>
+            </ScrollReveal>
+            
+            <ScrollReveal delay={0.7} className="w-full mx-auto">
+              <div className="mt-16">
+                <div className="grid grid-cols-3 gap-8 md:gap-12 lg:gap-20 items-center max-w-3xl mx-auto">
+                  {/* No logos section */}
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </motion.div>
+      </div>
+    </section>
   );
 };
 
