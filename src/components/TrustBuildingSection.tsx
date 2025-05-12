@@ -138,7 +138,7 @@ const TrustBuildingSection = () => {
               Készen áll egy olyan webes jelenlétre, amely valóban az Ön céljaira van szabva?
             </h3>
             <CTAButton 
-              text="Igen erre van szükségem – kérek egy konzultációt" 
+              text="Igen erre van szükségem – kérek egy díjmentes konzultációt most!" 
               to="/consultation" 
               className="whitespace-normal px-4 py-2 text-sm md:text-base md:px-6 md:py-3"
             />
