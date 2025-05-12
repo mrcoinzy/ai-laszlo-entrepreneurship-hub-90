@@ -73,7 +73,7 @@ const LeadMagnetSection = () => {
             <h3 className="text-2xl md:text-3xl font-bold mb-6 text-white">
               Most Ön jön – elindítjuk <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">az ügyfélszerző</span> rendszerét?
             </h3>
-            <CTAButton text="Igen, szeretném kipróbálni – garanciával" to="/courses" variant="outline" />
+            <CTAButton text="Igen, szeretném kipróbálni – garanciával" to="/consultation" variant="outline" />
           </motion.div>
         </div>
       </div>
