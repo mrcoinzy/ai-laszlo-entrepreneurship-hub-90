@@ -104,7 +104,7 @@ const Navigation = () => {
             </motion.span>
           </Link>
           
-          <div className="hidden xl:flex items-center space-x-10">
+          <div className="hidden xl:flex items-center space-x-10 justify-center flex-1 mx-4">
             {sections.map((section) => (
               <button 
                 key={section.id}
