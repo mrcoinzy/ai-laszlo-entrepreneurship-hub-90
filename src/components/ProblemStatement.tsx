@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Check, X, Clock, BadgePercent } from "lucide-react";
 import { motion } from "framer-motion";
@@ -62,7 +63,7 @@ const ProblemStatement = () => {
           <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-white">
             <span className="relative">
               <span className="relative z-10">
-                <span className="vevomagnes-text">Fizettett már ki weboldalt</span> vagy kampányt,
+                <span className="animated-text-gradient font-extrabold">Fizettett már ki weboldalt</span> vagy kampányt,
               </span>
               <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#8A2BE2]/70 to-transparent"></span>
             </span>

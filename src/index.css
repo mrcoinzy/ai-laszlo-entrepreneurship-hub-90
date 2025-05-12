@@ -62,19 +62,54 @@
   .purple-gradient-text {
     @apply bg-gradient-to-r from-[#8A2BE2] to-[#9370DB] bg-clip-text text-transparent;
   }
-}
+  
+  /* New animated text gradient with purple, blue, and white */
+  .animated-text-gradient {
+    background: linear-gradient(-45deg, #9b87f5, #1EAEDB, #FFFFFF, #9b87f5);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: animated-gradient 4s ease-in-out infinite;
+    text-shadow: 0 0 5px rgba(138, 43, 226, 0.3);
+    position: relative;
+    display: inline-block;
+  }
 
-/* New animation classes for the background */
-.animate-pulse-slow {
-  animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
+  .animated-text-gradient::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #1EAEDB, #9b87f5, transparent);
+    animation: gradient-line 4s ease-in-out infinite;
+  }
 
-.animation-delay-1000 {
-  animation-delay: 1s;
-}
+  @keyframes animated-gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
 
-.animation-delay-2000 {
-  animation-delay: 2s;
+  @keyframes gradient-line {
+    0% {
+      background-position: -100% 0;
+    }
+    50% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
 }
 
 /* Stars background effect */
@@ -98,6 +133,19 @@
   100% {
     background-position: -50px -25px, -125px -75px, -100px -100px, -75px -75px, -100px -50px, -50px -125px;
   }
+}
+
+/* New animation classes for the background */
+.animate-pulse-slow {
+  animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
 }
 
 /* Existing CSS below */
