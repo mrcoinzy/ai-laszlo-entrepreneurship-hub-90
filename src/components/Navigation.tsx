@@ -157,7 +157,7 @@ const Navigation = () => {
               <motion.button 
                 key={section.id}
                 onClick={() => handleScroll(section.id)} 
-                className="text-lg font-medium text-white/90 hover:text-white py-2 border-b border-white/10 transition-colors"
+                className="text-lg font-medium text-white/90 hover:text-white py-2 border-b border-white/10 transition-colors text-center"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 + 0.1, duration: 0.3 }}
@@ -170,6 +170,7 @@ const Navigation = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3, duration: 0.3 }}
+              className="text-center"
             >
               <Link 
                 to="/consultation"
