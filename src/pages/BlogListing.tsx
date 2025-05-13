@@ -36,8 +36,8 @@ const BlogListing = () => {
               tagline="Összes blog"
               heading="Személyes blogjaim"
               description="Fedezd fel az összes informatív blogjaimat, amelyeket napra készen írok meg."
-              gridClassName={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mx-auto ${
-                isMobile ? 'p-4 max-w-full pb-16' : 'p-6 max-w-7xl'
+              gridClassName={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-6 mx-auto ${
+                isMobile ? 'px-2 xs:px-4 max-w-full pb-16' : 'px-6 max-w-7xl'
               }`}
             />
           </ScrollRevealY>

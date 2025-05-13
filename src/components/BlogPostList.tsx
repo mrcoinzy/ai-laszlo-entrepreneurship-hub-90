@@ -28,7 +28,7 @@ const BlogPostList = () => {
 
   if (isLoading) {
     return (
-      <div className="animate-pulse space-y-4 px-4 sm:px-0 max-w-7xl mx-auto w-full">
+      <div className="animate-pulse space-y-4 px-2 xs:px-4 sm:px-0 max-w-7xl mx-auto w-full">
         {[1, 2, 3].map((i) => (
           <Card key={i} className="bg-accent/5">
             <CardHeader>
@@ -46,8 +46,8 @@ const BlogPostList = () => {
   }
 
   return (
-    <div className="w-full px-4 sm:px-6 md:px-0 mx-auto max-w-7xl">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+    <div className="w-full px-2 xs:px-4 sm:px-6 md:px-0 mx-auto max-w-7xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-6 w-full">
         {posts?.map((post) => (
           <Card key={post.id} className="bg-accent/5 h-full flex flex-col">
             {post.featured_image_url && (
@@ -61,17 +61,17 @@ const BlogPostList = () => {
                 </AspectRatio>
               </div>
             )}
-            <CardHeader className={post.featured_image_url ? "pt-3" : ""}>
-              <CardTitle className="text-base sm:text-lg line-clamp-2">{post.title}</CardTitle>
-              <CardDescription className="text-xs">
+            <CardHeader className={post.featured_image_url ? "pt-2 xs:pt-3" : ""}>
+              <CardTitle className="text-sm xs:text-base sm:text-lg line-clamp-2">{post.title}</CardTitle>
+              <CardDescription className="text-[10px] xs:text-xs">
                 Posted {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               </CardDescription>
               {post.keywords && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {post.keywords.split(',').slice(0, isMobile ? 2 : 3).map((keyword, i) => (
+                <div className="flex flex-wrap gap-1 mt-1 xs:mt-2">
+                  {post.keywords.split(',').slice(0, isMobile ? 1 : 3).map((keyword, i) => (
                     <span 
                       key={i} 
-                      className="px-2 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full text-xs"
+                      className="px-1.5 xs:px-2 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full text-[10px] xs:text-xs"
                     >
                       {keyword.trim()}
                     </span>
@@ -80,14 +80,14 @@ const BlogPostList = () => {
               )}
             </CardHeader>
             <CardContent className="flex-grow">
-              <p className="text-sm text-muted-foreground line-clamp-3">
-                {post.excerpt || post.content.substring(0, isMobile ? 80 : 120)}...
+              <p className="text-[10px] xs:text-sm text-muted-foreground line-clamp-3">
+                {post.excerpt || post.content.substring(0, isMobile ? 60 : 120)}...
               </p>
             </CardContent>
             <CardFooter className="pt-0">
-              <Link to={`/blog/${post.id}`} className="w-full sm:w-auto">
-                <Button variant="secondary" className="gap-2 w-full sm:w-auto text-xs sm:text-sm">
-                  <ExternalLink size={isMobile ? 14 : 16} />
+              <Link to={`/blog/${post.id}`} className="w-full xs:w-auto">
+                <Button variant="secondary" className="gap-1 xs:gap-2 w-full xs:w-auto text-[10px] xs:text-xs sm:text-sm">
+                  <ExternalLink size={isMobile ? 12 : 16} />
                   Read More
                 </Button>
               </Link>
