@@ -1,3 +1,4 @@
+
 import React from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
@@ -16,6 +17,7 @@ import AdminBlog from "@/pages/admin/Blog"
 import AdminsManagement from "@/pages/admin/AdminsManagement"
 import BlogPost from "@/pages/BlogPost"
 import BlogListing from "@/pages/BlogListing"
+import Legal from "@/pages/Legal"
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAdmin, isLoading } = useAuth();
@@ -77,6 +79,7 @@ function App() {
             } 
           />
           <Route path="/blog" element={<BlogListing />} />
+          <Route path="/legal" element={<Legal />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 

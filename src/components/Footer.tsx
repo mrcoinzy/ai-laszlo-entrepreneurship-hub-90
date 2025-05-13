@@ -53,6 +53,9 @@ const Footer = () => {
               <li>
                 <Link to="/consultation" className="text-white/70 hover:text-white transition-colors">Konzultáció</Link>
               </li>
+              <li>
+                <Link to="/legal" className="text-white/70 hover:text-white transition-colors">ÁSZF</Link>
+              </li>
             </ul>
           </div>
           
@@ -107,10 +110,17 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-white/10 pt-8 text-center">
-          <p className="text-white/50 text-sm">
-            © {new Date().getFullYear()} AI László. Minden jog fenntartva.
-          </p>
+        <div className="border-t border-white/10 pt-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center">
+            <p className="text-white/50 text-sm mb-3 sm:mb-0">
+              © {new Date().getFullYear()} AI László. Minden jog fenntartva.
+            </p>
+            <div className="flex space-x-4 text-sm">
+              <Link to="/legal" className="text-white/50 hover:text-white transition-colors">
+                Jogi nyilatkozat
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
