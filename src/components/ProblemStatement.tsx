@@ -65,7 +65,6 @@ const ProblemStatement = () => {
               <span className="relative z-10">
                 <span className="animated-text-gradient font-extrabold">Fizetett már ki weboldalt</span> vagy kampányt,
               </span>
-              <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#8A2BE2]/70 to-transparent"></span>
             </span>
             <br/>ami végül nem hozott semmit?
           </h2>

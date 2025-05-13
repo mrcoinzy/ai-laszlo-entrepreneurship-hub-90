@@ -39,10 +39,10 @@ const Footer = () => {
             
             <ul className="space-y-3">
               <li>
-                <Link to="/" className="text-white/70 hover:text-white transition-colors">Főoldal</Link>
+                <Link to="#" className="text-white/70 hover:text-white transition-colors">Főoldal</Link>
               </li>
               <li>
-                <Link to="/about" className="text-white/70 hover:text-white transition-colors">Rólam</Link>
+                <Link to="#about" className="text-white/70 hover:text-white transition-colors">Rólam</Link>
               </li>
               <li>
                 <Link to="/works" className="text-white/70 hover:text-white transition-colors">Projektek</Link>
@@ -66,13 +66,13 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <Mail className="h-5 w-5 text-purple-400 mr-3 mt-1" />
-                <a href="mailto:contact@ailaszlo.com" className="text-white/70 hover:text-white transition-colors">
-                  contact@ailaszlo.com
+                <a href="mailto:ailaszlo.start@gmail.com" className="text-white/70 hover:text-white transition-colors">
+                  ailaszlo.start@gmail.com
                 </a>
               </li>
               <li className="flex items-start">
                 <Instagram className="h-5 w-5 text-purple-400 mr-3 mt-1" />
-                <a href="https://instagram.com/ailaszlo" className="text-white/70 hover:text-white transition-colors">
+                <a href="https://www.instagram.com/ailaszlo.start/" className="text-white/70 hover:text-white transition-colors">
                   Instagram
                 </a>
               </li>
@@ -93,7 +93,7 @@ const Footer = () => {
                   <path d="M15 16h.01"></path>
                   <path d="M9 4h10v16H9a6 6 0 0 1 0-12"></path>
                 </svg>
-                <a href="https://tiktok.com/@ailaszlo" className="text-white/70 hover:text-white transition-colors">
+                <a href="https://www.tiktok.com/@ailaszlo.start" className="text-white/70 hover:text-white transition-colors">
                   TikTok
                 </a>
               </li>

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { ScrollRevealY } from "@/components/ui/scroll-reveal";
@@ -28,13 +27,13 @@ const AnimatedSection = ({
   // Mobile padding classes based on the provided prop
   const mobilePaddingClasses = {
     none: "py-0 px-0",
-    small: "py-6 px-4",
-    medium: "py-12 px-4",
-    large: "py-16 px-4",
+    small: "py-4 px-3",
+    medium: "py-8 px-4",
+    large: "py-12 px-4",
   };
   
   // Desktop padding is preserved from the existing styles
-  const sectionClasses = `section-base w-full ${className} ${isMobile ? mobilePaddingClasses[mobilePadding] : ""}`;
+  const sectionClasses = `section-base w-full max-w-full ${className} ${isMobile ? mobilePaddingClasses[mobilePadding] : ""}`;
 
   return (
     <section 
@@ -51,13 +50,14 @@ const AnimatedSection = ({
       
       {withAnimation ? (
         <ScrollRevealY 
-          className="container mx-auto px-4 sm:px-6 relative z-10 w-full" 
+          className="container mx-auto px-3 sm:px-6 relative z-10 w-full max-w-full overflow-hidden" 
           distance={isMobile ? 15 : 20}
+          width="100%"
         >
           {children}
         </ScrollRevealY>
       ) : (
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="container mx-auto px-3 sm:px-6 relative z-10 w-full max-w-full overflow-hidden">
           {children}
         </div>
       )}

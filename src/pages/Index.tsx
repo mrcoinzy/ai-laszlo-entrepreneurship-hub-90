@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,7 +71,7 @@ const Index = () => {
           {withScrollReveal(<LeadMagnetSection />)}
         </div>
         {posts && posts.length > 0 && (
-          <div id="blog" className="w-full">
+          <div id="blog" className="w-full max-w-full overflow-x-hidden">
             {withScrollReveal(
               <Blog7 
                 posts={posts}

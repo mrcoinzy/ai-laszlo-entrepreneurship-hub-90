@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
 
@@ -64,7 +63,12 @@ export const ScrollRevealY: React.FC<ScrollRevealProps & { distance?: number }> 
     <motion.div
       ref={ref}
       className={`${className} mx-auto`}
-      style={{ width, overflow: "hidden", position: "relative" }}
+      style={{ 
+        width: width === "100%" ? "100%" : width, 
+        maxWidth: "100%", 
+        overflow: "visible", 
+        position: "relative" 
+      }}
       variants={{
         hidden: { opacity: 0, y: distance, filter: "blur(8px)" },
         visible: { opacity: 1, y: 0, filter: "blur(0px)" }
