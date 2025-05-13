@@ -1,3 +1,4 @@
+
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,8 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import AnimatedSection from "../ui/animated-section";
 import { motion } from "framer-motion";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Post {
   id: string;
@@ -43,8 +46,10 @@ const Blog7 = ({
   posts = [],
   gridClassName = "grid gap-4 sm:gap-6 lg:gap-8 md:grid-cols-2 lg:grid-cols-2"
 }: Blog7Props) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <AnimatedSection className="py-12 sm:py-16 lg:py-24 relative">
+    <AnimatedSection className="py-12 sm:py-16 lg:py-24 relative" mobilePadding="medium">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 w-2/3 h-2/3 bg-purple-600/10 rounded-full filter blur-[80px] sm:blur-[100px] lg:blur-[120px] opacity-40"></div>
@@ -53,7 +58,7 @@ const Blog7 = ({
 
       <div className="container mx-auto flex flex-col items-center gap-6 sm:gap-8 lg:gap-12 px-4 sm:px-6">
         <motion.div 
-          className="text-center max-w-[90%] sm:max-w-2xl lg:max-w-3xl mx-auto relative z-10"
+          className="text-center max-w-[95%] sm:max-w-2xl lg:max-w-3xl mx-auto relative z-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -90,24 +95,26 @@ const Blog7 = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="h-full"
             >
               <Card className="grid grid-rows-[auto_auto_auto_auto] h-full bg-white/5 backdrop-blur-sm border-white/10 hover:border-purple-500/30 transition-all duration-300">
-                <div className="aspect-video w-full overflow-hidden">
-                  <Link
-                    to={`/blog/${post.id}`}
-                    className="transition-opacity duration-200 fade-in hover:opacity-70 block"
-                  >
-                    <img
-                      src={post.featured_image_url || "/placeholder.svg"}
-                      alt={post.title}
-                      className="h-full w-full object-cover object-center hover:scale-105 transition-transform duration-500"
-                    />
-                  </Link>
-                </div>
+                {post.featured_image_url && (
+                  <div className="w-full overflow-hidden">
+                    <Link to={`/blog/${post.id}`} className="transition-opacity duration-200 fade-in hover:opacity-70 block">
+                      <AspectRatio ratio={16/9}>
+                        <img
+                          src={post.featured_image_url}
+                          alt={post.title}
+                          className="h-full w-full object-cover object-center hover:scale-105 transition-transform duration-500"
+                        />
+                      </AspectRatio>
+                    </Link>
+                  </div>
+                )}
                 <div className="px-3 sm:px-4 pt-3 space-y-1">
                   {post.keywords && (
                     <div className="flex flex-wrap gap-1">
-                      {post.keywords.split(',').slice(0, 3).map((keyword, index) => (
+                      {post.keywords.split(',').slice(0, isMobile ? 2 : 3).map((keyword, index) => (
                         <Badge key={index} variant="secondary" className="text-xs bg-purple-500/20 text-purple-300 border-purple-500/30">
                           {keyword.trim()}
                         </Badge>
@@ -127,7 +134,7 @@ const Blog7 = ({
                 </CardHeader>
                 <CardContent className="px-3 sm:px-4 py-1">
                   <p className="text-xs sm:text-sm text-white/70 line-clamp-2">
-                    {post.excerpt || post.content.substring(0, 120)}...
+                    {post.excerpt || post.content.substring(0, isMobile ? 80 : 120)}...
                   </p>
                 </CardContent>
                 <CardFooter className="px-3 sm:px-4 pt-0 pb-4 mt-auto">

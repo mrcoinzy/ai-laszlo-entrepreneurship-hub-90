@@ -53,7 +53,6 @@ const AnimatedSection = ({
         <ScrollRevealY 
           className="container mx-auto px-4 sm:px-6 relative z-10 w-full" 
           distance={isMobile ? 15 : 20}
-          duration={isMobile ? 0.5 : 0.7}
         >
           {children}
         </ScrollRevealY>
