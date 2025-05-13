@@ -120,7 +120,7 @@ const ServicesSection = () => {
           <CTAButton 
             text="Indítsuk el a növekedést – kérjen díjmentes konzultációt most!" 
             to="/consultation"
-            className="whitespace-normal px-4 py-2 text-sm md:text-base md:px-6 md:py-3"
+            className="whitespace-normal px-8 py-2 text-sm md:text-base md:px-6 md:py-3 p-8"
           />
         </motion.div>
       </div>

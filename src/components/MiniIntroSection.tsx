@@ -73,8 +73,6 @@ const MiniIntroSection = () => {
                 }} 
                 className="inline-flex items-center text-purple-400 hover:text-white group transition-colors"
               >
-                <span>Nézze meg a módszert, amit használok</span>
-                <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
           </motion.div>

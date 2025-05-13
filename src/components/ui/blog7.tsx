@@ -72,10 +72,9 @@ const Blog7 = ({
           <p className="mb-4 sm:mb-6 text-white/70 text-sm sm:text-base lg:text-lg px-2 sm:px-0">
             {description}
           </p>
-          <Button variant="outline" className="w-auto border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30" asChild>
-            <Link to={buttonUrl}>
-              <span className="text-sm">{buttonText}</span>
-              <ArrowRight className="ml-2 size-4" />
+          <Button variant="outline" className="w-auto max-w-[95%] px-2 py-1 sm:px-4 sm:py-2 border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 mx-auto" asChild>
+            <Link to={buttonUrl} className="text-center whitespace-normal flex items-center justify-center">
+              <span className="text-[10px] xs:text-xs sm:text-sm inline-block max-w-[80vw] sm:max-w-none">{buttonText}</span>
             </Link>
           </Button>
         </motion.div>

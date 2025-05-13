@@ -123,7 +123,7 @@ const HeroSection = () => {
             
             <ScrollReveal delay={0.5} className="w-full mx-auto">
               <div className="flex flex-col sm:flex-row gap-5 justify-center">
-                <Link to="/contact" className="w-full sm:w-auto">
+                <Link to="/consultation" className="w-full sm:w-auto">
                   <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] 
                     hover:-translate-y-1 px-6 sm:px-8 py-5 sm:py-6 rounded-xl text-sm sm:text-base 
                     transition-all duration-300 group border-0">
@@ -133,7 +133,7 @@ const HeroSection = () => {
                     </span>
                   </Button>
                 </Link>
-                <Link to="/courses" className="w-full sm:w-auto">
+                <Link to="#ugyfeleim" className="w-full sm:w-auto">
                   <Button variant="outline" className="w-full sm:w-auto px-6 sm:px-8 py-5 sm:py-6 rounded-xl text-sm sm:text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
                     Nézze meg az ügyfeleim eredményeit
                   </Button>
