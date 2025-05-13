@@ -15,7 +15,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   className = "",
 }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
   const controls = useAnimation();
   
   useEffect(() => {
@@ -30,12 +30,12 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
       className={`${className} mx-auto`}
       style={{ width, overflow: "hidden", position: "relative" }}
       variants={{
-        hidden: { opacity: 0, filter: "blur(8px)" },
+        hidden: { opacity: 0, filter: "blur(5px)" },
         visible: { opacity: 1, filter: "blur(0px)" }
       }}
       initial="hidden"
       animate={controls}
-      transition={{ duration: 0.5, delay, ease: "easeOut" }}
+      transition={{ duration: 0.4, delay, ease: "easeOut" }}
     >
       {children}
     </motion.div>
@@ -45,12 +45,12 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
 export const ScrollRevealY: React.FC<ScrollRevealProps & { distance?: number }> = ({
   children,
   width = "fit-content",
-  delay = 0.25,
+  delay = 0.15,
   className = "",
-  distance = 20,
+  distance = 15,
 }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const isInView = useInView(ref, { once: true, amount: 0.1, rootMargin: "0px 0px 50px 0px" });
   const controls = useAnimation();
   
   useEffect(() => {
@@ -67,15 +67,16 @@ export const ScrollRevealY: React.FC<ScrollRevealProps & { distance?: number }> 
         width: width === "100%" ? "100%" : width, 
         maxWidth: "100%", 
         overflow: "visible", 
-        position: "relative" 
+        position: "relative",
+        willChange: "transform, opacity"
       }}
       variants={{
-        hidden: { opacity: 0, y: distance, filter: "blur(8px)" },
+        hidden: { opacity: 0, y: distance, filter: "blur(3px)" },
         visible: { opacity: 1, y: 0, filter: "blur(0px)" }
       }}
       initial="hidden"
       animate={controls}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      transition={{ duration: 0.4, delay, ease: "easeOut" }}
     >
       {children}
     </motion.div>

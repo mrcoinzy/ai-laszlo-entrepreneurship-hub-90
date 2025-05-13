@@ -1,4 +1,3 @@
-
 import React from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
@@ -79,6 +78,7 @@ function App() {
             } 
           />
           <Route path="/blog" element={<BlogListing />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
