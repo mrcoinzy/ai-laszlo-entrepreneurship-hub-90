@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
 
@@ -50,7 +51,8 @@ export const ScrollRevealY: React.FC<ScrollRevealProps & { distance?: number }> 
   distance = 15,
 }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1, rootMargin: "0px 0px 50px 0px" });
+  // Fix: Remove the rootMargin property since it's not recognized in the type definition
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
   const controls = useAnimation();
   
   useEffect(() => {
