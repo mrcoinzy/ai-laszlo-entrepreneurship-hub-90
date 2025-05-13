@@ -128,13 +128,13 @@ const BlogPost = () => {
 
           {/* Sidebar - Takes up 1/3 of the space on desktop */}
           <aside className="space-y-8">
-            {/* Free Consultation CTA */}
+            {/* Free PDF CTA - Changed from Consultation to Hungarian PDF download */}
             <Card className="p-6 bg-accent/5 border-accent/20">
-              <h2 className="text-2xl font-bold mb-4">Get Free Consultation</h2>
+              <h2 className="text-2xl font-bold mb-4">Ingyenes PDF letöltése</h2>
               <p className="text-muted-foreground mb-6">
-                Let's discuss how we can help your business grow and achieve its goals.
+                Csak most, 24 óráig! Töltse le értékes PDF anyagunkat teljesen ingyen.
               </p>
-              <CTAButton text="Book Your Free Consultation" to="/consultation" variant="primary" className="w-full" />
+              <CTAButton text="PDF Letöltése" to="/consultation" variant="primary" className="w-full" />
             </Card>
 
             {/* Recent Posts */}
