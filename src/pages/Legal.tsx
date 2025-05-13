@@ -26,9 +26,8 @@ const Legal = () => {
             <h2 className="text-2xl font-semibold mt-8 mb-4">1. Impresszum</h2>
             <p className="text-white/70">A weboldal üzemeltetője:</p>
             <p className="text-white/70">AI László (magánszemély)</p>
-            <p className="text-white/70">E-mail: hello@ailaszlo.com</p>
-            <p className="text-white/70">Székhely: [adja meg, ha kívánja]</p>
-            <p className="text-white/70">Tárhelyszolgáltató: [tárhelyszolgáltató neve, címe, e-mailje]</p>
+            <p className="text-white/70">E-mail: ailaszlo.start@gmail.com</p>
+            <p className="text-white/70">Tárhelyszolgáltató: [https://app.netlify.com/, email cím: support@netlify.com]</p>
             <p className="text-white/70 mt-4">
               Az impresszum közzététele a 2001. évi CVIII. törvény (Eker. tv.) 4. § (1) bekezdése értelmében kötelező, 
               és a fenti adatok folyamatosan, közvetlenül és könnyen elérhető módon jelennek meg a weboldalon.
