@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -9,36 +9,25 @@ import { ScrollReveal, ScrollRevealY } from "@/components/ui/scroll-reveal";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeroSection = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-    };
-  }, []);
+  const isMobile = useIsMobile();
 
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden">
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 to-black/60 z-0"></div>
       
-      {/* Animated background elements */}
+      {/* Animated background elements - reduced complexity on mobile */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {/* Animated gradient blobs */}
+        {/* Animated gradient blobs - fewer on mobile */}
         <div className="absolute top-1/4 -left-32 w-64 h-64 bg-purple-600/20 rounded-full filter blur-[120px] animate-pulse-slow"></div>
-        <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-blue-600/20 rounded-full filter blur-[120px] animate-pulse-slow animation-delay-2000"></div>
+        {!isMobile && (
+          <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-blue-600/20 rounded-full filter blur-[120px] animate-pulse-slow animation-delay-2000"></div>
+        )}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-600/10 rounded-full filter blur-[80px] animate-pulse-slow animation-delay-1000"></div>
         
-        {/* Small floating particles */}
+        {/* Small floating particles - fewer on mobile */}
         <div className="absolute w-full h-full opacity-30">
-          {[...Array(20)].map((_, i) => (
+          {[...Array(isMobile ? 10 : 20)].map((_, i) => (
             <div 
               key={i}
               className="absolute w-1 h-1 bg-white rounded-full"
@@ -54,11 +43,15 @@ const HeroSection = () => {
         </div>
       </div>
       
-      {/* Decorative elements */}
-      <div className="absolute bottom-10 left-10 w-32 h-32 bg-purple-600/20 rounded-full filter blur-3xl"></div>
-      <div className="absolute top-20 right-10 w-32 h-32 bg-blue-600/20 rounded-full filter blur-3xl"></div>
+      {/* Decorative elements - optimized for mobile */}
+      {!isMobile && (
+        <>
+          <div className="absolute bottom-10 left-10 w-32 h-32 bg-purple-600/20 rounded-full filter blur-3xl"></div>
+          <div className="absolute top-20 right-10 w-32 h-32 bg-blue-600/20 rounded-full filter blur-3xl"></div>
+        </>
+      )}
       
-      <div className="container mx-auto px-4 sm:px-6 pt-32 pb-20 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-20 relative z-10">
         <motion.div 
           className="flex flex-col items-center text-center"
           initial={{ opacity: 0, y: 30 }}
@@ -79,21 +72,21 @@ const HeroSection = () => {
             </motion.div>
             
             <ScrollRevealY className="w-full mx-auto">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
                 Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből, AI-val felgyorsítva</span>
               </h1>
             </ScrollRevealY>
             
             <ScrollRevealY 
-              className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto w-full"
+              className="text-base md:text-xl text-white/80 mb-8 sm:mb-10 max-w-2xl mx-auto w-full"
               delay={0.3}
             >
-              <p className="text-lg md:text-xl mb-4 font-medium text-white/90">
+              <p className="text-base sm:text-lg md:text-xl mb-4 font-medium text-white/90">
                 🧠 Egyedi rendszert építek, ami vevőket hoz, nem csak látogatókat:
               </p>
               
-              {/* Improved styling for the boxes - Modified to use 2 columns and 2 rows */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
+              {/* Improved styling for the boxes - Single column on mobile, 2 columns on larger screens */}
+              <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3 mb-6`}>
                 <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-sm hover:shadow-purple-500/10">
                   <div className="flex items-center">
                     <CheckCircle size={18} className="text-purple-400 mr-3 flex-shrink-0" />
@@ -130,18 +123,18 @@ const HeroSection = () => {
             
             <ScrollReveal delay={0.5} className="w-full mx-auto">
               <div className="flex flex-col sm:flex-row gap-5 justify-center">
-                <Link to="/contact">
-                  <Button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] 
-                    hover:-translate-y-1 px-8 py-6 rounded-xl text-base 
+                <Link to="/contact" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-[0_8px_25px_-5px_rgba(138,43,226,0.5)] 
+                    hover:-translate-y-1 px-6 sm:px-8 py-5 sm:py-6 rounded-xl text-sm sm:text-base 
                     transition-all duration-300 group border-0">
-                    <span className="relative z-10 flex items-center">
+                    <span className="relative z-10 flex items-center justify-center">
                       Kérek egy díjmentes konzultációt
                       <ChevronRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                     </span>
                   </Button>
                 </Link>
-                <Link to="/courses">
-                  <Button variant="outline" className="px-8 py-6 rounded-xl text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
+                <Link to="/courses" className="w-full sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto px-6 sm:px-8 py-5 sm:py-6 rounded-xl text-sm sm:text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
                     Nézze meg az ügyfeleim eredményeit
                   </Button>
                 </Link>
@@ -149,23 +142,15 @@ const HeroSection = () => {
             </ScrollReveal>
             
             <ScrollReveal delay={0.6} className="w-full mx-auto">
-              <div className="text-center mt-10">
-                <p className="text-white/60 text-sm mb-6 flex flex-wrap justify-center gap-x-6 gap-y-1">
+              <div className="text-center mt-8 sm:mt-10">
+                <p className="text-white/60 text-xs sm:text-sm mb-4 sm:mb-6 flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-1">
                   <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> 5+ év tapasztalat</span> 
                   <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 50+ projekt</span> 
                   <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">|</span> 100% magyar nyelven</span>
                 </p>
-                <p className="text-white/60 text-sm">
+                <p className="text-white/60 text-xs sm:text-sm">
                   <span className="inline-flex items-center"><span className="text-purple-400 mr-1.5">👉</span> Garantált figyelem, nem sablonmunka</span>
                 </p>
-              </div>
-            </ScrollReveal>
-            
-            <ScrollReveal delay={0.7} className="w-full mx-auto">
-              <div className="mt-16">
-                <div className="grid grid-cols-3 gap-8 md:gap-12 lg:gap-20 items-center max-w-3xl mx-auto">
-                  {/* No logos section */}
-                </div>
               </div>
             </ScrollReveal>
           </div>
