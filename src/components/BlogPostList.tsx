@@ -46,53 +46,55 @@ const BlogPostList = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 px-4 sm:px-0">
-      {posts?.map((post) => (
-        <Card key={post.id} className="bg-accent/5 h-full flex flex-col">
-          {post.featured_image_url && (
-            <div className="w-full">
-              <AspectRatio ratio={16/9} className="bg-muted overflow-hidden">
-                <img 
-                  src={post.featured_image_url} 
-                  alt={post.title}
-                  className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-                />
-              </AspectRatio>
-            </div>
-          )}
-          <CardHeader className={post.featured_image_url ? "pt-3" : ""}>
-            <CardTitle className="text-base sm:text-lg line-clamp-2">{post.title}</CardTitle>
-            <CardDescription className="text-xs">
-              Posted {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-            </CardDescription>
-            {post.keywords && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {post.keywords.split(',').slice(0, 3).map((keyword, i) => (
-                  <span 
-                    key={i} 
-                    className="px-2 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full text-xs"
-                  >
-                    {keyword.trim()}
-                  </span>
-                ))}
+    <div className="grid grid-cols-1 gap-4 sm:gap-6 px-4 sm:px-6 md:px-0 mx-auto w-full max-w-7xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+        {posts?.map((post) => (
+          <Card key={post.id} className="bg-accent/5 h-full flex flex-col">
+            {post.featured_image_url && (
+              <div className="w-full">
+                <AspectRatio ratio={16/9} className="bg-muted overflow-hidden">
+                  <img 
+                    src={post.featured_image_url} 
+                    alt={post.title}
+                    className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                  />
+                </AspectRatio>
               </div>
             )}
-          </CardHeader>
-          <CardContent className="flex-grow">
-            <p className="text-sm text-muted-foreground line-clamp-3">
-              {post.excerpt || post.content.substring(0, 120)}...
-            </p>
-          </CardContent>
-          <CardFooter className="pt-0">
-            <Link to={`/blog/${post.id}`} className="w-full sm:w-auto">
-              <Button variant="secondary" className="gap-2 w-full sm:w-auto text-xs sm:text-sm">
-                <ExternalLink size={isMobile ? 14 : 16} />
-                Read More
-              </Button>
-            </Link>
-          </CardFooter>
-        </Card>
-      ))}
+            <CardHeader className={post.featured_image_url ? "pt-3" : ""}>
+              <CardTitle className="text-base sm:text-lg line-clamp-2">{post.title}</CardTitle>
+              <CardDescription className="text-xs">
+                Posted {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+              </CardDescription>
+              {post.keywords && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {post.keywords.split(',').slice(0, isMobile ? 2 : 3).map((keyword, i) => (
+                    <span 
+                      key={i} 
+                      className="px-2 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full text-xs"
+                    >
+                      {keyword.trim()}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </CardHeader>
+            <CardContent className="flex-grow">
+              <p className="text-sm text-muted-foreground line-clamp-3">
+                {post.excerpt || post.content.substring(0, isMobile ? 80 : 120)}...
+              </p>
+            </CardContent>
+            <CardFooter className="pt-0">
+              <Link to={`/blog/${post.id}`} className="w-full sm:w-auto">
+                <Button variant="secondary" className="gap-2 w-full sm:w-auto text-xs sm:text-sm">
+                  <ExternalLink size={isMobile ? 14 : 16} />
+                  Read More
+                </Button>
+              </Link>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
