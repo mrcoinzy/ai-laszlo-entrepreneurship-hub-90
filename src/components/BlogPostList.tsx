@@ -28,7 +28,7 @@ const BlogPostList = () => {
 
   if (isLoading) {
     return (
-      <div className="animate-pulse space-y-4 px-4 sm:px-0">
+      <div className="animate-pulse space-y-4 px-4 sm:px-0 max-w-7xl mx-auto w-full">
         {[1, 2, 3].map((i) => (
           <Card key={i} className="bg-accent/5">
             <CardHeader>
@@ -46,7 +46,7 @@ const BlogPostList = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:gap-6 px-4 sm:px-6 md:px-0 mx-auto w-full max-w-7xl">
+    <div className="w-full px-4 sm:px-6 md:px-0 mx-auto max-w-7xl">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
         {posts?.map((post) => (
           <Card key={post.id} className="bg-accent/5 h-full flex flex-col">

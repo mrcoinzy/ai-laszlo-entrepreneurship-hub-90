@@ -56,7 +56,7 @@ const Blog7 = ({
         <div className="absolute bottom-0 left-0 w-2/3 h-2/3 bg-blue-600/10 rounded-full filter blur-[80px] sm:blur-[100px] lg:blur-[120px] opacity-40"></div>
       </div>
 
-      <div className="container mx-auto flex flex-col items-center gap-4 sm:gap-6 lg:gap-12 px-4 sm:px-6">
+      <div className="w-full flex flex-col items-center gap-4 sm:gap-6 lg:gap-12 px-4 sm:px-6">
         <motion.div 
           className="text-center max-w-full sm:max-w-2xl lg:max-w-3xl mx-auto relative z-10"
           initial={{ opacity: 0, y: 20 }}
@@ -82,7 +82,7 @@ const Blog7 = ({
         </motion.div>
 
         <motion.div 
-          className={gridClassName}
+          className={`w-full ${gridClassName}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
