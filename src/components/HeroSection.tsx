@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle } from "lucide-react";
@@ -5,6 +6,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import CTAButton from "./ui/cta-button";
 import { ScrollReveal, ScrollRevealY } from "@/components/ui/scroll-reveal";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeroSection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -78,7 +80,7 @@ const HeroSection = () => {
             
             <ScrollRevealY className="w-full mx-auto">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
-              Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből, AI-val felgyorsítva</span>
+                Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből, AI-val felgyorsítva</span>
               </h1>
             </ScrollRevealY>
             
