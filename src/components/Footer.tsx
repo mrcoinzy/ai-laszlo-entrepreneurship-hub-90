@@ -26,7 +26,7 @@ const Footer = () => {
             </p>
             
             <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-purple-500/20 flex items-center justify-center border border-white/10 hover:border-purple-500/30 transition-colors">
+              <a href="https://www.instagram.com/ailaszlo.start/" className="w-10 h-10 rounded-full bg-white/5 hover:bg-purple-500/20 flex items-center justify-center border border-white/10 hover:border-purple-500/30 transition-colors">
                 <Instagram className="h-5 w-5 text-white/70 hover:text-white" />
               </a>
             </div>
@@ -37,15 +37,6 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-white mb-6">Gyors Linkek</h4>
             
             <ul className="space-y-3">
-              <li>
-                <Link to="#" className="text-white/70 hover:text-white transition-colors">Főoldal</Link>
-              </li>
-              <li>
-                <Link to="#about" className="text-white/70 hover:text-white transition-colors">Rólam</Link>
-              </li>
-              <li>
-                <Link to="/works" className="text-white/70 hover:text-white transition-colors">Projektek</Link>
-              </li>
               <li>
                 <Link to="/blog" className="text-white/70 hover:text-white transition-colors">Blog</Link>
               </li>
@@ -65,8 +56,8 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <Mail className="h-5 w-5 text-purple-400 mr-3 mt-1" />
-                <a href="mailto:ailaszlo.start@gmail.com" className="text-white/70 hover:text-white transition-colors">
-                  ailaszlo.start@gmail.com
+                <a href="mailto:info@ailaszlo.com" className="text-white/70 hover:text-white transition-colors">
+                  info@ailaszlo.com
                 </a>
               </li>
               <li className="flex items-start">
