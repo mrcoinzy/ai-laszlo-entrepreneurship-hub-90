@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import CTAButton from "@/components/ui/cta-button";
@@ -44,14 +43,13 @@ const EmailLeadMagnetSection = () => {
         const subscriber = data[0];
         
         try {
-          // Call the edge function to send the email
+          // Call the edge function to send the email with the proper API key
           const response = await fetch(
             "https://jffkwmrwwmmmlbaazvry.supabase.co/functions/v1/send-subscription-email", 
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${supabase.auth.session()?.access_token || ""}`,
                 "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmZmt3bXJ3d21tbWxiYWF6dnJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwNTgzNTcsImV4cCI6MjA2MDYzNDM1N30.KeyC24HRq6xw8zbZ4Dp_jYX_jTqLZRx6Me2dWdsZ0vs"
               },
               body: JSON.stringify(subscriber),
