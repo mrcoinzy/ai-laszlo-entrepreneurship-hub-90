@@ -12,7 +12,10 @@ const EmailLeadMagnetSection = () => {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email) {
+      toast.error("Kérjük, adja meg az e-mail címét!");
+      return;
+    }
     setLoading(true);
 
     try {
@@ -27,7 +30,7 @@ const EmailLeadMagnetSection = () => {
           // Unique constraint violated (already subscribed)
           toast.error("Ez az e-mail cím már fel van iratkozva.");
         } else {
-          toast.error("Hiba történt a feliratkozáskor.");
+          toast.error("Hiba történt a feliratkozáskor: " + error.message);
           console.error("Subscription error:", error);
         }
         setLoading(false);
@@ -38,28 +41,36 @@ const EmailLeadMagnetSection = () => {
       if (data && data.length > 0) {
         const subscriber = data[0];
         
-        // Call the edge function to send the email
-        const response = await fetch(
-          "https://jffkwmrwwmmmlbaazvry.supabase.co/functions/v1/send-subscription-email", 
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(subscriber),
-          }
-        );
+        try {
+          // Call the edge function to send the email
+          const response = await fetch(
+            "https://jffkwmrwwmmmlbaazvry.supabase.co/functions/v1/send-subscription-email", 
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(subscriber),
+            }
+          );
 
-        if (!response.ok) {
-          console.error("Error sending email:", await response.text());
+          const responseData = await response.json();
+          
+          if (!response.ok) {
+            console.error("Error sending email:", responseData);
+            throw new Error(responseData.error || "Hiba történt az email küldésekor");
+          }
+          
+          toast.success("Sikeres feliratkozás! Elküldtük az eBook-ot az email címére.");
+          setEmail("");
+        } catch (emailError: any) {
+          console.error("Email sending error:", emailError);
+          toast.error("Sikeres feliratkozás, de az email küldése közben hiba történt. Kérjük, próbálja újra később!");
         }
       }
-
-      toast.success("Sikeres feliratkozás! Elküldtük az eBook-ot az email címére.");
-      setEmail("");
     } catch (err) {
       console.error("Subscription process error:", err);
-      toast.error("Hiba történt a feliratkozáskor.");
+      toast.error("Hiba történt a feliratkozáskor. Kérjük, próbálja újra később!");
     }
     
     setLoading(false);

@@ -24,8 +24,25 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const subscriber: EmailSubscriber = await req.json();
-    console.log("Received subscription data:", subscriber);
+    // Parse and validate the request body
+    const body = await req.text();
+    console.log("Raw request body:", body);
+    
+    // Make sure we have a valid JSON body
+    let subscriber: EmailSubscriber;
+    try {
+      subscriber = JSON.parse(body);
+      console.log("Parsed subscription data:", subscriber);
+    } catch (parseErr) {
+      console.error("JSON parse error:", parseErr);
+      return new Response(
+        JSON.stringify({ error: "Invalid request format" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
 
     if (!subscriber.email) {
       throw new Error("Email is required");
