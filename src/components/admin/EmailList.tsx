@@ -38,7 +38,7 @@ const EmailList = () => {
   if (error) {
     return (
       <div className="text-red-500 p-4">
-        Error loading subscribers: {(error as Error).message}
+        Error loading subscribers.
       </div>
     );
   }
@@ -46,34 +46,28 @@ const EmailList = () => {
   return (
     <ScrollArea className="h-[600px] pr-4">
       <div className="space-y-4">
-        {subscribers && subscribers.length > 0 ? (
-          subscribers.map((subscriber) => (
-            <Card key={subscriber.id} className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Mail className="h-5 w-5 text-primary" />
-                  <a href={`mailto:${subscriber.email}`} className="text-lg hover:text-primary">
-                    {subscriber.email}
-                  </a>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  {subscriber.created_at &&
-                    new Date(subscriber.created_at).toLocaleDateString()}
-                </div>
+        {subscribers?.map((subscriber) => (
+          <Card key={subscriber.id} className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Mail className="h-5 w-5 text-primary" />
+                <a href={`mailto:${subscriber.email}`} className="text-lg hover:text-primary">
+                  {subscriber.email}
+                </a>
               </div>
-              {subscriber.source && (
-                <div className="mt-2 text-sm text-muted-foreground">
-                  Forrás: {subscriber.source}
-                </div>
-              )}
-            </Card>
-          ))
-        ) : (
-          <div className="text-center p-4 text-muted-foreground">
-            Nincs még feliratkozó az email listán.
-          </div>
-        )}
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Calendar className="h-4 w-4" />
+                {subscriber.created_at &&
+                  new Date(subscriber.created_at).toLocaleDateString()}
+              </div>
+            </div>
+            {subscriber.source && (
+              <div className="mt-2 text-sm text-muted-foreground">
+                Forrás: {subscriber.source}
+              </div>
+            )}
+          </Card>
+        ))}
       </div>
     </ScrollArea>
   );
