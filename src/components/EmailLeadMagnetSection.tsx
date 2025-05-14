@@ -26,6 +26,8 @@ const EmailLeadMagnetSection = () => {
         .select();
 
       if (error) {
+        console.error("Supabase error:", error);
+        
         if (error.code === "23505") {
           // Unique constraint violated (already subscribed)
           toast.error("Ez az e-mail cím már fel van iratkozva.");
@@ -49,16 +51,16 @@ const EmailLeadMagnetSection = () => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${supabase.auth.session()?.access_token || ""}`,
+                "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmZmt3bXJ3d21tbWxiYWF6dnJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwNTgzNTcsImV4cCI6MjA2MDYzNDM1N30.KeyC24HRq6xw8zbZ4Dp_jYX_jTqLZRx6Me2dWdsZ0vs"
               },
               body: JSON.stringify(subscriber),
             }
           );
 
-          const responseData = await response.json();
-          
           if (!response.ok) {
-            console.error("Error sending email:", responseData);
-            throw new Error(responseData.error || "Hiba történt az email küldésekor");
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Hiba történt az email küldésekor");
           }
           
           toast.success("Sikeres feliratkozás! Elküldtük az eBook-ot az email címére.");
