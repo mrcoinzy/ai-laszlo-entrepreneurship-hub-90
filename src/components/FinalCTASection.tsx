@@ -33,7 +33,7 @@ const FinalCTASection = () => {
           </h2>
           
           <p className="text-lg text-white/70 max-w-3xl mx-auto mb-12">
-          Töltse ki az űrlapot vagy foglaljon időpontot, és 48 órán belül én magam fogom keresni Önt – nem egy asszisztens, nem egy robot.
+          Töltse ki az űrlapot vagy foglaljon időpontot és 24 órán belül fel fogom keresni.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">

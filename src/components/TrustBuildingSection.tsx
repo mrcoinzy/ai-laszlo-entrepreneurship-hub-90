@@ -8,17 +8,17 @@ const TrustBuildingSection = () => {
     {
       icon: <ShieldCheck className="h-10 w-10 text-purple-400 transition-all duration-300 group-hover:scale-110" />,
       title: "Sablonok nélkül, csak Önre szabva.",
-      description: "Nincs két egyforma cég – ezért minden rendszer is egyedi."
+      description: "Nincs két egyforma cég – ezért minden rendszer egyedi."
     },
     {
       icon: <Zap className="h-10 w-10 text-purple-400 transition-all duration-300 group-hover:scale-110" />,
-      title: "AI-val gyorsítva – de emberi minőségben.",
+      title: "AI-al gyorsítva – de emberi minőségben.",
       description: "Modern technológia, emberi figyelemmel párosítva."
     },
     {
       icon: <UserCheck className="h-10 w-10 text-purple-400 transition-all duration-300 group-hover:scale-110" />,
       title: "Nem lesz egy a sok közül.",
-      description: "Nálam nincs \"futószalag\" – csak valódi odafigyelés."
+      description: "Nálam nincs \"futószallag\" – csak valódi odafigyelés."
     },
     {
       icon: <Target className="h-10 w-10 text-purple-400 transition-all duration-300 group-hover:scale-110" />,

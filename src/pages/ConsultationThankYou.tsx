@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -54,7 +53,7 @@ const ConsultationThankYou = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.5 }}
             >
-              24 órán belül személyesen felveszem Önnel a kapcsolatot. Addig is nézze meg esettanulmányaimat, vagy töltse le az ingyenes útmutatót.
+              24 órán belül személyesen felveszem Önnel a kapcsolatot. Addig is nézze meg esettanulmányaimat vagy töltse le az ingyenes útmutatót.
             </motion.p>
             
             <motion.div 

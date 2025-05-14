@@ -10,7 +10,7 @@ const testimonials = [
     id: 1,
     name: "Kovács Péter",
     role: "Ügyvezető, TechSolution Kft.",
-    content: "AI László teljes mértékben átalakította a webhelyünket, és ezzel együtt az online jelenlétünket. Az eredmények messze felülmúlták az elvárásainkat.",
+    content: "AI László teljes mértékben átalakította a webhelyünket és ezzel együtt az online jelenlétünket. Az eredmények messze felülmúlták az elvárásainkat.",
     rating: 5,
     metric: {
       value: "140%",
@@ -34,7 +34,7 @@ const testimonials = [
     id: 3,
     name: "Szabó János",
     role: "Coach, MindfulSuccess",
-    content: "László munkája túlmutat a technikai szakértelmen. Valódi üzleti tanácsadó, aki megértette a coaching vállalkozásom céljait, és olyan digitális jelenlétet teremtett, amely 3× annyi foglalást eredményez havi szinten.",
+    content: "László munkája túlmutat a technikai szakértelmen. Valódi üzleti tanácsadó, aki megértette a coaching vállalkozásom céljait és olyan digitális jelenlétet teremtett, amely 3× annyi foglalást eredményez havi szinten.",
     rating: 5,
     metric: {
       value: "94%",

@@ -111,7 +111,7 @@ export const ServicesStep = ({ form }: ServicesStepProps) => {
 
       <div className="p-4 border border-blue-500/20 bg-blue-500/5 rounded-lg mt-8">
         <p className="text-blue-300 text-sm">
-          24 órán belül személyre szabott válasszal keresem Önt a megadott email címen.
+          24 órán belül személyre szabott válasszal keresem a megadott email címen.
         </p>
       </div>
     </div>

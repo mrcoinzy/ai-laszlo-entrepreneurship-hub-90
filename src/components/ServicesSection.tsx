@@ -8,7 +8,7 @@ const ServicesSection = () => {
     {
       icon: <Code className="h-12 w-12 text-purple-400 mb-4 transition-all duration-300 group-hover:scale-110" />,
       title: "Weboldal Fejlesztés",
-      description: "Modern üzleti weboldalak, amelyek gyorsak, mobilbarátok és eladnak. Kóddal vagy no-code technológiával – attól függően, hogy mi hozza a leggyorsabb eredményt Önnek."
+      description: "Modern üzleti weboldalak, amelyek gyorsak, mobilbarátok. Kóddal vagy no-code technológiával – attól függően, hogy mi hozza a leggyorsabb eredményt Önnek."
     },
     {
       icon: <Target className="h-12 w-12 text-purple-400 mb-4 transition-all duration-300 group-hover:scale-110" />,
@@ -18,7 +18,7 @@ const ServicesSection = () => {
     {
       icon: <LineChart className="h-12 w-12 text-purple-400 mb-4 transition-all duration-300 group-hover:scale-110" />,
       title: "Konverzió Optimalizálás",
-      description: "Több vásárló, kevesebb lemorzsolódás. UX fejlesztés, CTA-k finomhangolása, és adat alapú döntések."
+      description: "Több vásárló, kevesebb lemorzsolódás. UX fejlesztés, CTA-k finomhangolása, és adatalapú döntések."
     }
   ];
 

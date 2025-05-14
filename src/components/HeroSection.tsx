@@ -73,7 +73,7 @@ const HeroSection = () => {
             
             <ScrollRevealY className="w-full mx-auto">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
-                Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből, AI-val felgyorsítva</span>
+                Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből AI-al felgyorsítva</span>
               </h1>
             </ScrollRevealY>
             
