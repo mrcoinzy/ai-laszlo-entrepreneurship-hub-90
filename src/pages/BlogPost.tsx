@@ -114,7 +114,7 @@ const BlogPost = () => {
             
             {post.keywords && (
               <div className="mt-8 pt-8 border-t border-border">
-                <h2 className="text-xl font-semibold mb-4">Related Topics</h2>
+                <h2 className="text-xl font-semibold mb-4">Kapcsolódó témakörök</h2>
                 <div className="flex flex-wrap gap-2">
                   {post.keywords.split(',').map(keyword => (
                     <span key={keyword} className="px-3 py-1 bg-accent/20 rounded-full text-sm">
@@ -139,7 +139,7 @@ const BlogPost = () => {
 
             {/* Recent Posts */}
             <div>
-              <h3 className="text-xl font-semibold mb-4">Recent Posts</h3>
+              <h3 className="text-xl font-semibold mb-4">Előző posztok</h3>
               <div className="space-y-4">
                 {relatedPosts?.map(relatedPost => <Card key={relatedPost.id} className="p-4 hover:bg-accent/5 cursor-pointer transition-colors" onClick={() => navigate(`/blog/${relatedPost.id}`)}>
                     <h4 className="font-medium mb-2">{relatedPost.title}</h4>

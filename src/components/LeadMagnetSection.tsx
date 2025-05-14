@@ -30,7 +30,7 @@ const LeadMagnetSection = () => {
               transition={{ delay: 0.2, duration: 0.6 }}
               className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-white to-purple-300 bg-clip-text text-transparent"
             >
-              Nem kell a teljes összeget ki fizetnie, amíg nem mondja:
+              Nem kell a teljes összeget kifizetnie, amíg nem mondja:
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mt-2">
                 „Igen – ez működik."
               </span>

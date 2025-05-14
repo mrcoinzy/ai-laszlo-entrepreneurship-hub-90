@@ -67,7 +67,7 @@ const HeroSection = () => {
               className="mb-6 inline-block"
             >
               <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                Új szolgáltatások érhetők el!
+                0% kozkázat 100% növekedés
               </span>
             </motion.div>
             

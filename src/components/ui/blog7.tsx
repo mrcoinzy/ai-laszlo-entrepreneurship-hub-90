@@ -140,7 +140,7 @@ const Blog7 = ({
                     to={`/blog/${post.id}`}
                     className="flex items-center text-purple-300 hover:text-purple-200 transition-colors text-xs sm:text-sm group"
                   >
-                    Read more
+                    Olvass tovább
                     <ArrowRight className="ml-2 size-3 transition-transform duration-300 group-hover:translate-x-1" />
                   </Link>
                 </CardFooter>
