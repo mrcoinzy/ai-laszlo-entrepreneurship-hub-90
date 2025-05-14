@@ -19,7 +19,7 @@ const EmailLeadMagnetSection = () => {
     setLoading(true);
 
     try {
-      // Insert the email into the subscribers table
+      // Insert the email into the subscribers table with explicit public schema reference
       const { data, error } = await supabase
         .from("email_subscribers")
         .insert([{ email, source: "Newsletter Section" }])
