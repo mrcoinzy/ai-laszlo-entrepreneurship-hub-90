@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import CTAButton from "@/components/ui/cta-button";
 import AnimatedSection from "./ui/animated-section";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { downloadAndTrackPdf } from "@/lib/pdfTracking";
 
 const EmailLeadMagnetSection = () => {
   const [email, setEmail] = useState("");
@@ -15,22 +15,35 @@ const EmailLeadMagnetSection = () => {
     if (!email) return;
     setLoading(true);
 
-    const { error } = await supabase
-      .from("email_subscribers")
-      .insert([{ email, source: "Newsletter Section" }]);
+    try {
+      const { error } = await supabase
+        .from("email_subscribers")
+        .insert([{ email, source: "Newsletter Section" }]);
 
-    if (error) {
-      if (error.code === "23505") {
-        // Unique constraint violated (already subscribed)
-        toast.error("Ez az e-mail cím már fel van iratkozva.");
+      if (error) {
+        if (error.code === "23505") {
+          // Unique constraint violated (already subscribed)
+          toast.error("Ez az e-mail cím már fel van iratkozva.");
+          // Download PDF anyway for existing subscribers
+          downloadAndTrackPdf("konverzio_pszichologia_2025.pdf", email);
+          toast.success("A PDF letöltése megkezdődött");
+        } else {
+          toast.error("Hiba történt a feliratkozáskor.");
+        }
       } else {
-        toast.error("Hiba történt a feliratkozáskor.");
+        toast.success("Sikeres feliratkozás!");
+        setEmail("");
+        
+        // Automatically download the PDF after successful subscription
+        downloadAndTrackPdf("konverzio_pszichologia_2025.pdf", email);
+        toast.success("A PDF letöltése megkezdődött");
       }
-    } else {
-      toast.success("Sikeres feliratkozás!");
-      setEmail("");
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast.error("Váratlan hiba történt.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -54,6 +67,10 @@ const EmailLeadMagnetSection = () => {
           className="text-lg text-white/70 mb-8"
         >
           Iratkozzon fel hírlevelünkre, és tudja meg elsőként a legújabb trendeket és taktikákat!
+          <br/>
+          <span className="text-purple-300 font-medium mt-2 inline-block">
+            Feliratkozás után automatikusan letöltődik az ingyenes PDF útmutatónk.
+          </span>
         </motion.p>
         
         <motion.form 

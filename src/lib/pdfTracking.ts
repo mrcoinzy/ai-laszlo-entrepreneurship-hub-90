@@ -1,4 +1,3 @@
-
 import { supabaseAdmin } from "@/lib/supabase";
 
 /**
@@ -42,20 +41,26 @@ export const trackPdfDownload = async (userEmail: string, fileName: string) => {
  * 
  * @param fileName Name of the PDF file
  * @returns URL to the PDF file
+ * 
+ * Note: A tényleges PDF fájlokat a /public/assets/pdfs/ mappába kell helyezni, 
+ * hogy a letöltés működjön. A pdfs mappa létrehozása szükséges, 
+ * ha még nem létezik.
  */
 export const getPdfUrl = (fileName: string): string => {
-  // This is a placeholder implementation
-  // In a real application, this would be replaced with actual URLs to PDF files,
-  // possibly using a file storage solution
+  // A helyes elérési út a /public/assets/pdfs/ mappában lévő PDF fájlokhoz
+  // Ezeket a fájlokat manuálisan kell elhelyezni
+  // Relatív útvonalat használunk, hogy a build után is működjön
   
   // For demonstration purposes only
   const pdfs: Record<string, string> = {
-    "marketing_guide.pdf": "https://example.com/files/marketing_guide.pdf",
-    "seo_checklist.pdf": "https://example.com/files/seo_checklist.pdf",
-    "beginners_guide.pdf": "https://example.com/files/beginners_guide.pdf"
+    "marketing_guide.pdf": "/assets/pdfs/marketing_guide.pdf",
+    "seo_checklist.pdf": "/assets/pdfs/seo_checklist.pdf",
+    "beginners_guide.pdf": "/assets/pdfs/beginners_guide.pdf",
+    "konverzio_pszichologia_2025.pdf": "/assets/pdfs/konverzio_pszichologia_2025.pdf"
   };
   
-  return pdfs[fileName] || "https://example.com/files/default.pdf";
+  // Ha létezik a megadott nevű PDF, visszaadjuk az útvonalát, különben egy alapértelmezett PDF-et
+  return pdfs[fileName] || "/assets/pdfs/default.pdf";
 };
 
 /**
@@ -72,8 +77,14 @@ export const downloadAndTrackPdf = async (fileName: string, userEmail: string) =
     // Get the URL for the PDF
     const pdfUrl = getPdfUrl(fileName);
     
-    // Open the PDF in a new tab
-    window.open(pdfUrl, "_blank");
+    // Create a link element and trigger download
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.target = '_blank';
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   } catch (error) {
     console.error("Error downloading PDF:", error);
   }
