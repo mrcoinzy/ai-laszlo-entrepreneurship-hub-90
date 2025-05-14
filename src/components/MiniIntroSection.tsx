@@ -24,7 +24,7 @@ const MiniIntroSection = () => {
                 <AvatarImage 
                   src="/lovable-uploads/230b1d98-23a5-4cf4-822c-63532c0ea807.png" 
                   alt="AI László" 
-                  className="object-contain grayscale contrast-125" 
+                  className="object-cover grayscale contrast-125" 
                 />
                 <AvatarFallback className="bg-gradient-to-br from-purple-900/50 to-black text-4xl font-bold">
                   AL
