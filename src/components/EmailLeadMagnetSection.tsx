@@ -69,7 +69,7 @@ const EmailLeadMagnetSection = () => {
           Iratkozzon fel hírlevelünkre, és tudja meg elsőként a legújabb trendeket és taktikákat!
           <br/>
           <span className="text-purple-300 font-medium mt-2 inline-block">
-            Feliratkozás után automatikusan letöltődik az ingyenes PDF útmutatónk.
+            Feliratkozás után automatikusan letöltődik az ingyenes PDF útmutatóm.
           </span>
         </motion.p>
         
