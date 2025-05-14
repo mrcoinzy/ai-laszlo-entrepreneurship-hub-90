@@ -15,21 +15,53 @@ const EmailLeadMagnetSection = () => {
     if (!email) return;
     setLoading(true);
 
-    const { error } = await supabase
-      .from("email_subscribers")
-      .insert([{ email, source: "Newsletter Section" }]);
+    try {
+      // Insert the email into the subscribers table
+      const { data, error } = await supabase
+        .from("email_subscribers")
+        .insert([{ email, source: "Newsletter Section" }])
+        .select();
 
-    if (error) {
-      if (error.code === "23505") {
-        // Unique constraint violated (already subscribed)
-        toast.error("Ez az e-mail cím már fel van iratkozva.");
-      } else {
-        toast.error("Hiba történt a feliratkozáskor.");
+      if (error) {
+        if (error.code === "23505") {
+          // Unique constraint violated (already subscribed)
+          toast.error("Ez az e-mail cím már fel van iratkozva.");
+        } else {
+          toast.error("Hiba történt a feliratkozáskor.");
+          console.error("Subscription error:", error);
+        }
+        setLoading(false);
+        return;
       }
-    } else {
-      toast.success("Sikeres feliratkozás!");
+
+      // If subscription was successful, call the edge function to send the email
+      if (data && data.length > 0) {
+        const subscriber = data[0];
+        
+        // Call the edge function to send the email
+        const response = await fetch(
+          "https://jffkwmrwwmmmlbaazvry.supabase.co/functions/v1/send-subscription-email", 
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(subscriber),
+          }
+        );
+
+        if (!response.ok) {
+          console.error("Error sending email:", await response.text());
+        }
+      }
+
+      toast.success("Sikeres feliratkozás! Elküldtük az eBook-ot az email címére.");
       setEmail("");
+    } catch (err) {
+      console.error("Subscription process error:", err);
+      toast.error("Hiba történt a feliratkozáskor.");
     }
+    
     setLoading(false);
   };
 
@@ -53,7 +85,7 @@ const EmailLeadMagnetSection = () => {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="text-lg text-white/70 mb-8"
         >
-          Iratkozzon fel hírlevelünkre, és tudja meg elsőként a legújabb trendeket és taktikákat!
+          Iratkozzon fel hírlevelünkre, és töltse le MOST az ingyenes eBook-ot! Csak 24 óráig elérhető!
         </motion.p>
         
         <motion.form 
@@ -74,7 +106,7 @@ const EmailLeadMagnetSection = () => {
             required
           />
           <CTAButton 
-            text={loading ? "Feliratkozás..." : "Feliratkozom"} 
+            text={loading ? "Feldolgozás..." : "Ingyenes PDF Letöltése"} 
             to="#" 
             variant="secondary"
             type="submit"
