@@ -22,7 +22,7 @@ const MiniIntroSection = () => {
             <div className="relative">
               <Avatar className="w-64 h-64 border-4 border-purple-500/30 shadow-xl">
                 <AvatarImage 
-                  src="/lovable-uploads/f1aa429b-5e63-43b1-88c1-5e465ad3c7c7.png" 
+                  src="/lovable-uploads/230b1d98-23a5-4cf4-822c-63532c0ea807.png" 
                   alt="AI László" 
                   className="object-contain grayscale contrast-125" 
                 />
