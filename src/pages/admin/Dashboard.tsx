@@ -46,13 +46,13 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex w-full bg-background">
       <DashboardSidebar 
         isOpen={sidebarOpen} 
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
       />
       
-      <main className={`flex-1 p-8 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
+      <main className={`flex-1 p-4 md:p-8 transition-all duration-300 w-full ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
         <Routes>
           <Route index element={<AdminOverview />} />
           <Route path="consultations" element={<ConsultationsList />} />

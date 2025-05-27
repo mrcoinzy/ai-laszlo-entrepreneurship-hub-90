@@ -49,20 +49,20 @@ const AdminOverview = () => {
   const recentConsultations = dashboardData?.consultations.slice(0, 5) || [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Dashboard Overview</h2>
+    <div className="space-y-6 w-full max-w-none">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 className="text-xl md:text-2xl font-bold">Dashboard Overview</h2>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
         <Card 
-          className="bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer"
+          className="bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer w-full"
           onClick={() => navigate('/admin/dashboard/consultations')}
         >
           <CardHeader className="pb-2">
             <CardDescription>Total Consultations</CardDescription>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-2xl">
+              <CardTitle className="text-xl md:text-2xl">
                 {stats.totalConsultations}
               </CardTitle>
               <FileText className="text-primary h-5 w-5" />
@@ -77,11 +77,11 @@ const AdminOverview = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer">
+        <Card className="bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer w-full">
           <CardHeader className="pb-2">
             <CardDescription>Total Budget</CardDescription>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-2xl">
+              <CardTitle className="text-xl md:text-2xl">
                 ${stats.totalRevenue.toFixed(2)}
               </CardTitle>
               <BarChart3 className="text-primary h-5 w-5" />
@@ -96,11 +96,11 @@ const AdminOverview = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer">
+        <Card className="bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer w-full">
           <CardHeader className="pb-2">
             <CardDescription>Avg. Response Time</CardDescription>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-2xl">
+              <CardTitle className="text-xl md:text-2xl">
                 {stats.avgResponseTime} days
               </CardTitle>
               <Clock className="text-primary h-5 w-5" />
@@ -113,11 +113,11 @@ const AdminOverview = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer">
+        <Card className="bg-accent/10 hover:bg-accent/20 transition-colors cursor-pointer w-full">
           <CardHeader className="pb-2">
             <CardDescription>Blog Posts</CardDescription>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-2xl">
+              <CardTitle className="text-xl md:text-2xl">
                 0
               </CardTitle>
               <Book className="text-primary h-5 w-5" />
@@ -133,8 +133,8 @@ const AdminOverview = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-        <Card className="bg-accent/10">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-8 w-full">
+        <Card className="bg-accent/10 w-full">
           <CardHeader>
             <CardTitle className="text-lg">Recent Consultations</CardTitle>
             <CardDescription>Latest client inquiries</CardDescription>
@@ -143,8 +143,8 @@ const AdminOverview = () => {
             {recentConsultations.length > 0 ? (
               <div className="space-y-4">
                 {recentConsultations.map((consultation) => (
-                  <div key={consultation.id} className="flex justify-between items-center p-3 bg-background rounded-md">
-                    <div>
+                  <div key={consultation.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-background rounded-md gap-2">
+                    <div className="flex-1">
                       <div className="font-medium">{consultation.name}</div>
                       <div className="text-xs text-muted-foreground">{new Date(consultation.created_at).toLocaleDateString()}</div>
                     </div>
@@ -166,7 +166,7 @@ const AdminOverview = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-accent/10">
+        <Card className="bg-accent/10 w-full">
           <CardHeader>
             <CardTitle className="text-lg">Performance Metrics</CardTitle>
             <CardDescription>Current performance indicators</CardDescription>

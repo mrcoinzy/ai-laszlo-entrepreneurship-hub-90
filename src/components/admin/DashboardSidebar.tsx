@@ -96,7 +96,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
   ];
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
       <div className="p-4 flex items-center justify-between border-b border-white/10">
         {isOpen || isMobile ? (
           <Link to="/admin/dashboard" className="text-xl font-bold text-primary">
@@ -127,14 +127,14 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
                 <Link
                   to={item.href}
                   className={cn(
-                    "flex items-center px-3 py-2 rounded-md transition-colors",
+                    "flex items-center px-3 py-2 rounded-md transition-colors w-full",
                     isActive(item.href) 
                       ? "bg-primary text-primary-foreground" 
                       : "hover:bg-accent/50"
                   )}
                 >
-                  <item.icon size={18} className="mr-3" />
-                  <span>{item.label}</span>
+                  <item.icon size={18} className="mr-3 flex-shrink-0" />
+                  <span className="truncate">{item.label}</span>
                 </Link>
               ) : (
                 <Tooltip>
@@ -142,7 +142,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
                     <Link
                       to={item.href}
                       className={cn(
-                        "flex items-center justify-center px-3 py-2 rounded-md transition-colors",
+                        "flex items-center justify-center px-3 py-2 rounded-md transition-colors w-full",
                         isActive(item.href) 
                           ? "bg-primary text-primary-foreground" 
                           : "hover:bg-accent/50"
@@ -164,7 +164,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
       <div className="p-4 border-t border-white/10 space-y-2">
         {(isOpen || isMobile) && user && (
           <div className="px-3 py-2">
-            <div className="text-sm font-medium">{user.email}</div>
+            <div className="text-sm font-medium truncate">{user.email}</div>
             <div className="text-xs text-muted-foreground">Administrator</div>
           </div>
         )}
@@ -177,7 +177,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
                 className="w-full flex items-center justify-start px-3 py-2 rounded-md transition-colors hover:bg-accent/50 text-destructive hover:text-destructive"
                 onClick={handleLogout}
               >
-                <LogOut size={18} className="mr-3" />
+                <LogOut size={18} className="mr-3 flex-shrink-0" />
                 <span>Logout</span>
               </Button>
             ) : (
@@ -208,7 +208,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
       <Button 
         variant="ghost" 
         size="icon" 
-        className="fixed top-4 left-4 z-40 md:hidden"
+        className="fixed top-4 left-4 z-50 md:hidden bg-background"
       >
         <Sheet>
           <SheetTrigger asChild>
@@ -225,7 +225,7 @@ const DashboardSidebar = ({ isOpen, toggleSidebar }: DashboardSidebarProps) => {
   ) : (
     <div
       className={cn(
-        "h-screen bg-accent/10 border-r border-border fixed md:relative z-40 transition-all duration-300 ease-in-out",
+        "h-screen bg-accent/10 border-r border-border fixed top-0 left-0 z-40 transition-all duration-300 ease-in-out",
         isOpen ? "w-64" : "w-16"
       )}
     >
