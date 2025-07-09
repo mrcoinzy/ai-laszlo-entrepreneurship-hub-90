@@ -140,7 +140,7 @@ const PricingSection = () => {
                   </CardTitle>
                   <div className="text-center">
                     <span className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">
-                      {pkg.price}.000
+                      {pkg.price}
                     </span>
                     <span className="text-white/70 ml-1">Ft-tól</span>
                   </div>
