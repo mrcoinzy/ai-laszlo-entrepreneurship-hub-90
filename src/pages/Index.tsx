@@ -6,6 +6,7 @@ import HeroSection from "@/components/HeroSection";
 import MiniIntroSection from "@/components/MiniIntroSection";
 import ProblemStatement from "@/components/ProblemStatement";
 import ServicesSection from "@/components/ServicesSection";
+import PricingSection from "@/components/PricingSection";
 import TrustBuildingSection from "@/components/TrustBuildingSection";
 import PortfolioSection from "@/components/PortfolioSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -54,6 +55,9 @@ const Index = () => {
         </div>
         <div id="szolgaltatasok" className="w-full">
           {withScrollReveal(<ServicesSection />)}
+        </div>
+        <div id="arlista" className="w-full">
+          {withScrollReveal(<PricingSection />)}
         </div>
         <div id="miert-engem" className="w-full">
           {withScrollReveal(<TrustBuildingSection />)}
