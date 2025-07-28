@@ -89,7 +89,7 @@ const EbookPayment = () => {
       <Navigation />
       
       <div className="container mx-auto px-4 py-10 sm:py-20">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4 gradient-text">
               E-book Megrendelés
@@ -100,7 +100,7 @@ const EbookPayment = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-12">
             {/* E-book Details */}
             <Card className="bg-card/50 border-white/10">
               <CardHeader>
