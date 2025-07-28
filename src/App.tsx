@@ -17,6 +17,7 @@ import AdminsManagement from "@/pages/admin/AdminsManagement"
 import BlogPost from "@/pages/BlogPost"
 import BlogListing from "@/pages/BlogListing"
 import Legal from "@/pages/Legal"
+import EbookPayment from "@/pages/EbookPayment"
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAdmin, isLoading } = useAuth();
@@ -80,6 +81,7 @@ function App() {
           <Route path="/blog" element={<BlogListing />} />
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/legal" element={<Legal />} />
+          <Route path="/ebook-fizetes" element={<EbookPayment />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 
