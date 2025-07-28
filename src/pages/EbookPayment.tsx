@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navigation from "@/components/Navigation";
+import EbookNavigation from "@/components/EbookNavigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -86,7 +86,7 @@ const EbookPayment = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <EbookNavigation />
       
       <div className="container mx-auto px-4 py-10 sm:py-20">
         <div className="max-w-6xl mx-auto">
