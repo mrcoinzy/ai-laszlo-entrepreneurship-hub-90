@@ -26,7 +26,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending payment confirmation email to:", email);
 
     const emailResponse = await resend.emails.send({
-      from: "Ai László <onboarding@resend.dev>",
+      from: "onboarding@resend.dev",
       to: [email],
       subject: "E-book fizetés folyamatban - Ai László",
       html: `
