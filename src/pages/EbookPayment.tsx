@@ -122,7 +122,7 @@ const EbookPayment = () => {
               <CardContent>
                 <div className="aspect-[3/4] bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden mb-6">
                   <img 
-                    src="/lovable-uploads/230b1d98-23a5-4cf4-822c-63532c0ea807.png" 
+                    src="/lovable-uploads/7c6fb6a2-d14f-41d7-afe8-8c8096419975.png" 
                     alt="Tanulj úgy, mint aki 2030-ban él" 
                     className="w-full h-full object-cover"
                   />
