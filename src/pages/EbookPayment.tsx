@@ -113,21 +113,25 @@ const EbookPayment = () => {
                   </div>
                 </div>
                 <CardTitle className="text-xl text-white">
-                  AI működik 2025-ben
+                  Tanulj úgy, mint aki 2030-ban él, de ne bukj le a tanárnál!
                 </CardTitle>
                 <CardDescription className="text-white/70">
-                  A teljes útmutató az AI hatékony használatához vállalkozásokban
+                  A jövő iskolai trükkjei ma, AI-val, egyszerűen.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="aspect-[3/4] bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center mb-6">
-                  <Download size={64} className="text-white/60" />
+                <div className="aspect-[3/4] bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden mb-6">
+                  <img 
+                    src="/lovable-uploads/230b1d98-23a5-4cf4-822c-63532c0ea807.png" 
+                    alt="Tanulj úgy, mint aki 2030-ban él" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <CheckCircle size={20} className="text-green-400" />
-                    <span className="text-white/80">50+ oldal gyakorlati tanács</span>
+                    <span className="text-white/80">Rengeteg gyakorlati tanács</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle size={20} className="text-green-400" />
