@@ -173,7 +173,7 @@ const EbookPayment = () => {
                         <strong>Összeg:</strong> 4.990 Ft
                       </div>
                       <div>
-                        <strong>Közlemény:</strong> [Az Ön neve] - E-book megrendelés
+                        <strong>Közlemény:</strong> [Teljes neved] - E-book megrendelés
                       </div>
                     </div>
                   </div>
