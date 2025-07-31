@@ -10,45 +10,39 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Download, Shield, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
 const EbookPayment = () => {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
+    email: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const {
+      name,
+      value
+    } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!formData.name.trim() || !formData.email.trim()) {
       toast.error("Kérjük, töltse ki az összes mezőt!");
       return;
     }
-
     setIsSubmitting(true);
-
     try {
       // Insert into database
-      const { error: dbError } = await supabase
-        .from('ebook_purchases')
-        .insert([
-          {
-            name: formData.name.trim(),
-            email: formData.email.trim(),
-            status: 'pending'
-          }
-        ]);
-
+      const {
+        error: dbError
+      } = await supabase.from('ebook_purchases').insert([{
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        status: 'pending'
+      }]);
       if (dbError) {
         console.error('Database error:', dbError);
         toast.error("Hiba történt az adatok mentése során. Kérjük, próbálja újra!");
@@ -56,16 +50,14 @@ const EbookPayment = () => {
       }
 
       // Send confirmation email
-      const { error: emailError } = await supabase.functions.invoke(
-        'send-ebook-payment-confirmation',
-        {
-          body: {
-            name: formData.name.trim(),
-            email: formData.email.trim()
-          }
+      const {
+        error: emailError
+      } = await supabase.functions.invoke('send-ebook-payment-confirmation', {
+        body: {
+          name: formData.name.trim(),
+          email: formData.email.trim()
         }
-      );
-
+      });
       if (emailError) {
         console.error('Email error:', emailError);
         toast.error("Az email küldése sikertelen, de a rendelés rögzítve lett!");
@@ -74,8 +66,10 @@ const EbookPayment = () => {
       }
 
       // Redirect to success page or reset form
-      setFormData({ name: "", email: "" });
-      
+      setFormData({
+        name: "",
+        email: ""
+      });
     } catch (error) {
       console.error('Submission error:', error);
       toast.error("Hiba történt a rendelés során. Kérjük, próbálja újra!");
@@ -83,9 +77,7 @@ const EbookPayment = () => {
       setIsSubmitting(false);
     }
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <EbookNavigation />
       
       <div className="container mx-auto px-4 py-10 sm:py-20">
@@ -94,10 +86,7 @@ const EbookPayment = () => {
             <h1 className="text-3xl md:text-4xl font-bold mb-4 gradient-text">
               E-book Megrendelés
             </h1>
-            <p className="text-white/70 text-lg">
-              Szerezze be az "AI működik 2025-ben" e-book-ot és tanulja meg, 
-              hogyan használja hatékonyan az AI-t vállalkozásában!
-            </p>
+            <p className="text-white/70 text-lg">Szerezze be az "tanulj úgy, mint aki 2030-ban el - de ne bukj le a tanárnál" e-book-ot és tanulja meg, hogyan használja hatékonyan az AI-t vállalkozásában!</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12">
@@ -121,11 +110,7 @@ const EbookPayment = () => {
               </CardHeader>
               <CardContent>
                 <div className="aspect-[3/4] bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden mb-6">
-                  <img 
-                    src="/lovable-uploads/7c6fb6a2-d14f-41d7-afe8-8c8096419975.png" 
-                    alt="Tanulj úgy, mint aki 2030-ban él" 
-                    className="w-full h-full object-cover"
-                  />
+                  <img src="/lovable-uploads/7c6fb6a2-d14f-41d7-afe8-8c8096419975.png" alt="Tanulj úgy, mint aki 2030-ban él" className="w-full h-full object-cover" />
                 </div>
                 
                 <div className="space-y-4">
@@ -165,32 +150,14 @@ const EbookPayment = () => {
                     <Label htmlFor="name" className="text-white">
                       Teljes név *
                     </Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="Írja be a teljes nevét"
-                      required
-                      className="bg-background/50 border-white/20 text-white placeholder:text-white/50"
-                    />
+                    <Input id="name" name="name" type="text" value={formData.name} onChange={handleInputChange} placeholder="Írja be a teljes nevét" required className="bg-background/50 border-white/20 text-white placeholder:text-white/50" />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-white">
                       Email cím *
                     </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="példa@email.com"
-                      required
-                      className="bg-background/50 border-white/20 text-white placeholder:text-white/50"
-                    />
+                    <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="példa@email.com" required className="bg-background/50 border-white/20 text-white placeholder:text-white/50" />
                   </div>
 
                   <div className="bg-blue-950/30 p-4 rounded-lg border border-blue-500/20">
@@ -222,11 +189,7 @@ const EbookPayment = () => {
                     </p>
                   </div>
 
-                  <Button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3"
-                  >
+                  <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3">
                     {isSubmitting ? "Feldolgozás..." : "Megrendelés Elküldése"}
                   </Button>
 
@@ -242,8 +205,6 @@ const EbookPayment = () => {
       </div>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default EbookPayment;
