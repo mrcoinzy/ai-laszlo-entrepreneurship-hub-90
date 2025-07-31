@@ -167,7 +167,10 @@ const EbookPayment = () => {
                     </h4>
                     <div className="space-y-2 text-sm text-white/80">
                       <div>
-                        <strong>Bankszámlaszám:</strong> 12345678-12345678-12345678
+                        <strong>Kedvezményezett:</strong> Antal István László
+                      </div>
+                      <div>
+                        <strong>Bankszámlaszám:</strong> HU66107015207493513851100005
                       </div>
                       <div>
                         <strong>Összeg:</strong> 4.990 Ft
