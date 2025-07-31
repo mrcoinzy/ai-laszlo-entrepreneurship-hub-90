@@ -86,7 +86,7 @@ const EbookPayment = () => {
             <h1 className="text-3xl md:text-4xl font-bold mb-4 gradient-text">
               E-book Megrendelés
             </h1>
-            <p className="text-white/70 text-lg">Szerezze be az "tanulj úgy, mint aki 2030-ban el - de ne bukj le a tanárnál" e-book-ot és tanulja meg, hogyan használja hatékonyan az AI-t vállalkozásában!</p>
+            <p className="text-white/70 text-lg">Szerezze be az "tanulj úgy, mint aki 2030-ban el - de ne bukj le a tanárnál" e-book-ot és tanuld meg, hogyan használj hatékonyan az AI-t a tanulmányaidhoz</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12">
