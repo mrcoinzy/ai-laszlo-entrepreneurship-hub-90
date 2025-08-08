@@ -17,6 +17,9 @@ import Footer from "@/components/Footer";
 import ScrollIndicator from "@/components/ScrollIndicator";
 import { Blog7 } from "@/components/ui/blog7";
 import { ScrollReveal, ScrollRevealY } from "@/components/ui/scroll-reveal";
+import StatsSection from "@/components/StatsSection";
+import ProcessSection from "@/components/ProcessSection";
+import ToolsSection from "@/components/ToolsSection";
 
 const Index = () => {
   const { data: posts } = useQuery({
@@ -33,6 +36,19 @@ const Index = () => {
       return data;
     }
   });
+
+  React.useEffect(() => {
+    document.title = "Webfejlesztés és online marketing | AI László";
+    const desc = "Modern weboldal, arculat és online hirdetés – mind egy kézből, hogy vállalkozásod ne csak létezzen, hanem növekedjen is.";
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'description';
+      document.head.appendChild(meta);
+    }
+    meta.content = desc;
+  }, []);
+
 
   // Apply scroll reveal wrapper to sections
   const withScrollReveal = (component) => (
@@ -62,11 +78,20 @@ const Index = () => {
         <div id="miert-engem" className="w-full">
           {withScrollReveal(<TrustBuildingSection />)}
         </div>
+        <div className="w-full">
+          {withScrollReveal(<StatsSection />)}
+        </div>
+        <div className="w-full">
+          {withScrollReveal(<ToolsSection />)}
+        </div>
         <div id="eredmenyeim" className="w-full">
           {withScrollReveal(<PortfolioSection />)}
         </div>
         <div id="ugyfeleim" className="w-full">
           {withScrollReveal(<TestimonialsSection />)}
+        </div>
+        <div className="w-full">
+          {withScrollReveal(<ProcessSection />)}
         </div>
         <div className="w-full">
           {withScrollReveal(<EmailLeadMagnetSection />)}

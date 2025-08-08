@@ -67,13 +67,13 @@ const HeroSection = () => {
               className="mb-6 inline-block"
             >
               <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                0% kozkázat 100% növekedés
+                Weboldalkészítés • Teljes arculat • Online marketing
               </span>
             </motion.div>
             
             <ScrollRevealY className="w-full mx-auto">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tighter mb-6 text-white">
-                Teljes online vállalkozási rendszer - <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">egy kézből AI-al felgyorsítva</span>
+                Emeljük rakétasebességre az <span className="bg-gradient-to-r from-white via-purple-300 to-blue-300 bg-clip-text text-transparent">online megjelenésed</span>
               </h1>
             </ScrollRevealY>
             
@@ -117,7 +117,7 @@ const HeroSection = () => {
               </div>
               
               <p className="text-white/90 font-medium">
-                Mindezt úgy, hogy valóban ügyfelei legyenek, ne csak látogatói.
+                Mindezt úgy, hogy valóban ügyfeleid legyenek, ne csak látogatóid.
               </p>
             </ScrollRevealY>
             
@@ -133,9 +133,9 @@ const HeroSection = () => {
                     </span>
                   </Button>
                 </Link>
-                <Link to="#ugyfeleim" className="w-full sm:w-auto">
+                <Link to="#bemutatkozas" className="w-full sm:w-auto">
                   <Button variant="outline" className="w-full sm:w-auto px-6 sm:px-8 py-5 sm:py-6 rounded-xl text-sm sm:text-base border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300">
-                    Nézze meg az ügyfeleim eredményeit
+                    Ismerj meg minket
                   </Button>
                 </Link>
               </div>
