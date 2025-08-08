@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import MaintenanceNotice from "@/components/MaintenanceNotice";
 
 const Index = () => {
   React.useEffect(() => {
@@ -18,6 +19,7 @@ const Index = () => {
   return (
     <div className="min-h-screen w-full bg-black overflow-visible">
       <Navbar />
+      <MaintenanceNotice />
       <main className="w-full overflow-visible">
         <HeroSection />
       </main>
