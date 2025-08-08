@@ -59,65 +59,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full bg-black overflow-visible">
-      <ScrollIndicator />
-      <Navigation />
       <main className="w-full overflow-visible">
         <HeroSection />
-        <div id="bemutatkozas" className="w-full">
-          {withScrollReveal(<MiniIntroSection />)}
-        </div>
-        <div id="garancia" className="w-full">
-          <ProblemStatement />
-        </div>
-        <div id="szolgaltatasok" className="w-full">
-          {withScrollReveal(<ServicesSection />)}
-        </div>
-        <div id="arlista" className="w-full">
-          {withScrollReveal(<PricingSection />)}
-        </div>
-        <div id="miert-engem" className="w-full">
-          {withScrollReveal(<TrustBuildingSection />)}
-        </div>
-        <div className="w-full">
-          {withScrollReveal(<StatsSection />)}
-        </div>
-        <div className="w-full">
-          {withScrollReveal(<ToolsSection />)}
-        </div>
-        <div id="eredmenyeim" className="w-full">
-          {withScrollReveal(<PortfolioSection />)}
-        </div>
-        <div id="ugyfeleim" className="w-full">
-          {withScrollReveal(<TestimonialsSection />)}
-        </div>
-        <div className="w-full">
-          {withScrollReveal(<ProcessSection />)}
-        </div>
-        <div className="w-full">
-          {withScrollReveal(<EmailLeadMagnetSection />)}
-        </div>
-        <div className="w-full">
-          {withScrollReveal(<LeadMagnetSection />)}
-        </div>
-        {posts && posts.length > 0 && (
-          <div id="blog" className="w-full max-w-full overflow-x-hidden">
-            {withScrollReveal(
-              <Blog7 
-                posts={posts}
-                tagline="Friss Üzleti Tippek"
-                heading="Legújabb Cikkeim Önnek"
-                description="Fedezze fel a legfrissebb ügyfélszerzési stratégiákat és sikertörténeteket"
-                buttonText="Szeretném tudni, hogyan szerezhetek több ügyfelet"
-                buttonUrl="/blog"
-              />
-            )}
-          </div>
-        )}
-        <div id="contact" className="w-full">
-          {withScrollReveal(<FinalCTASection />)}
-        </div>
       </main>
-      <Footer />
     </div>
   );
 };
