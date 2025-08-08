@@ -24,6 +24,10 @@
     --input: 0 0% 14.9%;
     --ring: 272 67% 53%;
     --radius: 0.5rem;
+
+    /* Brand accent for neon elements (used in Hero ribbon & CTA) */
+    --brand-accent: 65 92% 58%;
+    --brand-accent-foreground: 0 0% 6%;
   }
 }
 
